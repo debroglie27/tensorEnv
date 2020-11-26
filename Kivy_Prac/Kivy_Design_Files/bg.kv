@@ -1,0 +1,20 @@
+<MyLayout>
+
+# One way of changing background of our App
+#    canvas.before:
+#        Color:
+#            rgba: (0.8, 0.8, 0.8, 1)
+#        Rectangle:
+#            size: self.size
+#            pos: self.pos
+
+    BoxLayout
+        orientation: "vertical"
+        size: root.width, root.height
+        padding: 50
+        spacing: 20
+
+        Button:
+            text: "Hello World"
+        Button:
+            text: "Goodbye World"

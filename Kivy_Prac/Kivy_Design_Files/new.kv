@@ -1,0 +1,44 @@
+#: import utils kivy.utils
+
+<MainGridLayout>
+
+    name: name
+    pizza: pizza
+    colour: colour
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:2
+
+            Label:
+                text: "Name"
+            TextInput:
+                id: name
+                multiline: False
+
+            Label:
+                text: "Favorite Pizza"
+            TextInput:
+                id: pizza
+                multiline: False
+
+            Label:
+                text: "Favorite Color"
+            TextInput:
+                id: colour
+                multiline: False
+                # For RGBA values
+                background_color: (0, 0, 1, 1)
+
+        Button:
+            text: "Submit"
+            font_size: 32
+            background_normal: ''
+            # For RGBA values
+            # background_color: (0, 0, 1, 1)
+            # For Hex Color Codes
+            background_color: utils.get_color_from_hex('#eefa00')
+            on_press: root.press()
