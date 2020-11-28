@@ -1,0 +1,92 @@
+<MyButton@Button>
+    size_hint: (0.25, 0.2)
+    font_size: 32
+
+<MyDarkButton@MyButton>
+    background_color: (0.7, 0.7, 0.7, 1)
+
+<MyLayout>
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        TextInput:
+            id: calc_input
+            text: "0"
+            halign: "right"
+            font_size: 60
+            size_hint: (1, 0.18)
+
+        GridLayout:
+            cols: 4
+            rows: 5
+
+            # Row1
+            MyButton:
+                text: "%"
+
+            MyButton:
+                text: "CE"
+
+            MyButton:
+                text: "C"
+                on_press: root.clear()
+
+            MyButton:
+                text: "/"
+
+            # Row2
+            MyDarkButton:
+                text: "7"
+
+            MyDarkButton:
+                text: "8"
+
+            MyDarkButton:
+                text: "9"
+
+            MyButton:
+                text: "x"
+
+            # Row3
+            MyDarkButton:
+                text: "4"
+
+            MyDarkButton:
+                text: "5"
+
+            MyDarkButton:
+                text: "6"
+
+            MyButton:
+                text: "-"
+
+            # Row4
+            MyDarkButton:
+                text: "1"
+
+            MyDarkButton:
+                text: "2"
+
+            MyDarkButton:
+                text: "3"
+
+            MyButton:
+                text: "+"
+
+            # Row5
+            MyDarkButton:
+                text: "+/-"
+
+            MyDarkButton:
+                text: "0"
+
+            MyDarkButton:
+                text: "."
+
+            MyButton:
+                text: "="
+                background_normal: ''
+                background_color: (173/255, 216/255, 230/255, 0.6)
+
