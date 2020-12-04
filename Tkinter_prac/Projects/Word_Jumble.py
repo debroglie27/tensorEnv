@@ -5,7 +5,7 @@ from random import shuffle
 
 root = Tk()
 root.title('Word Jumble Game')
-root.geometry('600x300+340+130')
+root.geometry('600x320+340+130')
 
 # List of State Words
 states = ['Washington', 'Oregon', 'California', 'Ohio', 'Nebraska', 'Colorado', 'Michigan', 'Massachusetts',
@@ -28,6 +28,11 @@ def shuffler():
     # Clear Answer Entry
     answer_entry.delete(0, END)
 
+    # Clear Hint Label and Reset hint_count
+    hint_label.config(text="")
+    global hint_count
+    hint_count = 0
+
     # Choose a Word from the state list
     global word
     word = choice(states)
@@ -42,6 +47,7 @@ def shuffler():
     my_label.config(text=shuffled_word)
 
 
+# Answer Function
 def answer():
 
     if word.lower() == answer_entry.get().lower():
@@ -53,6 +59,22 @@ def answer():
     shuffler()
 
 
+# Create Hint Counter
+hint_count = 0
+
+
+# Hint Function
+def hint():
+    global hint_count
+
+    word_length = len(word)
+
+    if hint_count < word_length:
+        hint_label.config(text=hint_label['text'] + ' ' + word[hint_count])
+
+    hint_count += 1
+
+
 answer_entry = Entry(root, font=('Helvetica', 24))
 answer_entry.pack(pady=20)
 
@@ -62,11 +84,19 @@ button_frame.pack(pady=10)
 
 # Our Pass Button
 pass_button = Button(button_frame, text="Pass", command=shuffler, font=('Helvetica', 15), bg="Orange")
-pass_button.grid(row=0, column=0, pady=10, padx=20)
+pass_button.grid(row=0, column=0, pady=10, padx=10)
 
 # Our Answer Button
 answer_button = Button(button_frame, text="Answer", command=answer, font=('Helvetica', 15), bg="#90EE90")
-answer_button.grid(row=0, column=1, pady=10, padx=20)
+answer_button.grid(row=0, column=1, pady=10, padx=10)
+
+# Our Hint Button
+hint_button = Button(button_frame, text="Hint", command=hint, font=('Helvetica', 15), bg="#add8e6")
+hint_button.grid(row=0, column=2, pady=10, padx=10)
+
+# Our Hint Label
+hint_label = Label(root, text="", font=('Helvetica', 15))
+hint_label.pack(pady=10)
 
 shuffler()
 
