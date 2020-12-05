@@ -1,16 +1,44 @@
 from tkinter import *
 from tkinter import filedialog
 from pygame import mixer
+import time
+from mutagen.mp3 import MP3
 
 root = Tk()
 root.title('Music Player')
-root.geometry("600x360+350+120")
+root.geometry("600x380+350+120")
 
 # Initialize Pygame Mixer
 mixer.init()
 
 # Variable for keeping the count for number of songs
 song_count = 0
+
+
+# Grab song length time info
+def play_time():
+    if not song_box.curselection():
+        return
+    # Grab Current time Elapsed
+    current_time = mixer.music.get_pos() // 1000
+    converted_current_time = time.strftime('%M:%S', time.gmtime(current_time))
+
+    # Get currently playing song
+    current_song = song_box.curselection()[0]
+    # Grab song title
+    song = song_box.get(current_song)
+    song = f'C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/{song}.mp3'
+
+    # Get song length with mutagen
+    song_mut = MP3(song)
+    song_length = song_mut.info.length
+    converted_song_length = time.strftime('%M:%S', time.gmtime(song_length))
+
+    # Displaying the info on the status bar
+    status_bar.config(text=f'Time Elapsed:  {converted_current_time}  of  {converted_song_length}  ')
+
+    # Update the time
+    status_bar.after(1000, play_time)
 
 
 # Add Song Function
@@ -81,12 +109,17 @@ def play():
     mixer.music.load(song)
     mixer.music.play(loops=0)
 
+    play_time()
+
 
 # Stop Playing Current Song
 def stop():
 
     mixer.music.stop()
     song_box.selection_clear(ACTIVE)
+
+    # Clear the Status Bar
+    status_bar.config(text='')
 
 
 # Variable to know whether the song is already paused or not
@@ -186,5 +219,10 @@ remove_song_menu = Menu(my_menu)
 my_menu.add_cascade(label="Remove Songs", menu=remove_song_menu)
 remove_song_menu.add_command(label="Remove one song from Playlist", command=remove_song)
 remove_song_menu.add_command(label="Remove all songs from Playlist", command=remove_all_songs)
+
+# Status Bar
+status_bar = Label(root, text='', bd=1, relief=GROOVE, anchor=E)
+status_bar.pack(fill=X, side=BOTTOM, ipady=2)
+
 
 root.mainloop()
