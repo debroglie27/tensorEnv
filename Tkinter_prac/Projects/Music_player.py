@@ -9,16 +9,22 @@ root.geometry("600x360+350+120")
 # Initialize Pygame Mixer
 mixer.init()
 
+# Variable for keeping the count for number of songs
+song_count = 0
+
 
 # Add Song Function
 def add_song():
     song = filedialog.askopenfilename(initialdir="./Audios", title="Choose A Song", filetypes=(("mp3 Files", "*.mp3"), ))
 
-    # Strip out the Directory info and .mp3 extension from SONG NAME
-    song = song.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/", "")
-    song = song.replace(".mp3", "")
+    if song:
+        # Strip out the Directory info and .mp3 extension from SONG NAME
+        song = song.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/", "")
+        song = song.replace(".mp3", "")
 
-    song_box.insert(END, song)
+        song_box.insert(END, song)
+        global song_count
+        song_count += 1
 
 
 def add_songs():
@@ -30,10 +36,44 @@ def add_songs():
         song = song.replace(".mp3", "")
 
         song_box.insert(END, song)
+        global song_count
+        song_count += 1
+
+
+# Remove a song from playlist
+def remove_song():
+
+    if not song_box.curselection():
+        return
+
+    global song_count
+
+    mixer.music.stop()
+    # Get the Current Anchor Index
+    anchor_index = song_box.index(ANCHOR)
+    song_box.delete(ANCHOR)
+    # Set the previous song to be the anchor
+    song_box.selection_set((anchor_index-1) % song_count)
+    song_box.activate((anchor_index-1) % song_count)
+
+    song_count -= 1
+
+
+# Remove all songs from playlist
+def remove_all_songs():
+    global song_count
+
+    mixer.music.stop()
+    song_box.delete(0, END)
+
+    song_count = 0
 
 
 # Play Selected Song
 def play():
+
+    if not song_box.curselection():
+        return
 
     song = song_box.get(ACTIVE)
     song = f'./Audios/{song}.mp3'
@@ -65,6 +105,44 @@ def pause():
         paused = True
 
 
+# Play the next song in playlist
+def next_song():
+
+    if not song_box.curselection():
+        return
+
+    cur_song = song_box.curselection()[0]
+    next_one = (cur_song + 1) % song_count
+
+    # Clearing the selected item
+    song_box.selection_clear(0, END)
+    # Setting the next one to be selected
+    song_box.selection_set(next_one)
+    # Activating the next one that was selected
+    song_box.activate(next_one)
+
+    play()
+
+
+# Play the previous song in playlist
+def prev_song():
+
+    if not song_box.curselection():
+        return
+
+    cur_song = song_box.curselection()[0]
+    prev_one = (cur_song - 1 + song_count) % song_count
+
+    # Clearing the selected item
+    song_box.selection_clear(0, END)
+    # Setting the next one to be selected
+    song_box.selection_set(prev_one)
+    # Activating the next one that was selected
+    song_box.activate(prev_one)
+
+    play()
+
+
 # Create Playlist Box
 song_box = Listbox(root, bg="black", fg="green", width=40, font=("Helvetica", 15), selectbackground="grey", selectforeground="black")
 song_box.pack(pady=20)
@@ -81,8 +159,8 @@ controls_frame = Frame(root)
 controls_frame.pack()
 
 # Create Player Control Buttons
-back_button = Button(controls_frame, image=back_btn_img, borderwidth=0)
-forward_button = Button(controls_frame, image=forward_btn_img, borderwidth=0)
+back_button = Button(controls_frame, image=back_btn_img, borderwidth=0, command=prev_song)
+forward_button = Button(controls_frame, image=forward_btn_img, borderwidth=0, command=next_song)
 play_button = Button(controls_frame, image=play_btn_img, borderwidth=0, command=play)
 pause_button = Button(controls_frame, image=pause_btn_img, borderwidth=0, command=pause)
 stop_button = Button(controls_frame, image=stop_btn_img, borderwidth=0, command=stop)
@@ -103,5 +181,10 @@ my_menu.add_cascade(label="Add Songs", menu=add_song_menu)
 add_song_menu.add_command(label="Add one song to Playlist", command=add_song)
 add_song_menu.add_command(label="Add many songs to Playlist", command=add_songs)
 
+# Add DELETE Song Menu
+remove_song_menu = Menu(my_menu)
+my_menu.add_cascade(label="Remove Songs", menu=remove_song_menu)
+remove_song_menu.add_command(label="Remove one song from Playlist", command=remove_song)
+remove_song_menu.add_command(label="Remove all songs from Playlist", command=remove_all_songs)
 
 root.mainloop()
