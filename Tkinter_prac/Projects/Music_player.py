@@ -21,6 +21,17 @@ def add_song():
     song_box.insert(END, song)
 
 
+def add_songs():
+    songs = filedialog.askopenfilenames(initialdir="./Audios", title="Choose A Song", filetypes=(("mp3 Files", "*.mp3"),))
+
+    # Loop Through the songs and remove directory info and .mp3 extension
+    for song in songs:
+        song = song.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/", "")
+        song = song.replace(".mp3", "")
+
+        song_box.insert(END, song)
+
+
 # Play Selected Song
 def play():
 
@@ -36,6 +47,22 @@ def stop():
 
     mixer.music.stop()
     song_box.selection_clear(ACTIVE)
+
+
+# Variable to know whether the song is already paused or not
+paused = False
+
+
+# Pause and Unpause the current song
+def pause():
+
+    global paused
+    if paused:
+        mixer.music.unpause()
+        paused = False
+    else:
+        mixer.music.pause()
+        paused = True
 
 
 # Create Playlist Box
@@ -57,7 +84,7 @@ controls_frame.pack()
 back_button = Button(controls_frame, image=back_btn_img, borderwidth=0)
 forward_button = Button(controls_frame, image=forward_btn_img, borderwidth=0)
 play_button = Button(controls_frame, image=play_btn_img, borderwidth=0, command=play)
-pause_button = Button(controls_frame, image=pause_btn_img, borderwidth=0)
+pause_button = Button(controls_frame, image=pause_btn_img, borderwidth=0, command=pause)
 stop_button = Button(controls_frame, image=stop_btn_img, borderwidth=0, command=stop)
 
 back_button.grid(row=0, column=0, padx=10)
@@ -74,6 +101,7 @@ root.config(menu=my_menu)
 add_song_menu = Menu(my_menu)
 my_menu.add_cascade(label="Add Songs", menu=add_song_menu)
 add_song_menu.add_command(label="Add one song to Playlist", command=add_song)
+add_song_menu.add_command(label="Add many songs to Playlist", command=add_songs)
 
 
 root.mainloop()
