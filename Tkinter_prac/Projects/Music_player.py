@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 from tkinter import filedialog
 from pygame import mixer
 import time
@@ -6,13 +7,15 @@ from mutagen.mp3 import MP3
 
 root = Tk()
 root.title('Music Player')
-root.geometry("600x380+350+120")
+root.geometry("600x470+350+80")
 
 # Initialize Pygame Mixer
 mixer.init()
 
 # Variable for keeping the count for number of songs
 song_count = 0
+# Song Length
+song_length = 0
 
 
 # Grab song length time info
@@ -31,12 +34,15 @@ def play_time():
 
     # Get song length with mutagen
     song_mut = MP3(song)
+    global song_length
     song_length = song_mut.info.length
     converted_song_length = time.strftime('%M:%S', time.gmtime(song_length))
 
     # Displaying the info on the status bar
     status_bar.config(text=f'Time Elapsed:  {converted_current_time}  of  {converted_song_length}  ')
 
+    # Update the slider position
+    my_slider.config(value=int(current_time))
     # Update the time
     status_bar.after(1000, play_time)
 
@@ -111,6 +117,9 @@ def play():
 
     play_time()
 
+    # making slider configuration acc. to the song
+    my_slider.config(to=song_length, value=0)
+
 
 # Stop Playing Current Song
 def stop():
@@ -120,6 +129,9 @@ def stop():
 
     # Clear the Status Bar
     status_bar.config(text='')
+
+    # Resetting the slider
+    my_slider.set(0)
 
 
 # Variable to know whether the song is already paused or not
@@ -176,6 +188,10 @@ def prev_song():
     play()
 
 
+def slide(x):
+    pass
+
+
 # Create Playlist Box
 song_box = Listbox(root, bg="black", fg="green", width=40, font=("Helvetica", 15), selectbackground="grey", selectforeground="black")
 song_box.pack(pady=20)
@@ -223,6 +239,10 @@ remove_song_menu.add_command(label="Remove all songs from Playlist", command=rem
 # Status Bar
 status_bar = Label(root, text='', bd=1, relief=GROOVE, anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=2)
+
+# Create a Music Position Slider
+my_slider = ttk.Scale(root, from_=0, to=100, orient=HORIZONTAL, value=0, length=400, command=slide)
+my_slider.pack(pady=20)
 
 
 root.mainloop()
