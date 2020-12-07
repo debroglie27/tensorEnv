@@ -231,9 +231,20 @@ def slide(x):
     mixer.music.play(loops=0, start=int(my_slider.get()))
 
 
+# Create Volume Function
+def volume(x):
+    mixer.music.set_volume(volume_slider.get())
+    current_volume = mixer.music.get_volume()*100
+    volume_label.config(text=str(int(current_volume)))
+
+
+# Create Master Frame
+master_frame = Frame(root)
+master_frame.pack(pady=20)
+
 # Create Playlist Box
-song_box = Listbox(root, bg="black", fg="green", width=40, font=("Helvetica", 15), selectbackground="grey", selectforeground="black")
-song_box.pack(pady=20)
+song_box = Listbox(master_frame, bg="black", fg="green", width=40, font=("Helvetica", 15), selectbackground="grey", selectforeground="black")
+song_box.grid(row=0, column=0)
 
 # Define Player Control Images
 back_btn_img = PhotoImage(file="./Music_Player_Images/back50.png")
@@ -243,8 +254,8 @@ pause_btn_img = PhotoImage(file="./Music_Player_Images/pause50.png")
 stop_btn_img = PhotoImage(file="./Music_Player_Images/stop50.png")
 
 # Create Player Control Frame
-controls_frame = Frame(root)
-controls_frame.pack()
+controls_frame = Frame(master_frame)
+controls_frame.grid(row=1, column=0, pady=(20, 0))
 
 # Create Player Control Buttons
 back_button = Button(controls_frame, image=back_btn_img, borderwidth=0, command=prev_song)
@@ -280,8 +291,19 @@ status_bar = Label(root, text='', bd=1, relief=GROOVE, anchor=E)
 status_bar.pack(fill=X, side=BOTTOM, ipady=2)
 
 # Create a Music Position Slider
-my_slider = ttk.Scale(root, from_=0, to=100, orient=HORIZONTAL, value=0, length=400, command=slide)
-my_slider.pack(pady=20)
+my_slider = ttk.Scale(master_frame, from_=0, to=100, orient=HORIZONTAL, value=0, length=430, command=slide)
+my_slider.grid(row=2, column=0, pady=(20, 0))
 
+# Create Volume Label Frame
+volume_frame = LabelFrame(master_frame, text="Volume")
+volume_frame.grid(row=0, column=1, padx=(30, 0), rowspan=2)
+
+# Create Volume Slider
+volume_slider = ttk.Scale(volume_frame, from_=1, to=0, orient=VERTICAL, value=1, length=230, command=volume)
+volume_slider.pack(padx=10, pady=10)
+
+# Create Volume value label
+volume_label = Label(volume_frame, text='100', font=('Helvetica', 15))
+volume_label.pack(pady=5)
 
 root.mainloop()
