@@ -7,7 +7,7 @@ from mutagen.mp3 import MP3
 
 root = Tk()
 root.title('Music Player')
-root.geometry("600x470+350+80")
+root.geometry("600x440+350+80")
 
 # Initialize Pygame Mixer
 mixer.init()
@@ -24,7 +24,6 @@ def play_time():
         return
     # Grab Current time Elapsed
     current_time = mixer.music.get_pos() // 1000
-    converted_current_time = time.strftime('%M:%S', time.gmtime(current_time))
 
     # Get currently playing song
     current_song = song_box.curselection()[0]
@@ -38,11 +37,30 @@ def play_time():
     song_length = song_mut.info.length
     converted_song_length = time.strftime('%M:%S', time.gmtime(song_length))
 
-    # Displaying the info on the status bar
-    status_bar.config(text=f'Time Elapsed:  {converted_current_time}  of  {converted_song_length}  ')
+    if int(my_slider.get()) == int(song_length):
+        # Displaying the info on the status bar
+        status_bar.config(text=f'Time Elapsed:  {converted_song_length}  of  {converted_song_length}  ')
+        # Making the slider value the end
+        my_slider.set(int(song_length)+1)
+    elif paused:
+        pass
+    elif int(my_slider.get()+1) == int(current_time):
+        # Update the slider position
+        my_slider.config(value=int(current_time))
+        # converted current time
+        converted_current_time = time.strftime('%M:%S', time.gmtime(my_slider.get()))
+        # Displaying the info on the status bar
+        status_bar.config(text=f'Time Elapsed:  {converted_current_time}  of  {converted_song_length}  ')
+    else:
+        # Update the slider position
+        my_slider.config(value=int(my_slider.get()))
+        # Change the converted current time
+        converted_current_time = time.strftime('%M:%S', time.gmtime(my_slider.get()))
+        # Displaying the info on the status bar
+        status_bar.config(text=f'Time Elapsed:  {converted_current_time}  of  {converted_song_length}  ')
+        # Update slider position by 1 second
+        my_slider.config(value=int(my_slider.get()+1))
 
-    # Update the slider position
-    my_slider.config(value=int(current_time))
     # Update the time
     status_bar.after(1000, play_time)
 
@@ -92,6 +110,9 @@ def remove_song():
 
     song_count -= 1
 
+    # Everything Stops after removing a song
+    stop()
+
 
 # Remove all songs from playlist
 def remove_all_songs():
@@ -101,6 +122,9 @@ def remove_all_songs():
     song_box.delete(0, END)
 
     song_count = 0
+
+    # Everything Stops after removing a song
+    stop()
 
 
 # Play Selected Song
@@ -129,7 +153,6 @@ def stop():
 
     # Clear the Status Bar
     status_bar.config(text='')
-
     # Resetting the slider
     my_slider.set(0)
 
@@ -159,14 +182,18 @@ def next_song():
     cur_song = song_box.curselection()[0]
     next_one = (cur_song + 1) % song_count
 
-    # Clearing the selected item
-    song_box.selection_clear(0, END)
+    stop()
+
     # Setting the next one to be selected
     song_box.selection_set(next_one)
     # Activating the next one that was selected
     song_box.activate(next_one)
 
-    play()
+    song = song_box.get(ACTIVE)
+    song = f'./Audios/{song}.mp3'
+
+    mixer.music.load(song)
+    mixer.music.play(loops=0)
 
 
 # Play the previous song in playlist
@@ -178,18 +205,30 @@ def prev_song():
     cur_song = song_box.curselection()[0]
     prev_one = (cur_song - 1 + song_count) % song_count
 
-    # Clearing the selected item
-    song_box.selection_clear(0, END)
+    stop()
+
     # Setting the next one to be selected
     song_box.selection_set(prev_one)
     # Activating the next one that was selected
     song_box.activate(prev_one)
 
-    play()
+    song = song_box.get(ACTIVE)
+    song = f'./Audios/{song}.mp3'
+
+    mixer.music.load(song)
+    mixer.music.play(loops=0)
 
 
 def slide(x):
-    pass
+
+    if not song_box.curselection():
+        return
+
+    song = song_box.get(ACTIVE)
+    song = f'./Audios/{song}.mp3'
+
+    mixer.music.load(song)
+    mixer.music.play(loops=0, start=int(my_slider.get()))
 
 
 # Create Playlist Box
