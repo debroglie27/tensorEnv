@@ -1,16 +1,44 @@
 from tkinter import *
 from tkinter import filedialog
 # from tkinter import font
+from tkinter import messagebox
+
 
 root = Tk()
 root.title('New File')
 root.geometry("900x536")
 
 filetypes = (("Text Files", "*.txt"), ("HTML Files", "*.html"), ("Python Files", "*.py"), ("All Files", "*.*"))
+current_file_name = False
+
+
+def check_file_saving():
+    if my_text.get('1.0', END) == '\n':
+        return True
+    if not current_file_name:
+        return False
+
+    # Open the Actual File
+    text_file = open(current_file_name, 'r')
+    stuff = text_file.read()
+    text_file.close()
+
+    if stuff == my_text.get('1.0', END):
+        return True
+    else:
+        return False
 
 
 # Create a new file
 def new_file():
+    if not check_file_saving():
+        messagebox.showwarning("Warning", "File Not Saved!!!")
+        return
+
+    # Reset the name of the file
+    global current_file_name
+    current_file_name = False
+
     my_text.delete('1.0', END)
     status_bar.config(text="New File      ")
     root.title("New File")
@@ -18,12 +46,21 @@ def new_file():
 
 # Open a new file
 def open_file():
+    # Check if current file is saved or not
+    if not check_file_saving():
+        messagebox.showwarning("Warning", "File Not Saved!!!")
+        return
+
     my_text.delete('1.0', END)
 
     # Grab file
     text_file = filedialog.askopenfilename(initialdir="./TextFiles/", title="Open File", filetypes=filetypes)
 
     if text_file:
+        # Set aside the name of the file
+        global current_file_name
+        current_file_name = text_file
+
         # Update Status Bar
         status_bar.config(text=f'{text_file}      ')
         name = text_file.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/TextFiles/", "")
@@ -40,13 +77,33 @@ def open_file():
         text_file.close()
 
 
+# Save File
+def save_file():
+    global current_file_name
+    if current_file_name:
+        # Save the File
+        text_file = open(current_file_name, 'w')
+        text_file.write(my_text.get(1.0, END))
+
+        # Close the File
+        text_file.close()
+
+        # Show Pop Up
+        messagebox.showinfo("Info", "File Saved Successfully")
+    else:
+        save_as_file()
+
+
 # Save As File
 def save_as_file():
     text_file = filedialog.asksaveasfilename(defaultextension=".*", initialdir="./TextFiles", title="Save File", filetypes=filetypes)
 
     if text_file:
-        name = text_file
+        # Set aside the name of the file
+        global current_file_name
+        current_file_name = text_file
 
+        name = text_file
         # Update Status Bar
         status_bar.config(text=f'{text_file}      ')
         name = name.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/TextFiles/", "")
@@ -58,6 +115,9 @@ def save_as_file():
 
         # Close the File
         text_file.close()
+
+        # Show Pop Up
+        messagebox.showinfo("Info", "File Saved Successfully")
 
 
 # Create Main Frame
@@ -85,7 +145,7 @@ file_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="File", menu=file_menu)
 file_menu.add_command(label="New", command=new_file)
 file_menu.add_command(label="Open", command=open_file)
-file_menu.add_command(label="Save")
+file_menu.add_command(label="Save", command=save_file)
 file_menu.add_command(label="Save As", command=save_as_file)
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)

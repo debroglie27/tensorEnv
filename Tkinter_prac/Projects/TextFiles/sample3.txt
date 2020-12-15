@@ -1,0 +1,6 @@
+Hi This is sample3.txt
+
+I added something new here
+
+I added another something new
+
