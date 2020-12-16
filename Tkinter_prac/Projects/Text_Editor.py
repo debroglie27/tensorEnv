@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
-# from tkinter import font
+from tkinter import font
 from tkinter import messagebox
 
 
@@ -169,6 +169,44 @@ def paste_text(e):
             my_text.insert(position, selected)
 
 
+# Bold Text
+def bold_it(e):
+    if my_text.get(1.0, END) == "\n" or not my_text.tag_ranges("sel"):
+        return
+
+    current_tags = my_text.tag_names("sel.first")
+
+    if "bold_italic" in current_tags:
+        my_text.tag_remove("bold_italic", "sel.first", "sel.last")
+        my_text.tag_add("italic", "sel.first", "sel.last")
+    elif "italic" in current_tags:
+        my_text.tag_remove("italic", "sel.first", "sel.last")
+        my_text.tag_add("bold_italic", "sel.first", "sel.last")
+    elif "bold" in current_tags:
+        my_text.tag_remove("bold", "sel.first", "sel.last")
+    else:
+        my_text.tag_add("bold", "sel.first", "sel.last")
+
+
+# Italics Text
+def italics_it(e):
+    if my_text.get(1.0, END) == "\n" or not my_text.tag_ranges("sel"):
+        return
+
+    current_tags = my_text.tag_names("sel.first")
+
+    if "bold_italic" in current_tags:
+        my_text.tag_remove("bold_italic", "sel.first", "sel.last")
+        my_text.tag_add("bold", "sel.first", "sel.last")
+    elif "bold" in current_tags:
+        my_text.tag_remove("bold", "sel.first", "sel.last")
+        my_text.tag_add("bold_italic", "sel.first", "sel.last")
+    elif "italic" in current_tags:
+        my_text.tag_remove("italic", "sel.first", "sel.last")
+    else:
+        my_text.tag_add("italic", "sel.first", "sel.last")
+
+
 # Create Main Frame
 my_frame = Frame(root)
 my_frame.pack(pady=1, fill=BOTH, expand=1)
@@ -218,9 +256,34 @@ edit_menu.add_separator()
 edit_menu.add_command(label="Undo", accelerator="(Ctrl+z)", command=my_text.edit_undo)
 edit_menu.add_command(label="Redo", accelerator="(Ctrl+y)", command=my_text.edit_redo)
 
+# Add Property Menu
+property_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Property", menu=property_menu)
+property_menu.add_command(label="Bold", accelerator="(Ctrl+b)", command=lambda: bold_it(False))
+property_menu.add_command(label="Italics", accelerator="(Ctrl+i)", command=lambda: italics_it(False))
+
 # Edit Bindings
 root.bind("<Control-Key-x>", cut_text)
 root.bind("<Control-Key-c>", copy_text)
 root.bind("<Control-Key-v>", paste_text)
+
+# Property Bindings
+root.bind("<Control-Key-b>", bold_it)
+root.bind("<Control-Key-l>", italics_it)
+
+# Bold Font
+bold_font = font.Font(my_text, my_text.cget("font"))
+bold_font.configure(weight="bold")
+# Italics Font
+italics_font = font.Font(my_text, my_text.cget("font"))
+italics_font.configure(slant="italic")
+# Bold Italics Font
+bold_italics_font = font.Font(my_text, my_text.cget("font"))
+bold_italics_font.configure(weight="bold", slant="italic")
+
+# Creating Tags
+my_text.tag_configure("bold", font=bold_font)
+my_text.tag_configure("italic", font=italics_font)
+my_text.tag_configure("bold_italic", font=bold_italics_font)
 
 root.mainloop()
