@@ -1,8 +1,6 @@
 from tkinter import *
-from tkinter import filedialog
 from tkinter import ttk
 from tkinter import colorchooser
-from PIL import Image
 
 
 root = Tk()
