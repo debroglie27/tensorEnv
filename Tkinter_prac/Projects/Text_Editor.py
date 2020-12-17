@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import font
 from tkinter import messagebox
+from tkinter import colorchooser
 
 
 root = Tk()
@@ -101,7 +102,8 @@ def save_file():
 
 # Save As File
 def save_as_file():
-    text_file = filedialog.asksaveasfilename(defaultextension=".*", initialdir="./TextFiles", title="Save File", filetypes=filetypes)
+    text_file = filedialog.asksaveasfilename(defaultextension=".*", initialdir="./TextFiles",
+                                             title="Save File", filetypes=filetypes)
 
     if text_file:
         # Set aside the name of the file
@@ -207,6 +209,20 @@ def italics_it(e):
         my_text.tag_add("italic", "sel.first", "sel.last")
 
 
+# To change the foreground of our TEXT EDITOR
+def fg_color():
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(fg=my_color)
+
+
+# To change the background of our TEXT EDITOR
+def bg_color():
+    my_color = colorchooser.askcolor()[1]
+    if my_color:
+        my_text.config(bg=my_color)
+
+
 # Create Main Frame
 my_frame = Frame(root)
 my_frame.pack(pady=1, fill=BOTH, expand=1)
@@ -261,6 +277,9 @@ property_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Property", menu=property_menu)
 property_menu.add_command(label="Bold", accelerator="(Ctrl+b)", command=lambda: bold_it(False))
 property_menu.add_command(label="Italics", accelerator="(Ctrl+i)", command=lambda: italics_it(False))
+property_menu.add_separator()
+property_menu.add_command(label="Foreground Color", command=fg_color)
+property_menu.add_command(label="Background Color", command=bg_color)
 
 # Edit Bindings
 root.bind("<Control-Key-x>", cut_text)
@@ -275,15 +294,16 @@ root.bind("<Control-Key-l>", italics_it)
 bold_font = font.Font(my_text, my_text.cget("font"))
 bold_font.configure(weight="bold")
 # Italics Font
-italics_font = font.Font(my_text, my_text.cget("font"))
-italics_font.configure(slant="italic")
+italic_font = font.Font(my_text, my_text.cget("font"))
+italic_font.configure(slant="italic")
 # Bold Italics Font
-bold_italics_font = font.Font(my_text, my_text.cget("font"))
-bold_italics_font.configure(weight="bold", slant="italic")
+bold_italic_font = font.Font(my_text, my_text.cget("font"))
+bold_italic_font.configure(weight="bold", slant="italic")
 
 # Creating Tags
 my_text.tag_configure("bold", font=bold_font)
-my_text.tag_configure("italic", font=italics_font)
-my_text.tag_configure("bold_italic", font=bold_italics_font)
+my_text.tag_configure("italic", font=italic_font)
+my_text.tag_configure("bold_italic", font=bold_italic_font)
+
 
 root.mainloop()
