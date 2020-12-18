@@ -171,6 +171,16 @@ def paste_text(e):
             my_text.insert(position, selected)
 
 
+# Select All Text
+def select_all(e):
+    my_text.tag_add("sel", "1.0", "end")
+
+
+# Clear All Text
+def clear_all(e):
+    my_text.delete(1.0, END)
+
+
 # Bold Text
 def bold_it(e):
     if my_text.get(1.0, END) == "\n" or not my_text.tag_ranges("sel"):
@@ -271,6 +281,9 @@ edit_menu.add_command(label="Paste", accelerator="(Ctrl+v)", command=lambda: pas
 edit_menu.add_separator()
 edit_menu.add_command(label="Undo", accelerator="(Ctrl+z)", command=my_text.edit_undo)
 edit_menu.add_command(label="Redo", accelerator="(Ctrl+y)", command=my_text.edit_redo)
+edit_menu.add_separator()
+edit_menu.add_command(label="Select All", accelerator="(Ctrl+a)", command=lambda: select_all(True))
+edit_menu.add_command(label="Clear", accelerator="(Ctrl+r)", command=lambda: clear_all(True))
 
 # Add Property Menu
 property_menu = Menu(my_menu, tearoff=False)
@@ -285,6 +298,8 @@ property_menu.add_command(label="Background Color", command=bg_color)
 root.bind("<Control-Key-x>", cut_text)
 root.bind("<Control-Key-c>", copy_text)
 root.bind("<Control-Key-v>", paste_text)
+root.bind("<Control-Key-a>", select_all)
+root.bind("<Control-Key-r>", clear_all)
 
 # Property Bindings
 root.bind("<Control-Key-b>", bold_it)
