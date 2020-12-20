@@ -233,6 +233,35 @@ def bg_color():
         my_text.config(bg=my_color)
 
 
+# Night Mode Variable
+night_mode_bool = False
+
+
+# Changing NIGHT Mode ON/OFF
+def night_mode():
+    global night_mode_bool
+    if night_mode_bool:
+        main_color = "SystemButtonFace"
+        status_color = "#cfcfcf"
+        second_color = "white"
+        text_color = "black"
+        night_mode_bool = False
+    else:
+        main_color = "#272727"
+        status_color = "#272727"
+        second_color = "#373737"
+        text_color = "yellow"
+        night_mode_bool = True
+
+    root.config(bg=main_color)
+    status_bar.config(bg=status_color, fg=text_color)
+    my_text.config(bg=second_color, fg=text_color)
+    file_menu.config(bg=main_color, fg=text_color)
+    edit_menu.config(bg=main_color, fg=text_color)
+    property_menu.config(bg=main_color, fg=text_color)
+    options_menu.config(bg=main_color, fg=text_color)
+
+
 # Create Main Frame
 my_frame = Frame(root)
 my_frame.pack(pady=1, fill=BOTH, expand=1)
@@ -293,6 +322,13 @@ property_menu.add_command(label="Italics", accelerator="(Ctrl+i)", command=lambd
 property_menu.add_separator()
 property_menu.add_command(label="Foreground Color", command=fg_color)
 property_menu.add_command(label="Background Color", command=bg_color)
+
+# Add Options Menu
+options_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Options", menu=options_menu)
+options_menu.add_command(label="Night Mode ON", command=night_mode)
+options_menu.add_command(label="Night Mode OFF", command=night_mode)
+
 
 # Edit Bindings
 root.bind("<Control-Key-x>", cut_text)
