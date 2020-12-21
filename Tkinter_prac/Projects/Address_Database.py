@@ -1,3 +1,7 @@
+import os
+import smtplib
+from pathlib import Path
+from dotenv import load_dotenv
 from tkinter import *
 import sqlite3
 from tkinter import messagebox
@@ -35,9 +39,9 @@ class WinLogin:
 
         # Username Label and Entry
         self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(row=0, column=0, padx=10, pady=(40, 0))
+        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0))
         self.username_entry = Entry(self.root, font=('Helvetica', 15))
-        self.username_entry.grid(row=0, column=1, padx=10, pady=(40, 0), columnspan=3)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
         self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
@@ -47,11 +51,15 @@ class WinLogin:
 
         # Login Button
         self.login_button = Button(self.root, text="Login", bg="#90EE90", font=('Helvetica', 11), command=self.login_check)
-        self.login_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0))
+        self.login_button.grid(row=2, column=0, columnspan=2, pady=20, padx=(40, 0), ipadx=10)
 
         # SignUp Button
         self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=('Helvetica', 11), command=lambda: self.signup(WinSignup, "SignUp Window"))
-        self.signup_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 40))
+        self.signup_button.grid(row=2, column=2, columnspan=2, pady=20, padx=(0, 45), ipadx=10)
+
+        # Forgot Password Label
+        self.forgot_pass_label = Button(root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.signup(WinForgotPass, "Forgot Password Window"))
+        self.forgot_pass_label.grid(row=3, column=1, padx=(0, 30), columnspan=2)
 
     def login_check(self):
         username = self.username_entry.get()
@@ -71,10 +79,16 @@ class WinLogin:
             if record == password:
                 self.new_window(WinHome, "Home Window")
             else:
-                messagebox.showerror("Error", "Username or Password Incorrect!!!", parent=self.root)
+                messagebox.showerror("Error", "Incorrect!!! Username or Password", parent=self.root)
 
         except Exception:
-            messagebox.showerror("Error", "Username or Password Incorrect!!!", parent=self.root)
+            messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
+
+    def forgot_pass_window(self, _class, t):
+        level = Tk()
+        title = t
+        _class(level, title)
+        self.root.destroy()
 
     def signup(self, _class, t):
         level = Tk()
@@ -89,45 +103,133 @@ class WinLogin:
         self.root.destroy()
 
 
+# Forgot Password Window
+class WinForgotPass:
+
+    def __init__(self, master, title):
+        self.root = master
+        self.root.title(title)
+        self.root.geometry("360x200+450+150")
+
+        # Instruction Label
+        self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere password will be shared.", font=('Helvetica', 13), fg="green")
+        self.instruction_label.grid(row=0, column=0, padx=65, pady=(20, 0), columnspan=4)
+
+        # Email Label and Entry
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=1, column=0, padx=10, pady=20)
+        self.email_entry = Entry(self.root, font=('Helvetica', 15))
+        self.email_entry.grid(row=1, column=1, padx=(0, 30), pady=20, columnspan=3)
+
+        # Back Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
+        self.back_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0), ipadx=10)
+
+        # Send Button
+        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11), command=self.email_check)
+        self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
+
+    def email_check(self):
+        email = self.email_entry.get()
+
+        try:
+            conn = sqlite3.connect('address_book.db')
+            c = conn.cursor()
+            query = 'Select Password from users where email_id=?'
+            c.execute(query, (email,))
+
+            user_password = c.fetchone()
+
+            conn.commit()
+            conn.close()
+
+            if user_password is None:
+                messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
+            else:
+                try:
+                    env_path = Path('../../../openCV_venv/.env')
+                    load_dotenv(dotenv_path=env_path)
+
+                    EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
+                    EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
+
+                    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+                        smtp.ehlo()
+                        smtp.starttls()
+                        smtp.ehlo()
+
+                        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+
+                        subject = 'Forgot Password: Address Database'
+                        body = f'Dear User\n\nPlease find your Password of your Address Database Account\n\nPassword: {user_password[0]}'
+
+                        msg = f'Subject: {subject}\n\n{body}'
+
+                        smtp.sendmail(EMAIL_ADDRESS, email, msg)
+
+                        messagebox.showinfo("Info", "Mail has been sent Successfully:)", parent=self.root)
+                        self.close_window()
+
+                except Exception:
+                    messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
+
+        except Exception:
+            messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
+
+    def close_window(self):
+        global root
+        root = Tk()
+        WinLogin(root, "Login Window", "377x230+450+150")
+        self.root.destroy()
+
+
+# Window for SignUp
 class WinSignup:
 
     def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry('380x260+450+150')
+        self.root.geometry('380x280+450+150')
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
 
         # Username Label and Entry
         self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(row=0, column=0, padx=10, pady=(40, 0))
+        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0), sticky=E)
         self.username_entry = Entry(self.root, font=('Helvetica', 15))
-        self.username_entry.grid(row=0, column=1, padx=10, pady=(40, 0), columnspan=3)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
         self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
-        self.password_label.grid(row=1, column=0, padx=10, pady=10)
+        self.password_label.grid(row=1, column=0, padx=10, pady=(10, 0), sticky=E)
         self.password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.password_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=3)
+        self.password_entry.grid(row=1, column=1, padx=10, pady=(10, 0), columnspan=3)
+
+        # Email Label and Entry
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=2, column=0, padx=10, pady=10, sticky=E)
+        self.email_entry = Entry(self.root, font=('Helvetica', 15))
+        self.email_entry.grid(row=2, column=1, padx=10, pady=10, columnspan=3)
 
         # Admin Secret Key
         self.secret_label = Label(self.root, text="Secret Key:", font=('Helvetica', 15))
-        self.secret_label.grid(row=2, column=0, padx=10, pady=10)
+        self.secret_label.grid(row=3, column=0, padx=10, pady=(20, 10), sticky=E)
         self.secret_entry = Entry(self.root, font=('Helvetica', 15))
-        self.secret_entry.grid(row=2, column=1, padx=10, pady=10, columnspan=3)
+        self.secret_entry.grid(row=3, column=1, padx=10, pady=(20, 10), columnspan=3)
 
         # Back Button
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=3, column=0, columnspan=2, pady=20, padx=(30, 0))
+        self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0))
 
         # Submit Button
         self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11), command=self.login_check)
-        self.submit_button.grid(row=3, column=2, columnspan=2, pady=20, padx=(0, 60))
+        self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60))
 
     def login_check(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
+        email_id = self.email_entry.get()
         secret_key = self.secret_entry.get()
 
         if not secret_key == '12345':
@@ -137,12 +239,13 @@ class WinSignup:
             try:
                 self.username_entry.delete(0, END)
                 self.password_entry.delete(0, END)
+                self.email_entry.delete(0, END)
                 self.secret_entry.delete(0, END)
 
                 conn = sqlite3.connect('address_book.db')
                 c = conn.cursor()
-                query = "Insert Into users(Username, Password) values(?, ?)"
-                c.execute(query, (username, password))
+                query = "Insert Into users(Username, Password, email_id) values(?, ?, ?)"
+                c.execute(query, (username, password, email_id))
 
                 conn.commit()
                 conn.close()
@@ -483,9 +586,7 @@ WinLogin(root, "Login Window", "377x230+450+150")
 mainloop()
 
 
-# import sqlite3
-#
-# conn = sqlite3.connect('../Projects/address_book.db')
+# conn = sqlite3.connect('./address_book.db')
 # c = conn.cursor()
 #
 # c.execute('''CREATE TABLE addresses(
@@ -495,7 +596,6 @@ mainloop()
 #           city text,
 #           state text,
 #           zipcode integer)''')
-#
 #
 # conn.commit()
 # conn.close()
