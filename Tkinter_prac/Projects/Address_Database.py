@@ -167,7 +167,7 @@ class WinForgotPass:
 
                         smtp.sendmail(EMAIL_ADDRESS, email, msg)
 
-                        messagebox.showinfo("Info", "Mail has been sent Successfully:)", parent=self.root)
+                        messagebox.showinfo("Information", "Mail has been sent Successfully:)", parent=self.root)
                         self.close_window()
 
                 except Exception:
@@ -250,12 +250,12 @@ class WinSignup:
                 conn.commit()
                 conn.close()
 
-                messagebox.showinfo("Info", "Account Successfully Added!!!", parent=self.root)
+                messagebox.showinfo("Information", "Account Successfully Added!!!", parent=self.root)
 
                 self.close_window()
 
             except Exception:
-                messagebox.showinfo("Info", "Please Try Again!!!", parent=self.root)
+                messagebox.showinfo("Information", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         global root
@@ -270,6 +270,7 @@ class WinHome:
         self.root = master
         self.root.title(title)
         self.root.geometry("377x360+450+150")
+        self.root['bg'] = "#90EE90"
 
         self.head_label = Label(self.root, text="Welcome to Database", bg='#e67e22', font=('Helvetica', 20))
         self.head_label.grid(row=0, column=0, pady=20, ipadx=50)
@@ -363,26 +364,83 @@ class WinSearch:
     def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry("450x300+450+150")
+        self.root.geometry("530x360+450+150")
 
-        self.select_label = Label(self.root, text="Search:", anchor=E)
-        self.select_label.grid(row=0, column=0, padx=(12, 35), pady=20, ipadx=15)
-        self.select_Entry = Entry(self.root, width=20)
+        self.select_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 10))
+        self.select_label.grid(row=0, column=0, padx=(5, 35), pady=20, ipadx=10)
+        self.select_Entry = Entry(self.root, width=20, font=('Helvetica', 10))
         self.select_Entry.grid(row=0, column=1, padx=(0, 10))
 
         self.drop = ttk.Combobox(self.root, value=['Search by...', 'OID', 'First_Name', 'Last_Name', 'Address', 'City', 'State', 'Zipcode'])
         self.drop.current(0)
-        self.drop.grid(row=0, column=2, padx=20)
+        self.drop.grid(row=0, column=2, padx=(0, 20))
 
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", command=self.close_window)
-        self.back_button.grid(row=1, column=0, padx=(10, 0), pady=25, ipadx=15)
-        self.show_button = Button(self.root, text="Search", bg="#90EE90", command=lambda: self.show(1))
-        self.show_button.grid(row=1, column=1, padx=0, ipadx=20)
-        self.show_all_button = Button(self.root, text="Show All", bg="orange", command=lambda: self.show(0))
-        self.show_all_button.grid(row=1, column=2, padx=(25, 30), ipadx=20)
+        # Buttons
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 10), command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(10, 0), pady=15, ipadx=10)
+        self.show_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 10), command=lambda: self.show(1))
+        self.show_button.grid(row=1, column=1, padx=0, ipadx=10)
+        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 10), command=lambda: self.show(0))
+        self.show_all_button.grid(row=1, column=2, padx=(25, 30), ipadx=10)
 
-        self.show_label = Label(self.root, text='')
-        self.show_label.grid(row=2, column=0, columnspan=3)
+        # Add some style
+        self.style = ttk.Style()
+        # Pick a theme
+        self.style.theme_use("clam")
+        self.style.configure("Treeview",
+                             background="white",
+                             foreground="black",
+                             rowheight=25,
+                             fieldbackground="#E3E3E3")
+
+        self.style.map('Treeview',
+                       background=[('selected', 'yellow')],
+                       foreground=[('selected', 'black')])
+
+        # Create TreeView Frame
+        self.tree_frame = Frame(self.root)
+        self.tree_frame.grid(row=2, column=0, columnspan=3, pady=20, padx=10)
+
+        # TreeView ScrollBar
+        self.tree_scroll = Scrollbar(self.tree_frame)
+        self.tree_scroll.pack(side=RIGHT, fill=Y)
+
+        # Create TreeView
+        self.my_tree = ttk.Treeview(self.tree_frame, height=7, yscrollcommand=self.tree_scroll.set)
+        self.my_tree.pack()
+
+        # Configure ScrollBar
+        self.tree_scroll.config(command=self.my_tree.yview)
+
+        # Define our columns
+        self.my_tree['columns'] = ("OID", "F_Name", "L_Name", "Address", "City", "State", "Zipcode")
+
+        # Format our columns
+        self.my_tree.column("#0", width=0, stretch=NO)
+        self.my_tree.column("OID", anchor=CENTER, width=30)
+        self.my_tree.column("F_Name", anchor=CENTER, width=80)
+        self.my_tree.column("L_Name", anchor=CENTER, width=80)
+        self.my_tree.column("Address", anchor=CENTER, width=80)
+        self.my_tree.column("City", anchor=CENTER, width=80)
+        self.my_tree.column("State", anchor=CENTER, width=80)
+        self.my_tree.column("Zipcode", anchor=CENTER, width=60)
+
+        # Create Headings
+        self.my_tree.heading("#0", text="", anchor=CENTER)
+        self.my_tree.heading("OID", text="OID", anchor=CENTER)
+        self.my_tree.heading("F_Name", text="F_Name", anchor=CENTER)
+        self.my_tree.heading("L_Name", text="L_Name", anchor=CENTER)
+        self.my_tree.heading("Address", text="Address", anchor=CENTER)
+        self.my_tree.heading("City", text="City", anchor=CENTER)
+        self.my_tree.heading("State", text="State", anchor=CENTER)
+        self.my_tree.heading("Zipcode", text="Zipcode", anchor=CENTER)
+
+        # Count Variable for number of records
+        self.count = 0
+
+        # Create Stripped row Tags
+        self.my_tree.tag_configure('oddrow', background="white")
+        self.my_tree.tag_configure('evenrow', background="lightblue")
 
     def show(self, a):
         if self.select_Entry.get() == "" and a == 1:
@@ -406,15 +464,24 @@ class WinSearch:
 
         records = c.fetchall()
 
+        # Removing the Preexisting Records(if any)
+        for rec in self.my_tree.get_children():
+            self.my_tree.delete(rec)
+
+        # Resetting the Count
+        self.count = 0
+
         if records:
-            print_records = ""
             for record in records:
-                print_records += str(record) + "\n"
+                if self.count % 2 == 0:
+                    self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record, tags=("evenrow",))
+                else:
+                    self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record, tags=("oddrow",))
+                self.count += 1
         else:
-            print_records = "Record Not Found"
+            messagebox.showinfo("Information", "No Record Found!!!", parent=self.root)
 
-        self.show_label.config(text=print_records, fg="black")
-
+        # Clearing the Entry Box and Resetting the Drop Down Box
         self.select_Entry.delete(0, END)
         self.drop.current(0)
 
@@ -564,15 +631,21 @@ class WinDelete:
             conn = sqlite3.connect('address_book.db')
             c = conn.cursor()
 
-            query = "Delete from addresses where oid=?"
-            c.execute(query, self.select_Entry.get())
+            query1 = "Select * from addresses where oid=?"
+            c.execute(query1, (self.select_Entry.get(),))
 
-            self.select_Entry.delete(0, END)
+            if c.fetchone() is None:
+                messagebox.showerror("Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
+            else:
+                query2 = "Delete from addresses where oid=?"
+                c.execute(query2, (self.select_Entry.get(),))
 
-            conn.commit()
-            conn.close()
+                self.select_Entry.delete(0, END)
 
-            messagebox.showinfo("Information", "Successfully Deleted", parent=self.root)
+                conn.commit()
+                conn.close()
+
+                messagebox.showinfo("Information", "Successfully Deleted", parent=self.root)
 
     def close_window(self):
         global root
