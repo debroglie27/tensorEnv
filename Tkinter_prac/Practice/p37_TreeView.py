@@ -19,7 +19,21 @@ style.map('Treeview',
           background=[('selected', 'yellow')],
           foreground=[('selected', 'black')])
 
-my_tree = ttk.Treeview(root)
+# Create TreeView Frame
+tree_frame = Frame(root)
+tree_frame.pack(pady=20)
+
+# TreeView ScrollBar
+tree_scroll = Scrollbar(tree_frame)
+tree_scroll.pack(side=RIGHT, fill=Y)
+
+# Create TreeView
+my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set)
+my_tree.pack()
+
+# Configure ScrollBar
+tree_scroll.config(command=my_tree.yview)
+
 
 # Define our columns
 my_tree['columns'] = ("Name", "ID", "Favorite Pizza")
@@ -38,15 +52,18 @@ my_tree.heading("Favorite Pizza", text="Favorite Pizza", anchor=W)
 
 # Add data
 data = [
-    ["John", 1, "Pepperoni"],
-    ["Mary", 2, "Cheese"],
-    ["Tim", 3, "Mushroom"],
-    ["Erin", 4, "Ham"],
-    ["Bob", 5, "Onion"],
-    ["Steve", 6, "Peppers"],
-    ["Tina", 7, "Cheese"],
-    ["Mark", 8, "Supreme"],
-    ["Ruth", 9, "Vegan"]
+    ["John", 1, "Pepperoni"], ["Mary", 2, "Cheese"],
+    ["Tim", 3, "Mushroom"], ["Erin", 4, "Ham"],
+    ["Bob", 5, "Onion"], ["Steve", 6, "Peppers"],
+    ["Tina", 7, "Cheese"], ["Mark", 8, "Supreme"],
+    ["Ruth", 9, "Vegan"], ["John", 1, "Pepperoni"],
+    ["Mary", 2, "Cheese"], ["Tim", 3, "Mushroom"],
+    ["Erin", 4, "Ham"], ["Bob", 5, "Onion"],
+    ["Steve", 6, "Peppers"], ["Tina", 7, "Cheese"],
+    ["Mark", 8, "Supreme"], ["Ruth", 9, "Vegan"],
+    ["Bob", 5, "Onion"], ["Steve", 6, "Peppers"],
+    ["Tina", 7, "Cheese"], ["Mark", 8, "Supreme"],
+    ["Ruth", 9, "Vegan"], ["Mark", 8, "Supreme"]
 ]
 
 # Create Stripped row Tags
@@ -65,9 +82,6 @@ for record in data:
 
 # Add Children
 # my_tree.insert(parent='0', index='end', iid=6, text="Child", values=("Sony", 1.2, "Paneer"))
-
-# Pack to the Screen
-my_tree.pack(pady=20)
 
 
 # Frame for Label and Entry Boxes
