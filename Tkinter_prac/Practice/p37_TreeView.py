@@ -3,7 +3,7 @@ from tkinter import ttk
 
 root = Tk()
 root.title('TreeView')
-root.geometry('500x550')
+root.geometry('500x560')
 
 # Add some style
 style = ttk.Style()
@@ -138,18 +138,83 @@ def remove_many():
         my_tree.delete(rec)
 
 
+def select_record():
+    # Clearing the Entry Boxes
+    name_box.delete(0, END)
+    id_box.delete(0, END)
+    topping_box.delete(0, END)
+
+    # Grab the Record number
+    selected = my_tree.focus()
+    # Grab the values of the record
+    values = my_tree.item(selected, "values")
+
+    # Output to Entry Boxes
+    name_box.insert(0, values[0])
+    id_box.insert(0, values[1])
+    topping_box.insert(0, values[2])
+
+
+def update_record():
+    # Grab the record number
+    selected = my_tree.focus()
+    # Saving the updated record
+    my_tree.item(selected, text="", values=(name_box.get(), id_box.get(), topping_box.get()))
+
+    # Clearing the Entry Boxes
+    name_box.delete(0, END)
+    id_box.delete(0, END)
+    topping_box.delete(0, END)
+
+
+# Binding Function
+def clicker(e):
+    select_record()
+
+
+def up():
+    rows = my_tree.selection()
+    for row in rows:
+        my_tree.move(row, my_tree.parent(row), my_tree.index(row)-1)
+
+
+def down():
+    rows = my_tree.selection()
+    for row in reversed(rows):
+        my_tree.move(row, my_tree.parent(row), my_tree.index(row) + 1)
+
+
+# Buttons Frame
+but_frame = Frame(root)
+but_frame.pack(pady=20)
+
 # Buttons
-add_record_but = Button(root, text="Add Record", command=add_record)
-add_record_but.pack(pady=(20, 5))
+move_up_but = Button(but_frame, text="Move Up", command=up)
+move_up_but.grid(row=0, column=0, pady=5, padx=(0, 40))
 
-remove_all_but = Button(root, text="Remove All", command=remove_all)
-remove_all_but.pack(pady=5)
+move_down_but = Button(but_frame, text="Move Down", command=down)
+move_down_but.grid(row=0, column=1, pady=5)
 
-remove_one_but = Button(root, text="Remove One", command=remove_one)
-remove_one_but.pack(pady=5)
+select_but = Button(but_frame, text="Select Record", command=select_record)
+select_but.grid(row=1, column=0, pady=5, padx=(0, 40))
 
-remove_many_but = Button(root, text="Remove Many", command=remove_many)
-remove_many_but.pack(pady=5)
+update_but = Button(but_frame, text="Update Record", command=update_record)
+update_but.grid(row=2, column=0, pady=5, padx=(0, 40))
 
+add_record_but = Button(but_frame, text="Add Record", command=add_record)
+add_record_but.grid(row=3, column=0, pady=5, padx=(0, 40))
+
+remove_all_but = Button(but_frame, text="Remove All", command=remove_all)
+remove_all_but.grid(row=1, column=1, pady=5)
+
+remove_one_but = Button(but_frame, text="Remove One", command=remove_one)
+remove_one_but.grid(row=2, column=1, pady=5)
+
+remove_many_but = Button(but_frame, text="Remove Many", command=remove_many)
+remove_many_but.grid(row=3, column=1, pady=5)
+
+# Bindings
+# my_tree.bind("<ButtonRelease-1>", clicker)
+my_tree.bind("<Double-1>", clicker)
 
 root.mainloop()
