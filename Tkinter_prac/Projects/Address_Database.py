@@ -129,7 +129,15 @@ class WinForgotPass:
         self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11), command=self.email_check)
         self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
 
+        # Loading the Environment Variables from .env file
+        env_path = Path('../../../openCV_venv/.env')
+        load_dotenv(dotenv_path=env_path)
+
+        self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
+        self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
+
     def email_check(self):
+        messagebox.showinfo("Information", "It may take some time\nPlease Wait!!!", parent=self.root)
         email = self.email_entry.get()
 
         try:
@@ -147,25 +155,15 @@ class WinForgotPass:
                 messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
             else:
                 try:
-                    env_path = Path('../../../openCV_venv/.env')
-                    load_dotenv(dotenv_path=env_path)
-
-                    EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
-                    EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
-
-                    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-                        smtp.ehlo()
-                        smtp.starttls()
-                        smtp.ehlo()
-
-                        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                        smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
                         subject = 'Forgot Password: Address Database'
                         body = f'Dear User\n\nPlease find your Password of your Address Database Account\n\nPassword: {user_password[0]}'
 
                         msg = f'Subject: {subject}\n\n{body}'
 
-                        smtp.sendmail(EMAIL_ADDRESS, email, msg)
+                        smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
 
                         messagebox.showinfo("Information", "Mail has been sent Successfully:)", parent=self.root)
                         self.close_window()
@@ -642,10 +640,10 @@ class WinDelete:
 
                 self.select_Entry.delete(0, END)
 
-                conn.commit()
-                conn.close()
-
                 messagebox.showinfo("Information", "Successfully Deleted", parent=self.root)
+
+            conn.commit()
+            conn.close()
 
     def close_window(self):
         global root
