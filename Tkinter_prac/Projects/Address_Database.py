@@ -263,7 +263,7 @@ class WinHome:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+150")
+        self.root.geometry("377x360+450+140")
         self.root['bg'] = "#90EE90"
 
         self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Helvetica', 25))
@@ -285,8 +285,12 @@ class WinHome:
         # Add File Menu
         self.file_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="File", menu=self.file_menu)
-        self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.file_menu.add_command(label="Insert", command=lambda: self.new_window(WinInsert, "Insert Window", self.user_oid))
+        self.file_menu.add_command(label="Search", command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
+        self.file_menu.add_command(label="Update", command=lambda: self.new_window(WinUpdate, "Update Window", self.user_oid))
+        self.file_menu.add_command(label="Delete", command=lambda: self.new_window(WinDelete, "Delete Window", self.user_oid))
         self.file_menu.add_separator()
+        self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
         self.file_menu.add_command(label="Exit", command=self.root.quit)
 
         # Finding Username for our Status Bar
