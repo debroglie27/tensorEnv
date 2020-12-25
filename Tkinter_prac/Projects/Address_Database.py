@@ -29,10 +29,10 @@ root = Tk()
 
 class WinLogin:
 
-    def __init__(self, master, title, geo):
+    def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry(geo)
+        self.root.geometry("377x230+450+150")
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -58,7 +58,7 @@ class WinLogin:
         self.signup_button.grid(row=2, column=2, columnspan=2, pady=20, padx=(0, 45), ipadx=10)
 
         # Forgot Password Label
-        self.forgot_pass_label = Button(root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.signup(WinForgotPass, "Forgot Password Window"))
+        self.forgot_pass_label = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.signup(WinForgotPass, "Forgot Password Window"))
         self.forgot_pass_label.grid(row=3, column=1, padx=(0, 30), columnspan=2)
 
     def login_check(self):
@@ -68,38 +68,35 @@ class WinLogin:
         try:
             conn = sqlite3.connect('address_book.db')
             c = conn.cursor()
-            query = 'Select Password from users where Username=?'
+            query = 'Select Password, oid from users where Username=?'
             c.execute(query, (username,))
 
-            record = c.fetchone()[0]
+            record, oid = c.fetchone()
 
             conn.commit()
             conn.close()
 
             if record == password:
-                self.new_window(WinHome, "Home Window")
+                self.new_window(WinHome, "Home Window", oid)
             else:
                 messagebox.showerror("Error", "Incorrect!!! Username or Password", parent=self.root)
 
         except Exception:
             messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
 
-    def forgot_pass_window(self, _class, t):
+    def forgot_pass_window(self, _class, title):
         level = Tk()
-        title = t
         _class(level, title)
         self.root.destroy()
 
-    def signup(self, _class, t):
+    def signup(self, _class, title):
         level = Tk()
-        title = t
         _class(level, title)
         self.root.destroy()
 
-    def new_window(self, _class, t):
+    def new_window(self, _class, title, oid):
         level = Tk()
-        title = t
-        _class(level, title)
+        _class(level, title, oid)
         self.root.destroy()
 
 
@@ -175,9 +172,8 @@ class WinForgotPass:
             messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
-        global root
-        root = Tk()
-        WinLogin(root, "Login Window", "377x230+450+150")
+        level = Tk()
+        WinLogin(level, "Login Window")
         self.root.destroy()
 
 
@@ -256,43 +252,80 @@ class WinSignup:
                 messagebox.showinfo("Information", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
-        global root
-        root = Tk()
-        WinLogin(root, "Login Window", "377x230+450+150")
+        level = Tk()
+        WinLogin(level, "Login Window")
         self.root.destroy()
 
 
 class WinHome:
 
-    def __init__(self, master, title):
+    def __init__(self, master, title, user_oid):
         self.root = master
+        self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("377x360+450+150")
         self.root['bg'] = "#90EE90"
 
-        self.head_label = Label(self.root, text="Welcome to Database", bg='#e67e22', font=('Helvetica', 20))
-        self.head_label.grid(row=0, column=0, pady=20, ipadx=50)
+        self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Helvetica', 25))
+        self.head_label.pack(pady=(0, 20), ipadx=50, ipady=10)
 
-        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinInsert, "Insert Window"))
-        self.but_insert.grid(row=1, column=0, pady=(20, 0), ipadx=60)
-        self.but_show = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinSearch, "Search Window"))
-        self.but_show.grid(row=2, column=0, pady=(15, 0), ipadx=54)
-        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinUpdate, "Update Window"))
-        self.but_update.grid(row=3, column=0, pady=(15, 0), ipadx=54)
-        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinDelete, "Delete Window"))
-        self.but_delete.grid(row=4, column=0, pady=(15, 0), ipadx=57)
+        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinInsert, "Insert Window", self.user_oid))
+        self.but_insert.pack(pady=(10, 0), ipadx=40)
+        self.but_show = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
+        self.but_show.pack(pady=(18, 0), ipadx=34)
+        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinUpdate, "Update Window", self.user_oid))
+        self.but_update.pack(pady=(18, 0), ipadx=34)
+        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinDelete, "Delete Window", self.user_oid))
+        self.but_delete.pack(pady=(18, 0), ipadx=37)
 
-    def new_window(self, _class, t):
+        # Create Menu
+        self.my_menu = Menu(self.root)
+        self.root.config(menu=self.my_menu)
+
+        # Add File Menu
+        self.file_menu = Menu(self.my_menu, tearoff=False)
+        self.my_menu.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Exit", command=self.root.quit)
+
+        # Finding Username for our Status Bar
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+        query = 'Select Username from users where OID=?'
+        c.execute(query, (self.user_oid,))
+
+        username = c.fetchone()[0]
+
+        conn.commit()
+        conn.close()
+
+        # Finding whether our user is an ADMIN or not
+        if self.user_oid == 1:
+            text = f'User: {username} (ADMIN) '
+        else:
+            text = f'User: {username} '
+
+        # Add Status Bar
+        self.status_bar = Label(self.root, text=text, anchor=E, bg="#dfdfdf")
+        self.status_bar.pack(fill=X, side=BOTTOM, ipady=1)
+
+    def logout(self, _class, title):
         level = Tk()
-        title = t
         _class(level, title)
+        self.root.destroy()
+
+    def new_window(self, _class, title, oid):
+        level = Tk()
+        _class(level, title, oid)
         self.root.destroy()
 
 
 class WinInsert:
 
-    def __init__(self, master, title):
+    def __init__(self, master, title, user_oid):
         self.root = master
+        self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("360x280+450+150")
 
@@ -351,24 +384,26 @@ class WinInsert:
             conn.close()
 
     def close_window(self):
-        global root
-        root = Tk()
-        WinHome(root, "Home Window")
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
         self.root.destroy()
 
 
 class WinSearch:
 
-    def __init__(self, master, title):
+    def __init__(self, master, title, user_oid):
         self.root = master
+        self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("530x360+450+150")
+        self.root.geometry("530x360+400+150")
 
-        self.select_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 10))
-        self.select_label.grid(row=0, column=0, padx=(5, 35), pady=20, ipadx=10)
-        self.select_Entry = Entry(self.root, width=20, font=('Helvetica', 10))
-        self.select_Entry.grid(row=0, column=1, padx=(0, 10))
+        # Our Search Label and Search Entry
+        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 10))
+        self.search_label.grid(row=0, column=0, padx=(5, 35), pady=20, ipadx=10)
+        self.search_Entry = Entry(self.root, width=20, font=('Helvetica', 10))
+        self.search_Entry.grid(row=0, column=1, padx=(0, 10))
 
+        # Drop Down Box for Search Type
         self.drop = ttk.Combobox(self.root, value=['Search by...', 'OID', 'First_Name', 'Last_Name', 'Address', 'City', 'State', 'Zipcode'])
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 20))
@@ -441,7 +476,7 @@ class WinSearch:
         self.my_tree.tag_configure('evenrow', background="lightblue")
 
     def show(self, a):
-        if self.select_Entry.get() == "" and a == 1:
+        if self.search_Entry.get() == "" and a == 1:
             messagebox.showwarning("Warning", "Please Provide the Value to be Searched", parent=self.root)
             return
 
@@ -457,7 +492,7 @@ class WinSearch:
             c.execute("Select OID, * from addresses")
         else:
             query = "select OID, * from addresses where " + selection + " LIKE ?"
-            value = '%'+self.select_Entry.get()+'%'
+            value = '%'+self.search_Entry.get()+'%'
             c.execute(query, (value,))
 
         records = c.fetchall()
@@ -480,23 +515,23 @@ class WinSearch:
             messagebox.showinfo("Information", "No Record Found!!!", parent=self.root)
 
         # Clearing the Entry Box and Resetting the Drop Down Box
-        self.select_Entry.delete(0, END)
+        self.search_Entry.delete(0, END)
         self.drop.current(0)
 
         conn.commit()
         conn.close()
 
     def close_window(self):
-        global root
-        root = Tk()
-        WinHome(root, "Home Window")
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
         self.root.destroy()
 
 
 class WinUpdate:
 
-    def __init__(self, master, title):
+    def __init__(self, master, title, user_oid):
         self.root = master
+        self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("360x400+450+150")
 
@@ -599,16 +634,16 @@ class WinUpdate:
             conn.close()
 
     def close_window(self):
-        global root
-        root = Tk()
-        WinHome(root, "Home Window")
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
         self.root.destroy()
 
 
 class WinDelete:
 
-    def __init__(self, master, title):
+    def __init__(self, master, title, user_oid):
         self.root = master
+        self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("350x200+450+150")
 
@@ -646,13 +681,12 @@ class WinDelete:
             conn.close()
 
     def close_window(self):
-        global root
-        root = Tk()
-        WinHome(root, "Home Window")
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
         self.root.destroy()
 
 
-WinLogin(root, "Login Window", "377x230+450+150")
+WinLogin(root, "Login Window")
 
 mainloop()
 
