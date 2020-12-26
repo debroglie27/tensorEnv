@@ -32,7 +32,7 @@ class WinLogin:
     def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry("377x230+450+150")
+        self.root.geometry("375x230+450+150")
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -82,7 +82,7 @@ class WinLogin:
                 messagebox.showerror("Error", "Incorrect!!! Username or Password", parent=self.root)
 
         except Exception:
-            messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
+            messagebox.showerror("Error", "Incorrect!!! Username or Password", parent=self.root)
 
     def forgot_pass_window(self, _class, title):
         level = Tk()
@@ -217,10 +217,10 @@ class WinSignup:
         self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0))
 
         # Submit Button
-        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11), command=self.login_check)
+        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11), command=self.signup_check)
         self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60))
 
-    def login_check(self):
+    def signup_check(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
         email_id = self.email_entry.get()
@@ -392,7 +392,7 @@ class WinUserDetails:
 
     def close_window(self):
         level = Tk()
-        WinHome(level, "Login Window", self.user_oid)
+        WinHome(level, "Home Window", self.user_oid)
         self.root.destroy()
 
     def change_entry(self, val):
@@ -423,7 +423,70 @@ class WinChangePass:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("360x280+450+150")
+        self.root.geometry("450x280+440+150")
+
+        # Bullet Symbol
+        self.bullet_symbol = "\u2022"
+
+        # Current Password Label and Entry
+        self.current_password_label = Label(self.root, text="Current Password:", font=('Helvetica', 15))
+        self.current_password_label.grid(row=0, column=0, padx=10, pady=(30, 20), sticky=E)
+        self.current_password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.current_password_entry.grid(row=0, column=1, padx=10, pady=(30, 20), sticky=W)
+
+        # New Password Label and Entry
+        self.new_password_label = Label(self.root, text="New Password:", font=('Helvetica', 15))
+        self.new_password_label.grid(row=1, column=0, padx=10, pady=(20, 10), sticky=E)
+        self.new_password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.new_password_entry.grid(row=1, column=1, padx=10, pady=(20, 10), sticky=W)
+
+        # Confirm Password Label and Entry
+        self.confirm_password_label = Label(self.root, text="Confirm Password:", font=('Helvetica', 15))
+        self.confirm_password_label.grid(row=2, column=0, padx=10, pady=(5, 0), sticky=E)
+        self.confirm_password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.confirm_password_entry.grid(row=2, column=1, padx=10, pady=(5, 0), sticky=W)
+
+        # Back and Save Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.grid(row=3, column=0, pady=20, columnspan=2)
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+
+        # Save Button
+        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_password)
+        self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+
+    def close_window(self):
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
+        self.root.destroy()
+
+    def change_password(self):
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+
+        query = "Select password from users where oid=?"
+        c.execute(query, (self.user_oid,))
+
+        record = c.fetchone()[0]
+
+        if record != self.current_password_entry.get():
+            messagebox.showerror("Error", "Wrong Current Password!!!", parent=self.root)
+        else:
+            if self.new_password_entry.get() != self.confirm_password_entry.get():
+                messagebox.showerror("Error", "Confirm Password is not same\nas New Password!!!", parent=self.root)
+            else:
+                query = "update users set password = ? where OID = ?"
+                c.execute(query, (self.confirm_password_entry.get(), self.user_oid))
+
+                messagebox.showinfo("Information", "Password Changed Successfully!!!", parent=self.root)
+
+        conn.commit()
+        conn.close()
+
+        self.close_window()
 
 
 class WinInsert:
