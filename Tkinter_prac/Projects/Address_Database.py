@@ -14,7 +14,7 @@ from tkinter import ttk
 # conn.commit()
 # conn.close()
 
-# Username: Admin
+# User ADMIN: Arijeet
 # Password: 1234
 # Secret Key: 12345
 
@@ -285,6 +285,7 @@ class WinHome:
         # Add File Menu
         self.file_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="File", menu=self.file_menu)
+        # Add File Menu Items
         self.file_menu.add_command(label="Insert", command=lambda: self.new_window(WinInsert, "Insert Window", self.user_oid))
         self.file_menu.add_command(label="Search", command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
         self.file_menu.add_command(label="Update", command=lambda: self.new_window(WinUpdate, "Update Window", self.user_oid))
@@ -292,6 +293,13 @@ class WinHome:
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
         self.file_menu.add_command(label="Exit", command=self.root.quit)
+
+        # Add Settings Menu
+        self.settings_menu = Menu(self.my_menu, tearoff=False)
+        self.my_menu.add_cascade(label="Settings", menu=self.settings_menu)
+        # Add Settings Menu Items
+        self.settings_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
+        self.settings_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePass, "Change Password", self.user_oid))
 
         # Finding Username for our Status Bar
         conn = sqlite3.connect('address_book.db')
@@ -323,6 +331,99 @@ class WinHome:
         level = Tk()
         _class(level, title, oid)
         self.root.destroy()
+
+
+class WinUserDetails:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("435x220+440+150")
+
+        # Username Label and Entry
+        self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
+        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0), sticky=E)
+        self.username_entry = Entry(self.root, font=('Helvetica', 15), fg="green", width=19)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), sticky=W)
+
+        # Email Label and Entry
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=1, column=0, padx=10, pady=20, sticky=E)
+        self.email_entry = Entry(self.root, font=('Helvetica', 15), fg="green", width=19)
+        self.email_entry.grid(row=1, column=1, padx=10, pady=20, sticky=W)
+
+        # Change Buttons
+        self.change_button1 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange", command=lambda: self.change_entry(0))
+        self.change_button1.grid(row=0, column=2, padx=5, pady=(30, 0))
+        self.change_button2 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange", command=lambda: self.change_entry(1))
+        self.change_button2.grid(row=1, column=2, padx=5, pady=20)
+
+        # Finding Details of User
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+        query = 'Select Username, Email_id from users where OID=?'
+        c.execute(query, (self.user_oid,))
+
+        username, email = c.fetchone()
+
+        conn.commit()
+        conn.close()
+
+        # Displaying Values in Username Entry and Email Entry
+        self.username_entry.insert(0, username)
+        self.email_entry.insert(0, email)
+
+        # Making the Entry Boxes READ-ONLY
+        self.username_entry.config(state="readonly")
+        self.email_entry.config(state="readonly")
+
+        # Back and Save Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.grid(row=2, column=0, columnspan=3)
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+
+        # Save Button
+        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.save_details)
+        self.save_button.grid(row=0, column=1, pady=20, padx=(40, 0), ipadx=5)
+
+    def close_window(self):
+        level = Tk()
+        WinHome(level, "Login Window", self.user_oid)
+        self.root.destroy()
+
+    def change_entry(self, val):
+        if val == 0:
+            self.username_entry.config(state=NORMAL)
+        elif val == 1:
+            self.email_entry.config(state=NORMAL)
+
+    def save_details(self):
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+
+        query = "update users set Username = ?, Email_id = ? where OID = ?"
+        e = (self.username_entry.get(), self.email_entry.get(), self.user_oid)
+        c.execute(query, e)
+
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Information", "Successfully Saved", parent=self.root)
+
+        self.close_window()
+
+
+class WinChangePass:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("360x280+450+150")
 
 
 class WinInsert:
