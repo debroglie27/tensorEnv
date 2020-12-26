@@ -21,6 +21,10 @@ def enable_new():
     file_menu.entryconfig("New", state=NORMAL)
 
 
+def delete_new():
+    file_menu.delete("New")
+
+
 # Create Menu
 my_menu = Menu(root)
 root.config(menu=my_menu)
@@ -38,5 +42,9 @@ disable_button.pack(pady=20)
 
 enable_button = Button(root, text="Enable New", command=enable_new)
 enable_button.pack(pady=10)
+
+delete_button = Button(root, text="Delete New", command=delete_new)
+delete_button.pack(pady=10)
+
 
 root.mainloop()
