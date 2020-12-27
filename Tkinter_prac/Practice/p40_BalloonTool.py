@@ -1,4 +1,4 @@
-from tkinter import *
+# from tkinter import *
 from tkinter.tix import *
 
 root = Tk()
