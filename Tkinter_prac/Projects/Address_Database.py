@@ -550,6 +550,15 @@ class WinChangePassword:
         self.close_window()
 
 
+class WinAllUserDetails:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("360x280+450+150")
+
+
 class WinChangeSecretKey:
 
     def __init__(self, master, title, user_oid):
@@ -631,15 +640,6 @@ class WinChangeSecretKey:
         conn.close()
 
         self.close_window()
-
-
-class WinAllUserDetails:
-
-    def __init__(self, master, title, user_oid):
-        self.root = master
-        self.user_oid = user_oid
-        self.root.title(title)
-        self.root.geometry("360x280+450+150")
 
 
 class WinInsert:
