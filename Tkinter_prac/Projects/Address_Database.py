@@ -24,6 +24,9 @@ from tkinter import ttk
 # User2: Nibedita
 # Password: 1969
 
+# User3: Hritesh
+# Password: 1999
+
 root = Tk()
 
 
@@ -221,21 +224,30 @@ class WinSignup:
         self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60))
 
     def signup_check(self):
+        # Storing the values of Entry Boxes
         username = self.username_entry.get()
         password = self.password_entry.get()
         email_id = self.email_entry.get()
         secret_key = self.secret_entry.get()
 
-        if not secret_key == '12345':
+        # Clearing the Entry Boxes
+        self.username_entry.delete(0, END)
+        self.password_entry.delete(0, END)
+        self.email_entry.delete(0, END)
+        self.secret_entry.delete(0, END)
+
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+
+        c.execute('''Select secret_key from Secret_Key''')
+
+        record = c.fetchone()[0]
+
+        if not secret_key == record:
             messagebox.showerror("Error", "Secret Key Incorrect!!!", parent=self.root)
             return
         else:
             try:
-                self.username_entry.delete(0, END)
-                self.password_entry.delete(0, END)
-                self.email_entry.delete(0, END)
-                self.secret_entry.delete(0, END)
-
                 conn = sqlite3.connect('address_book.db')
                 c = conn.cursor()
                 query = "Insert Into users(Username, Password, email_id) values(?, ?, ?)"
@@ -299,7 +311,41 @@ class WinHome:
         self.my_menu.add_cascade(label="Settings", menu=self.settings_menu)
         # Add Settings Menu Items
         self.settings_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
-        self.settings_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePass, "Change Password", self.user_oid))
+        self.settings_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePassword, "Change Password", self.user_oid))
+
+        if self.user_oid == 1:
+            # Add Admin Settings Menu
+            self.admin_settings_menu = Menu(self.my_menu, tearoff=False)
+            self.my_menu.add_cascade(label="Admin Settings", menu=self.admin_settings_menu)
+            # Add Settings Menu Items
+            self.admin_settings_menu.add_command(label="All User Details", command=lambda: self.new_window(WinAllUserDetails, "All User Details", self.user_oid))
+            self.admin_settings_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(WinChangeSecretKey, "Change Secret Key", self.user_oid))
+
+        # Add Right Click Pop Up Menu
+        self.my_popup_menu = Menu(self.root, tearoff=False)
+        # Insert, Search, Update and Delete
+        self.my_popup_menu.add_command(label="Insert", command=lambda: self.new_window(WinInsert, "Insert Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Search", command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Update", command=lambda: self.new_window(WinUpdate, "Update Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Delete", command=lambda: self.new_window(WinDelete, "Delete Window", self.user_oid))
+        self.my_popup_menu.add_separator()
+        # User Details and Change Password
+        self.my_popup_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
+        self.my_popup_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePassword, "Change Password", self.user_oid))
+        self.my_popup_menu.add_separator()
+
+        if self.user_oid == 1:
+            # All User Details and Change Scret Key
+            self.my_popup_menu.add_command(label="All User Details", command=lambda: self.new_window(WinAllUserDetails, "All User Details", self.user_oid))
+            self.my_popup_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(WinChangeSecretKey, "Change Secret Key", self.user_oid))
+            self.my_popup_menu.add_separator()
+
+        # Logout and Exit
+        self.my_popup_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.my_popup_menu.add_command(label="Exit", command=root.quit)
+
+        # Binding the Right click Pop Up Menu
+        self.root.bind("<Button-3>", self.my_popup)
 
         # Finding Username for our Status Bar
         conn = sqlite3.connect('address_book.db')
@@ -321,6 +367,9 @@ class WinHome:
         # Add Status Bar
         self.status_bar = Label(self.root, text=text, anchor=E, bg="#dfdfdf")
         self.status_bar.pack(fill=X, side=BOTTOM, ipady=1)
+
+    def my_popup(self, event):
+        self.my_popup_menu.tk_popup(event.x_root, event.y_root)
 
     def logout(self, _class, title):
         level = Tk()
@@ -417,7 +466,7 @@ class WinUserDetails:
         self.close_window()
 
 
-class WinChangePass:
+class WinChangePassword:
 
     def __init__(self, master, title, user_oid):
         self.root = master
@@ -464,6 +513,16 @@ class WinChangePass:
         self.root.destroy()
 
     def change_password(self):
+        # Storing the values of Entry Boxes
+        current_password = self.current_password_entry.get()
+        new_password = self.new_password_entry.get()
+        confirm_password = self.confirm_password_entry.get()
+
+        # Clearing the Entry Boxes
+        self.current_password_entry.delete(0, END)
+        self.new_password_entry.delete(0, END)
+        self.confirm_password_entry.delete(0, END)
+
         conn = sqlite3.connect('address_book.db')
         c = conn.cursor()
 
@@ -472,14 +531,16 @@ class WinChangePass:
 
         record = c.fetchone()[0]
 
-        if record != self.current_password_entry.get():
+        if record != current_password.get():
             messagebox.showerror("Error", "Wrong Current Password!!!", parent=self.root)
+            return
         else:
-            if self.new_password_entry.get() != self.confirm_password_entry.get():
+            if new_password != confirm_password:
                 messagebox.showerror("Error", "Confirm Password is not same\nas New Password!!!", parent=self.root)
+                return
             else:
                 query = "update users set password = ? where OID = ?"
-                c.execute(query, (self.confirm_password_entry.get(), self.user_oid))
+                c.execute(query, (confirm_password, self.user_oid))
 
                 messagebox.showinfo("Information", "Password Changed Successfully!!!", parent=self.root)
 
@@ -487,6 +548,98 @@ class WinChangePass:
         conn.close()
 
         self.close_window()
+
+
+class WinChangeSecretKey:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("456x280+440+150")
+
+        # Bullet Symbol
+        self.bullet_symbol = "\u2022"
+
+        # Current Password Label and Entry
+        self.current_secret_key_label = Label(self.root, text="Current Secret Key:", font=('Helvetica', 15))
+        self.current_secret_key_label.grid(row=0, column=0, padx=10, pady=(30, 20), sticky=E)
+        self.current_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.current_secret_key_entry.grid(row=0, column=1, padx=10, pady=(30, 20), sticky=W)
+        
+        # New Password Label and Entry
+        self.new_secret_key_label = Label(self.root, text="New Secret Key:", font=('Helvetica', 15))
+        self.new_secret_key_label.grid(row=1, column=0, padx=10, pady=(20, 10), sticky=E)
+        self.new_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.new_secret_key_entry.grid(row=1, column=1, padx=10, pady=(20, 10), sticky=W)
+
+        # Confirm Password Label and Entry
+        self.confirm_secret_key_label = Label(self.root, text="Confirm Secret Key:", font=('Helvetica', 15))
+        self.confirm_secret_key_label.grid(row=2, column=0, padx=10, pady=(5, 0), sticky=E)
+        self.confirm_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.confirm_secret_key_entry.grid(row=2, column=1, padx=10, pady=(5, 0), sticky=W)
+
+        # Back and Save Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.grid(row=3, column=0, pady=20, columnspan=2)
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+
+        # Save Button
+        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_secret_key)
+        self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+
+    def close_window(self):
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
+        self.root.destroy()
+
+    def change_secret_key(self):
+        # Storing the values of Entry Boxes
+        current_secret_key = self.current_secret_key_entry.get()
+        new_secret_key = self.new_secret_key_entry.get()
+        confirm_secret_key = self.confirm_secret_key_entry.get()
+
+        # Clearing the Entry Boxes
+        self.current_secret_key_entry.delete(0, END)
+        self.new_secret_key_entry.delete(0, END)
+        self.confirm_secret_key_entry.delete(0, END)
+
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+
+        c.execute('''Select secret_key from Secret_Key''')
+
+        record = c.fetchone()[0]
+
+        if record != current_secret_key:
+            messagebox.showerror("Error", "Wrong Current Secret Key!!!", parent=self.root)
+            return
+        else:
+            if new_secret_key != confirm_secret_key:
+                messagebox.showerror("Error", "Confirm Secret Key is not same\nas New Secret Key!!!", parent=self.root)
+                return
+            else:
+                query = "update Secret_Key set secret_key = ? where OID = 1"
+                c.execute(query, (confirm_secret_key,))
+
+                messagebox.showinfo("Information", "Secret Key Changed Successfully!!!", parent=self.root)
+
+        conn.commit()
+        conn.close()
+
+        self.close_window()
+
+
+class WinAllUserDetails:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("360x280+450+150")
 
 
 class WinInsert:
@@ -701,7 +854,7 @@ class WinUpdate:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("360x400+450+150")
+        self.root.geometry("360x400+450+130")
 
         self.select_label = Label(self.root, text="Select ID:", anchor=E)
         self.select_label.grid(row=0, column=0, padx=(30, 38), pady=(20, 10), ipadx=18)
