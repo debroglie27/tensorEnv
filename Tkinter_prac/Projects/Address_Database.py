@@ -335,7 +335,7 @@ class WinHome:
         self.my_popup_menu.add_separator()
 
         if self.user_oid == 1:
-            # All User Details and Change Scret Key
+            # All User Details and Change Secret Key
             self.my_popup_menu.add_command(label="All User Details", command=lambda: self.new_window(WinAllUserDetails, "All User Details", self.user_oid))
             self.my_popup_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(WinChangeSecretKey, "Change Secret Key", self.user_oid))
             self.my_popup_menu.add_separator()
