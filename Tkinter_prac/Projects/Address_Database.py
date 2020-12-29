@@ -14,18 +14,11 @@ from tkinter import ttk
 # conn.commit()
 # conn.close()
 
-# User ADMIN: Arijeet
-# Password: 1234
+# ADMIN: Arijeet
 # Secret Key: 12345
 
-# User1: Mrinal
-# Password: 1967
-
-# User2: Nibedita
-# Password: 1969
-
-# User3: Hritesh
-# Password: 1999
+# Users = ['Arijeet', 'Mrinal', 'Nibedita', 'Hritesh', 'Shubham']
+# Password = ['1234', '1967', '1969', '1999', '1010']
 
 root = Tk()
 
@@ -212,16 +205,16 @@ class WinSignup:
         # Admin Secret Key
         self.secret_label = Label(self.root, text="Secret Key:", font=('Helvetica', 15))
         self.secret_label.grid(row=3, column=0, padx=10, pady=(20, 10), sticky=E)
-        self.secret_entry = Entry(self.root, font=('Helvetica', 15))
+        self.secret_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
         self.secret_entry.grid(row=3, column=1, padx=10, pady=(20, 10), columnspan=3)
 
         # Back Button
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0))
+        self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0), ipadx=4)
 
         # Submit Button
         self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11), command=self.signup_check)
-        self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60))
+        self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60), ipadx=4)
 
     def signup_check(self):
         # Storing the values of Entry Boxes
@@ -556,7 +549,94 @@ class WinAllUserDetails:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("360x280+450+150")
+        self.root.geometry("390x300+450+150")
+
+        # Add some style
+        self.style = ttk.Style()
+        # Pick a theme
+        self.style.theme_use("clam")
+        self.style.configure("Treeview",
+                             background="white",
+                             foreground="black",
+                             rowheight=25,
+                             fieldbackground="#E3E3E3")
+
+        self.style.map('Treeview',
+                       background=[('selected', 'yellow')],
+                       foreground=[('selected', 'black')])
+
+        # Create TreeView Frame
+        self.tree_frame = Frame(self.root)
+        self.tree_frame.pack(pady=(20, 0), padx=10)
+
+        # TreeView ScrollBar
+        self.tree_scroll = Scrollbar(self.tree_frame)
+        self.tree_scroll.pack(side=RIGHT, fill=Y)
+
+        # Create TreeView
+        self.my_tree = ttk.Treeview(self.tree_frame, height=6, yscrollcommand=self.tree_scroll.set)
+        self.my_tree.pack()
+
+        # Configure ScrollBar
+        self.tree_scroll.config(command=self.my_tree.yview)
+
+        # Define our columns
+        self.my_tree['columns'] = ("OID", "Username", "Email")
+
+        # Format our columns
+        self.my_tree.column("#0", width=0, stretch=NO)
+        self.my_tree.column("OID", anchor=CENTER, width=30)
+        self.my_tree.column("Username", anchor=CENTER, width=100)
+        self.my_tree.column("Email", anchor=CENTER, width=180)
+
+        # Create Headings
+        self.my_tree.heading("#0", text="", anchor=CENTER)
+        self.my_tree.heading("OID", text="OID", anchor=CENTER)
+        self.my_tree.heading("Username", text="Username", anchor=CENTER)
+        self.my_tree.heading("Email", text="Email", anchor=CENTER)
+
+        # Count Variable for number of records
+        self.count = 0
+
+        # Create Stripped row Tags
+        self.my_tree.tag_configure('oddrow', background="white")
+        self.my_tree.tag_configure('evenrow', background="lightblue")
+
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+
+        c.execute("Select OID, Username, Email_id from users")
+        records = c.fetchall()
+
+        # Resetting the Count
+        self.count = 0
+
+        for record in records:
+            if self.count % 2 == 0:
+                self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record, tags=("evenrow",))
+            else:
+                self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record, tags=("oddrow",))
+            self.count += 1
+
+        # Back and Remove Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.pack(pady=(20, 10))
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
+        self.back_button.grid(row=0, column=0, pady=10, padx=(10, 40), ipadx=5)
+
+        # Remove Button
+        self.remove_button = Button(self.button_frame, text="Remove", bg="orange", font=('Helvetica', 11), command=self.remove_user)
+        self.remove_button.grid(row=0, column=1, pady=10, padx=(20, 0), ipadx=5)
+
+    def close_window(self):
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
+        self.root.destroy()
+
+    def remove_user(self):
+        pass
 
 
 class WinChangeSecretKey:
@@ -648,38 +728,47 @@ class WinInsert:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("360x280+450+150")
+        self.root.geometry("395x330+430+150")
 
-        self.f_name = Entry(self.root, width=30)
-        self.f_name.grid(row=0, column=1, pady=(15, 5))
-        self.l_name = Entry(self.root, width=30)
-        self.l_name.grid(row=1, column=1, pady=5)
-        self.address = Entry(self.root, width=30)
-        self.address.grid(row=2, column=1, pady=5)
-        self.city = Entry(self.root, width=30)
-        self.city.grid(row=3, column=1, pady=5)
-        self.state = Entry(self.root, width=30)
-        self.state.grid(row=4, column=1, pady=5)
-        self.zipcode = Entry(self.root, width=30)
-        self.zipcode.grid(row=5, column=1, pady=5)
+        # All Entry Boxes
+        self.f_name = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.f_name.grid(row=0, column=1, pady=(15, 5), padx=(20, 0))
+        self.l_name = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.l_name.grid(row=1, column=1, pady=5, padx=(20, 0))
+        self.address = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.address.grid(row=2, column=1, pady=5, padx=(20, 0))
+        self.city = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.city.grid(row=3, column=1, pady=5, padx=(20, 0))
+        self.state = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.state.grid(row=4, column=1, pady=5, padx=(20, 0))
+        self.zipcode = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.zipcode.grid(row=5, column=1, pady=5, padx=(20, 0))
 
-        self.f_name_label = Label(self.root, text="First Name")
-        self.f_name_label.grid(row=0, column=0, padx=(40, 0), pady=(15, 5), sticky=W)
-        self.l_name_label = Label(self.root, text="Last Name:")
-        self.l_name_label.grid(row=1, column=0, padx=(40, 0), sticky=W)
-        self.address_label = Label(self.root, text="Address:")
-        self.address_label.grid(row=2, column=0, padx=(40, 0), sticky=W)
-        self.city_label = Label(self.root, text="City:")
-        self.city_label.grid(row=3, column=0, padx=(40, 0), sticky=W)
-        self.state_label = Label(self.root, text="State:")
-        self.state_label.grid(row=4, column=0, padx=(40, 0), sticky=W)
-        self.zipcode_label = Label(self.root, text="Zipcode:")
-        self.zipcode_label.grid(row=5, column=0, padx=(40, 0), pady=(0, 5), sticky=W)
+        # All Labels
+        self.f_name_label = Label(self.root, text="First Name:", font=('Helvetica', 15))
+        self.f_name_label.grid(row=0, column=0, padx=(20, 0), pady=(15, 5), sticky=E)
+        self.l_name_label = Label(self.root, text="Last Name:", font=('Helvetica', 15))
+        self.l_name_label.grid(row=1, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.address_label = Label(self.root, text="Address:", font=('Helvetica', 15))
+        self.address_label.grid(row=2, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.city_label = Label(self.root, text="City:", font=('Helvetica', 15))
+        self.city_label.grid(row=3, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.state_label = Label(self.root, text="State:", font=('Helvetica', 15))
+        self.state_label.grid(row=4, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.zipcode_label = Label(self.root, text="Zipcode:", font=('Helvetica', 15))
+        self.zipcode_label.grid(row=5, column=0, padx=(20, 0), pady=5, sticky=E)
 
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", command=self.close_window)
-        self.back_button.grid(row=6, column=0, padx=(60, 0), pady=30, ipadx=25)
-        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", command=self.submit)
-        self.submit_button.grid(row=6, column=1, padx=20, ipadx=30)
+        # Back and Submit Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.grid(row=6, column=0, pady=10, columnspan=2)
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+
+        # Submit Button
+        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11), command=self.submit)
+        self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def submit(self):
         if self.f_name.get() == self.l_name.get() == self.address.get() == self.city.get() == self.state.get() == self.zipcode.get() == '':
