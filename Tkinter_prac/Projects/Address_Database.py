@@ -28,7 +28,7 @@ class WinLogin:
     def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry("375x230+450+150")
+        self.root.geometry("370x230+450+150")
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -549,7 +549,7 @@ class WinAllUserDetails:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("390x300+450+150")
+        self.root.geometry("390x290+450+150")
 
         # Add some style
         self.style = ttk.Style()
@@ -605,8 +605,11 @@ class WinAllUserDetails:
         conn = sqlite3.connect('address_book.db')
         c = conn.cursor()
 
-        c.execute("Select OID, Username, Email_id from users")
+        c.execute("Select OID, Username, Email_id from users where oid <> 1")
         records = c.fetchall()
+
+        conn.commit()
+        conn.close()
 
         # Resetting the Count
         self.count = 0
@@ -624,11 +627,11 @@ class WinAllUserDetails:
 
         # Back Button
         self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
-        self.back_button.grid(row=0, column=0, pady=10, padx=(10, 40), ipadx=5)
+        self.back_button.grid(row=0, column=0, pady=10, padx=(5, 45), ipadx=5)
 
         # Remove Button
         self.remove_button = Button(self.button_frame, text="Remove", bg="orange", font=('Helvetica', 11), command=self.remove_user)
-        self.remove_button.grid(row=0, column=1, pady=10, padx=(20, 0), ipadx=5)
+        self.remove_button.grid(row=0, column=1, pady=10, padx=(25, 0), ipadx=5)
 
     def close_window(self):
         level = Tk()
@@ -636,7 +639,25 @@ class WinAllUserDetails:
         self.root.destroy()
 
     def remove_user(self):
-        pass
+        if self.my_tree.focus():
+            for record in self.my_tree.selection():
+                # Getting the OID from the record
+                OID = self.my_tree.item(record)['values'][0]
+
+                conn = sqlite3.connect('address_book.db')
+                c = conn.cursor()
+
+                c.execute("Delete from users where oid=?", (OID, ))
+
+                conn.commit()
+                conn.close()
+
+                # removing the record from the treeview
+                self.my_tree.delete(record)
+
+                messagebox.showinfo("Information", "Successfully Removed!")
+        else:
+            messagebox.showinfo("Information", "Please select a record to remove!!!")
 
 
 class WinChangeSecretKey:
@@ -805,7 +826,7 @@ class WinSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("530x360+400+150")
+        self.root.geometry("530x365+400+150")
 
         # Our Search Label and Search Entry
         self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 10))
@@ -943,46 +964,55 @@ class WinUpdate:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("360x400+450+130")
+        self.root.geometry("390x430+440+110")
 
-        self.select_label = Label(self.root, text="Select ID:", anchor=E)
-        self.select_label.grid(row=0, column=0, padx=(30, 38), pady=(20, 10), ipadx=18)
-        self.select_Entry = Entry(self.root, width=20)
-        self.select_Entry.grid(row=0, column=1, padx=(0, 40))
+        # Select Label and Entry Box
+        self.select_label = Label(self.root, text="Select ID:", anchor=E, font=('Helvetica', 15))
+        self.select_label.grid(row=0, column=0, padx=(20, 25), pady=(20, 10), ipadx=18)
+        self.select_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
+        self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", command=self.close_window)
-        self.back_button.grid(row=1, column=0, padx=(90, 0), pady=(10, 30), ipadx=10)
-        self.show_button = Button(self.root, text="Show", bg="orange", command=self.display)
-        self.show_button.grid(row=1, column=1, padx=(0, 60), pady=(10, 30), ipadx=10)
+        # Back and Show Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(90, 0), pady=(10, 30), ipadx=6)
+        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11), command=self.display)
+        self.show_button.grid(row=1, column=1, padx=(0, 60), pady=(10, 30), ipadx=6)
 
-        self.f_name = Entry(self.root, width=30)
-        self.f_name.grid(row=2, column=1, pady=5)
-        self.l_name = Entry(self.root, width=30)
-        self.l_name.grid(row=3, column=1, pady=5)
-        self.address = Entry(self.root, width=30)
-        self.address.grid(row=4, column=1, pady=5)
-        self.city = Entry(self.root, width=30)
-        self.city.grid(row=5, column=1, pady=5)
-        self.state = Entry(self.root, width=30)
-        self.state.grid(row=6, column=1, pady=5)
-        self.zipcode = Entry(self.root, width=30)
-        self.zipcode.grid(row=7, column=1, pady=5)
+        # Label and Entry Frame
+        self.my_frame = Frame(self.root)
+        self.my_frame.grid(row=2, column=0, columnspan=2)
 
-        self.f_name_label = Label(self.root, text="First Name")
-        self.f_name_label.grid(row=2, column=0, padx=(30, 0), sticky=W)
-        self.l_name_label = Label(self.root, text="Last Name:")
-        self.l_name_label.grid(row=3, column=0, padx=(30, 0), sticky=W)
-        self.address_label = Label(self.root, text="Address:")
-        self.address_label.grid(row=4, column=0, padx=(30, 0), sticky=W)
-        self.city_label = Label(self.root, text="City:")
-        self.city_label.grid(row=5, column=0, padx=(30, 0), sticky=W)
-        self.state_label = Label(self.root, text="State:")
-        self.state_label.grid(row=6, column=0, padx=(30, 0), sticky=W)
-        self.zipcode_label = Label(self.root, text="Zipcode:")
-        self.zipcode_label.grid(row=7, column=0, padx=(30, 0), sticky=W)
+        # All Entry Boxes
+        self.f_name = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.f_name.grid(row=0, column=1, pady=5)
+        self.l_name = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.l_name.grid(row=1, column=1, pady=5)
+        self.address = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.address.grid(row=2, column=1, pady=5)
+        self.city = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.city.grid(row=3, column=1, pady=5)
+        self.state = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.state.grid(row=4, column=1, pady=5)
+        self.zipcode = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.zipcode.grid(row=5, column=1, pady=5)
 
-        self.update_button = Button(self.root, text="Update", bg="#90EE90", command=self.update)
-        self.update_button.grid(row=8, column=0, pady=15, ipadx=20, columnspan=2)
+        # All Labels
+        self.f_name_label = Label(self.my_frame, text="First Name:", font=('Helvetica', 15))
+        self.f_name_label.grid(row=0, column=0, padx=(0, 20), sticky=E)
+        self.l_name_label = Label(self.my_frame, text="Last Name:", font=('Helvetica', 15))
+        self.l_name_label.grid(row=1, column=0, padx=(0, 20), sticky=E)
+        self.address_label = Label(self.my_frame, text="Address:", font=('Helvetica', 15))
+        self.address_label.grid(row=2, column=0, padx=(0, 20), sticky=E)
+        self.city_label = Label(self.my_frame, text="City:", font=('Helvetica', 15))
+        self.city_label.grid(row=3, column=0, padx=(0, 20), sticky=E)
+        self.state_label = Label(self.my_frame, text="State:", font=('Helvetica', 15))
+        self.state_label.grid(row=4, column=0, padx=(0, 20), sticky=E)
+        self.zipcode_label = Label(self.my_frame, text="Zipcode:", font=('Helvetica', 15))
+        self.zipcode_label.grid(row=5, column=0, padx=(0, 20), sticky=E)
+
+        # Update Button
+        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
+        self.update_button.grid(row=3, column=0, pady=25, ipadx=10, columnspan=2)
 
     def display(self):
         self.f_name.delete(0, END)
