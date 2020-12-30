@@ -33,25 +33,25 @@ def play():
     img_label1.config(image=image1)
 
     if selection == choice:
-        my_label.config(text="Its a Tie!!!")
+        my_label.config(text="Its A Tie!!!")
         return
 
     text = ''
     if selection == "rock":
         if choice == "scissor":
-            text = "Rock breaks Scissor - You Win!!!"
+            text = "Rock Smashes Scissor - You Win!!!"
         elif choice == "paper":
-            text = "Paper covers Rock - You Lose!!!"
+            text = "Paper Covers Rock - You Lose!!!"
     elif selection == "paper":
         if choice == "scissor":
-            text = "Scissor cuts Paper - You Lose!!!"
+            text = "Scissor Cuts Paper - You Lose!!!"
         elif choice == "rock":
-            text = "Paper covers Rock - You Win!!!"
+            text = "Paper Covers Rock - You Win!!!"
     elif selection == "scissor":
         if choice == "rock":
-            text = "Rock breaks Scissor - You Lose!!!"
+            text = "Rock Smashes Scissor - You Lose!!!"
         elif choice == "paper":
-            text = "Scissor cuts Paper - You Win!!!"
+            text = "Scissor Cuts Paper - You Win!!!"
 
     my_label.config(text=text)
 

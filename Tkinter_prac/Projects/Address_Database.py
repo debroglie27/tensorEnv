@@ -9,10 +9,16 @@ from tkinter import ttk
 
 # conn = sqlite3.connect('address_book.db')
 # c = conn.cursor()
-# query = "Insert Into users(Username, Password) values(?, ?)"
-# c.execute(query, ('Admin', '1234'))
 # conn.commit()
 # conn.close()
+
+# c.execute('''CREATE TABLE addresses(
+#           first_name text,
+#           last_name text,
+#           address text,
+#           city text,
+#           state text,
+#           zipcode integer)''')
 
 # ADMIN: Arijeet
 # Secret Key: 12345
@@ -47,23 +53,26 @@ class WinLogin:
 
         # Login Button
         self.login_button = Button(self.root, text="Login", bg="#90EE90", font=('Helvetica', 11), command=self.login_check)
-        self.login_button.grid(row=2, column=0, columnspan=2, pady=20, padx=(40, 0), ipadx=10)
+        self.login_button.grid(row=2, column=0, columnspan=2, pady=20, padx=(35, 0), ipadx=6)
 
         # SignUp Button
-        self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=('Helvetica', 11), command=lambda: self.signup(WinSignup, "SignUp Window"))
-        self.signup_button.grid(row=2, column=2, columnspan=2, pady=20, padx=(0, 45), ipadx=10)
+        self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=('Helvetica', 11), command=lambda: self.forgot_signup_window(WinSignup, "SignUp Window"))
+        self.signup_button.grid(row=2, column=2, columnspan=2, pady=20, padx=(0, 50), ipadx=6)
 
-        # Forgot Password Label
-        self.forgot_pass_label = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.signup(WinForgotPass, "Forgot Password Window"))
-        self.forgot_pass_label.grid(row=3, column=1, padx=(0, 30), columnspan=2)
+        # Forgot Password Button
+        self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
+        self.forgot_pass_button.grid(row=3, column=1, padx=(0, 30), columnspan=2)
 
     def login_check(self):
+        # Storing the Entry Boxes value in variables
         username = self.username_entry.get()
         password = self.password_entry.get()
 
         try:
             conn = sqlite3.connect('address_book.db')
             c = conn.cursor()
+
+            # Finding Password and OID for the given Username
             query = 'Select Password, oid from users where Username=?'
             c.execute(query, (username,))
 
@@ -80,12 +89,7 @@ class WinLogin:
         except Exception:
             messagebox.showerror("Error", "Incorrect!!! Username or Password", parent=self.root)
 
-    def forgot_pass_window(self, _class, title):
-        level = Tk()
-        _class(level, title)
-        self.root.destroy()
-
-    def signup(self, _class, title):
+    def forgot_signup_window(self, _class, title):
         level = Tk()
         _class(level, title)
         self.root.destroy()
@@ -130,12 +134,15 @@ class WinForgotPass:
         self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
 
     def email_check(self):
+        # Displaying Message Informing that it will take time
         messagebox.showinfo("Information", "It may take some time\nPlease Wait!!!", parent=self.root)
         email = self.email_entry.get()
 
         try:
             conn = sqlite3.connect('address_book.db')
             c = conn.cursor()
+
+            # Finding Password for the given Email_id
             query = 'Select Password from users where email_id=?'
             c.execute(query, (email,))
 
@@ -148,6 +155,7 @@ class WinForgotPass:
                 messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
             else:
                 try:
+                    # Sending Email Code
                     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                         smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
@@ -158,6 +166,7 @@ class WinForgotPass:
 
                         smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
 
+                        # Message to inform that Email has been sent
                         messagebox.showinfo("Information", "Mail has been sent Successfully:)", parent=self.root)
                         self.close_window()
 
@@ -232,29 +241,33 @@ class WinSignup:
         conn = sqlite3.connect('address_book.db')
         c = conn.cursor()
 
+        # Finding Secret Key
         c.execute('''Select secret_key from Secret_Key''')
 
         record = c.fetchone()[0]
 
         if not secret_key == record:
             messagebox.showerror("Error", "Secret Key Incorrect!!!", parent=self.root)
-            return
         else:
             try:
                 conn = sqlite3.connect('address_book.db')
                 c = conn.cursor()
+
+                # Inserting Details of New User
                 query = "Insert Into users(Username, Password, email_id) values(?, ?, ?)"
                 c.execute(query, (username, password, email_id))
-
                 conn.commit()
-                conn.close()
 
+                # Displaying message informing that account was added successfully
                 messagebox.showinfo("Information", "Account Successfully Added!!!", parent=self.root)
-
-                self.close_window()
 
             except Exception:
                 messagebox.showinfo("Information", "Please Try Again!!!", parent=self.root)
+
+        conn.commit()
+        conn.close()
+
+        self.close_window()
 
     def close_window(self):
         level = Tk()
@@ -268,7 +281,7 @@ class WinHome:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+140")
+        self.root.geometry("377x360+450+120")
         self.root['bg'] = "#90EE90"
 
         self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Helvetica', 25))
@@ -306,6 +319,7 @@ class WinHome:
         self.settings_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
         self.settings_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePassword, "Change Password", self.user_oid))
 
+        # Only for Admin
         if self.user_oid == 1:
             # Add Admin Settings Menu
             self.admin_settings_menu = Menu(self.my_menu, tearoff=False)
@@ -327,6 +341,7 @@ class WinHome:
         self.my_popup_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePassword, "Change Password", self.user_oid))
         self.my_popup_menu.add_separator()
 
+        # Only for Admin
         if self.user_oid == 1:
             # All User Details and Change Secret Key
             self.my_popup_menu.add_command(label="All User Details", command=lambda: self.new_window(WinAllUserDetails, "All User Details", self.user_oid))
@@ -401,9 +416,10 @@ class WinUserDetails:
         self.change_button2 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange", command=lambda: self.change_entry(1))
         self.change_button2.grid(row=1, column=2, padx=5, pady=20)
 
-        # Finding Details of User
         conn = sqlite3.connect('address_book.db')
         c = conn.cursor()
+
+        # Finding Details of User
         query = 'Select Username, Email_id from users where OID=?'
         c.execute(query, (self.user_oid,))
 
@@ -447,6 +463,7 @@ class WinUserDetails:
         conn = sqlite3.connect('address_book.db')
         c = conn.cursor()
 
+        # Updating the database with new values
         query = "update users set Username = ?, Email_id = ? where OID = ?"
         e = (self.username_entry.get(), self.email_entry.get(), self.user_oid)
         c.execute(query, e)
@@ -454,8 +471,8 @@ class WinUserDetails:
         conn.commit()
         conn.close()
 
+        # Message Informing Successful Saving
         messagebox.showinfo("Information", "Successfully Saved", parent=self.root)
-
         self.close_window()
 
 
@@ -519,21 +536,22 @@ class WinChangePassword:
         conn = sqlite3.connect('address_book.db')
         c = conn.cursor()
 
+        # Finding password the given user
         query = "Select password from users where oid=?"
         c.execute(query, (self.user_oid,))
 
         record = c.fetchone()[0]
 
-        if record != current_password.get():
+        if record != current_password:
             messagebox.showerror("Error", "Wrong Current Password!!!", parent=self.root)
-            return
         else:
             if new_password != confirm_password:
                 messagebox.showerror("Error", "Confirm Password is not same\nas New Password!!!", parent=self.root)
-                return
             else:
                 query = "update users set password = ? where OID = ?"
                 c.execute(query, (confirm_password, self.user_oid))
+
+                conn.commit()
 
                 messagebox.showinfo("Information", "Password Changed Successfully!!!", parent=self.root)
 
@@ -549,7 +567,7 @@ class WinAllUserDetails:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("390x290+450+150")
+        self.root.geometry("390x290+450+130")
 
         # Add some style
         self.style = ttk.Style()
@@ -666,40 +684,49 @@ class WinChangeSecretKey:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("456x280+440+150")
+        self.root.geometry("456x290+430+130")
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
 
         # Current Password Label and Entry
         self.current_secret_key_label = Label(self.root, text="Current Secret Key:", font=('Helvetica', 15))
-        self.current_secret_key_label.grid(row=0, column=0, padx=10, pady=(30, 20), sticky=E)
+        self.current_secret_key_label.grid(row=0, column=0, padx=10, pady=(30, 10), sticky=E)
         self.current_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.current_secret_key_entry.grid(row=0, column=1, padx=10, pady=(30, 20), sticky=W)
+        self.current_secret_key_entry.grid(row=0, column=1, padx=10, pady=(30, 10), sticky=W)
+
+        # Forgot Secret Key Button
+        self.forgot_secret_key_button = Button(self.root, text="Forgot Secret Key?", fg="blue", relief=FLAT, command=lambda: self.new_window(WinForgotSecretKey, "Forgot Secret Key Window", self.user_oid))
+        self.forgot_secret_key_button.grid(row=1, column=0, columnspan=2)
         
         # New Password Label and Entry
         self.new_secret_key_label = Label(self.root, text="New Secret Key:", font=('Helvetica', 15))
-        self.new_secret_key_label.grid(row=1, column=0, padx=10, pady=(20, 10), sticky=E)
+        self.new_secret_key_label.grid(row=2, column=0, padx=10, pady=(15, 10), sticky=E)
         self.new_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.new_secret_key_entry.grid(row=1, column=1, padx=10, pady=(20, 10), sticky=W)
+        self.new_secret_key_entry.grid(row=2, column=1, padx=10, pady=(15, 10), sticky=W)
 
         # Confirm Password Label and Entry
         self.confirm_secret_key_label = Label(self.root, text="Confirm Secret Key:", font=('Helvetica', 15))
-        self.confirm_secret_key_label.grid(row=2, column=0, padx=10, pady=(5, 0), sticky=E)
+        self.confirm_secret_key_label.grid(row=3, column=0, padx=10, pady=(5, 0), sticky=E)
         self.confirm_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.confirm_secret_key_entry.grid(row=2, column=1, padx=10, pady=(5, 0), sticky=W)
+        self.confirm_secret_key_entry.grid(row=3, column=1, padx=10, pady=(5, 0), sticky=W)
 
         # Back and Save Button Frame
         self.button_frame = Frame(self.root)
-        self.button_frame.grid(row=3, column=0, pady=20, columnspan=2)
+        self.button_frame.grid(row=4, column=0, pady=20, columnspan=2)
 
         # Back Button
         self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
-        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+        self.back_button.grid(row=0, column=0, padx=(10, 40), ipadx=5)
 
         # Save Button
         self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_secret_key)
         self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+
+    def new_window(self, _class, title, oid):
+        level = Tk()
+        _class(level, title, oid)
+        self.root.destroy()
 
     def close_window(self):
         level = Tk()
@@ -743,13 +770,96 @@ class WinChangeSecretKey:
         self.close_window()
 
 
+class WinForgotSecretKey:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("360x200+450+150")
+
+        # Instruction Label
+        self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere Secret Key will be shared.", font=('Helvetica', 13), fg="green")
+        self.instruction_label.grid(row=0, column=0, padx=57, pady=(20, 0), columnspan=4)
+
+        # Email Label and Entry
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=1, column=0, padx=10, pady=20)
+        self.email_entry = Entry(self.root, font=('Helvetica', 15))
+        self.email_entry.grid(row=1, column=1, padx=(0, 30), pady=20, columnspan=3)
+
+        # Back Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
+        self.back_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0), ipadx=10)
+
+        # Send Button
+        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11), command=self.email_check)
+        self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
+
+        # Loading the Environment Variables from .env file
+        env_path = Path('../../../openCV_venv/.env')
+        load_dotenv(dotenv_path=env_path)
+
+        self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
+        self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
+
+    def email_check(self):
+        messagebox.showinfo("Information", "It may take some time\nPlease Wait!!!", parent=self.root)
+        email = self.email_entry.get()
+
+        conn = sqlite3.connect('address_book.db')
+        c = conn.cursor()
+
+        query = 'select oid from users where email_id=?'
+        c.execute(query, (email, ))
+
+        OID = c.fetchone()
+
+        if OID is None or OID[0] != 1:
+            messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
+        else:
+            query = 'Select secret_key from Secret_Key where oid=1'
+            c.execute(query)
+
+            secret_key = c.fetchone()
+
+            if secret_key is None:
+                messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
+            else:
+                try:
+                    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                        smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+
+                        subject = 'Forgot Secret Key: Address Database'
+                        body = f'Dear User\n\nPlease find the Secret Key of the Address Database Account\n\nSecret Key: {secret_key[0]}'
+
+                        msg = f'Subject: {subject}\n\n{body}'
+
+                        smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
+
+                        messagebox.showinfo("Information", "Mail has been sent Successfully:)", parent=self.root)
+
+                except Exception:
+                    messagebox.showerror("Error", "Please Try Again!!!", parent=self.root)
+
+        conn.commit()
+        conn.close()
+
+        self.close_window()
+
+    def close_window(self):
+        level = Tk()
+        WinChangeSecretKey(level, "Change Secret Key", self.user_oid)
+        self.root.destroy()
+
+
 class WinInsert:
 
     def __init__(self, master, title, user_oid):
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("395x330+430+150")
+        self.root.geometry("395x330+440+140")
 
         # All Entry Boxes
         self.f_name = Entry(self.root, width=20, font=('Helvetica', 15))
@@ -1129,18 +1239,3 @@ class WinDelete:
 WinLogin(root, "Login Window")
 
 mainloop()
-
-
-# conn = sqlite3.connect('./address_book.db')
-# c = conn.cursor()
-#
-# c.execute('''CREATE TABLE addresses(
-#           first_name text,
-#           last_name text,
-#           address text,
-#           city text,
-#           state text,
-#           zipcode integer)''')
-#
-# conn.commit()
-# conn.close()
