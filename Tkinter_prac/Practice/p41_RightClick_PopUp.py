@@ -1,7 +1,7 @@
 from tkinter import *
 
 root = Tk()
-root.title('Balloon Text Tool Tips')
+root.title('Right Click Menu PopUp')
 root.geometry("400x300")
 
 
