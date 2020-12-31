@@ -35,6 +35,7 @@ class WinLogin:
         self.root = master
         self.root.title(title)
         self.root.geometry("370x230+450+150")
+        self.root.resizable(width=False, height=False)
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -107,6 +108,7 @@ class WinForgotPass:
         self.root = master
         self.root.title(title)
         self.root.geometry("360x200+450+150")
+        self.root.resizable(width=False, height=False)
 
         # Instruction Label
         self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere password will be shared.", font=('Helvetica', 13), fg="green")
@@ -189,6 +191,7 @@ class WinSignup:
         self.root = master
         self.root.title(title)
         self.root.geometry('380x280+450+150')
+        self.root.resizable(width=False, height=False)
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -283,6 +286,7 @@ class WinHome:
         self.root.title(title)
         self.root.geometry("377x360+450+120")
         self.root['bg'] = "#90EE90"
+        self.root.resizable(width=False, height=False)
 
         self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Helvetica', 25))
         self.head_label.pack(pady=(0, 20), ipadx=50, ipady=10)
@@ -397,6 +401,7 @@ class WinUserDetails:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("435x220+440+150")
+        self.root.resizable(width=False, height=False)
 
         # Username Label and Entry
         self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
@@ -483,6 +488,7 @@ class WinChangePassword:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("450x280+440+150")
+        self.root.resizable(width=False, height=False)
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -568,6 +574,7 @@ class WinAllUserDetails:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("390x290+450+130")
+        self.root.resizable(width=False, height=False)
 
         # Add some style
         self.style = ttk.Style()
@@ -685,6 +692,7 @@ class WinChangeSecretKey:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("456x290+430+130")
+        self.root.resizable(width=False, height=False)
 
         # Bullet Symbol
         self.bullet_symbol = "\u2022"
@@ -777,6 +785,7 @@ class WinForgotSecretKey:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("360x200+450+150")
+        self.root.resizable(width=False, height=False)
 
         # Instruction Label
         self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere Secret Key will be shared.", font=('Helvetica', 13), fg="green")
@@ -860,6 +869,7 @@ class WinInsert:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("395x330+440+140")
+        self.root.resizable(width=False, height=False)
 
         # All Entry Boxes
         self.f_name = Entry(self.root, width=20, font=('Helvetica', 15))
@@ -937,6 +947,7 @@ class WinSearch:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("530x365+400+150")
+        self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
         self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 10))
@@ -1075,6 +1086,7 @@ class WinUpdate:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("390x430+440+110")
+        self.root.resizable(width=False, height=False)
 
         # Select Label and Entry Box
         self.select_label = Label(self.root, text="Select ID:", anchor=E, font=('Helvetica', 15))
@@ -1196,6 +1208,7 @@ class WinDelete:
         self.user_oid = user_oid
         self.root.title(title)
         self.root.geometry("350x200+450+150")
+        self.root.resizable(width=False, height=False)
 
         self.select_label = Label(self.root, text="Select ID:", anchor=E)
         self.select_label.grid(row=0, column=0, padx=(30, 38), pady=(20, 10), ipadx=18)
