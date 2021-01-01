@@ -286,19 +286,19 @@ class WinHome:
         self.root.title(title)
         self.root.geometry("377x360+450+120")
         self.root['bg'] = "#90EE90"
-        self.root.resizable(width=False, height=False)
+        # self.root.resizable(width=False, height=False)
 
-        self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Helvetica', 25))
-        self.head_label.pack(pady=(0, 20), ipadx=50, ipady=10)
+        self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Monotype Corsiva', 32, "bold"))
+        self.head_label.pack(pady=(0, 10), ipadx=25, ipady=10)
 
         self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinInsert, "Insert Window", self.user_oid))
-        self.but_insert.pack(pady=(10, 0), ipadx=40)
-        self.but_show = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
-        self.but_show.pack(pady=(18, 0), ipadx=34)
+        self.but_insert.pack(pady=(10, 0), ipadx=35)
+        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
+        self.but_search.pack(pady=(20, 0), ipadx=29)
         self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinUpdate, "Update Window", self.user_oid))
-        self.but_update.pack(pady=(18, 0), ipadx=34)
+        self.but_update.pack(pady=(20, 0), ipadx=29)
         self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinDelete, "Delete Window", self.user_oid))
-        self.but_delete.pack(pady=(18, 0), ipadx=37)
+        self.but_delete.pack(pady=(20, 0), ipadx=32)
 
         # Create Menu
         self.my_menu = Menu(self.root)
@@ -1207,18 +1207,18 @@ class WinDelete:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("350x200+450+150")
+        self.root.geometry("390x160+450+150")
         self.root.resizable(width=False, height=False)
 
-        self.select_label = Label(self.root, text="Select ID:", anchor=E)
-        self.select_label.grid(row=0, column=0, padx=(30, 38), pady=(20, 10), ipadx=18)
-        self.select_Entry = Entry(self.root, width=20)
+        self.select_label = Label(self.root, text="Select ID:", font=('Helvetica', 15), anchor=E)
+        self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
+        self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(90, 0), pady=30, ipadx=10)
-        self.del_button = Button(self.root, text="Delete", bg="orange", command=self.delete_record)
-        self.del_button.grid(row=1, column=1, padx=(0, 60), pady=30, ipadx=10)
+        self.del_button = Button(self.root, text="Delete", bg="orange", font=('Helvetica', 11), command=self.delete_record)
+        self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
 
     def delete_record(self):
         if self.select_Entry.get() == '':
