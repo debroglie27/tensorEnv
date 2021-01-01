@@ -43,13 +43,13 @@ class WinLogin:
         # Username Label and Entry
         self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
         self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0))
-        self.username_entry = Entry(self.root, font=('Helvetica', 15))
+        self.username_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15))
         self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
         self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
         self.password_label.grid(row=1, column=0, padx=10, pady=10)
-        self.password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.password_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15))
         self.password_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=3)
 
         # Login Button
@@ -63,6 +63,24 @@ class WinLogin:
         # Forgot Password Button
         self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
         self.forgot_pass_button.grid(row=3, column=1, padx=(0, 30), columnspan=2)
+
+        # Placeholder for our Entry Boxes and also giving a message to distinguish
+        self.username_entry.insert(0, "Username")
+        self.username_entry.message = 0
+        self.password_entry.insert(0, "Password")
+        self.password_entry.message = 1
+
+        # Binding our Entry Boxes
+        self.username_entry.bind("<Button-1>", self.placeholder_vanish)
+        self.password_entry.bind("<Button-1>", self.placeholder_vanish)
+
+    def placeholder_vanish(self, event):
+        if event.widget.message == 0 and self.username_entry.get() == "Username":
+            self.username_entry.delete(0, END)
+            self.username_entry.config(fg="black")
+        if event.widget.message == 1 and self.password_entry.get() == "Password":
+            self.password_entry.delete(0, END)
+            self.password_entry.config(fg="black", show=self.bullet_symbol)
 
     def login_check(self):
         # Storing the Entry Boxes value in variables
@@ -288,11 +306,11 @@ class WinHome:
         self.root['bg'] = "#90EE90"
         # self.root.resizable(width=False, height=False)
 
-        self.head_label = Label(self.root, text="Welcome to Database", bg='#A0E170', font=('Monotype Corsiva', 32, "bold"))
-        self.head_label.pack(pady=(0, 10), ipadx=25, ipady=10)
+        self.head_label = Label(self.root, text="Welcome to Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE, font=('Monotype Corsiva', 32, "bold"))
+        self.head_label.pack(pady=(0, 10), ipadx=10, ipady=5)
 
         self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinInsert, "Insert Window", self.user_oid))
-        self.but_insert.pack(pady=(10, 0), ipadx=35)
+        self.but_insert.pack(pady=(15, 0), ipadx=35)
         self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinSearch, "Search Window", self.user_oid))
         self.but_search.pack(pady=(20, 0), ipadx=29)
         self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinUpdate, "Update Window", self.user_oid))
