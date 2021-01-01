@@ -23,8 +23,8 @@ from tkinter import ttk
 # ADMIN: Arijeet
 # Secret Key: 12345
 
-# Users = ['Arijeet', 'Mrinal', 'Nibedita', 'Hritesh', 'Shubham']
-# Password = ['1234', '1967', '1969', '1999', '1010']
+# Users = ['Arijeet', 'Mrinal', 'Nibedita', 'Hritesh', 'Shubham', 'Prajnanshu', 'Manish']
+# Password = ['1234', '1967', '1969', '1999', '1010', '1998', '007']
 
 root = Tk()
 
@@ -43,13 +43,13 @@ class WinLogin:
         # Username Label and Entry
         self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
         self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0))
-        self.username_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15))
+        self.username_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15), validate="focusin", validatecommand=lambda: self.placeholder_vanish(0))
         self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
         self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
         self.password_label.grid(row=1, column=0, padx=10, pady=10)
-        self.password_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15))
+        self.password_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15), validate="focusin", validatecommand=lambda: self.placeholder_vanish(1))
         self.password_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=3)
 
         # Login Button
@@ -66,19 +66,15 @@ class WinLogin:
 
         # Placeholder for our Entry Boxes and also giving a message to distinguish
         self.username_entry.insert(0, "Username")
-        self.username_entry.message = 0
         self.password_entry.insert(0, "Password")
-        self.password_entry.message = 1
 
-        # Binding our Entry Boxes
-        self.username_entry.bind("<Button-1>", self.placeholder_vanish)
-        self.password_entry.bind("<Button-1>", self.placeholder_vanish)
-
-    def placeholder_vanish(self, event):
-        if event.widget.message == 0 and self.username_entry.get() == "Username":
+    def placeholder_vanish(self, val):
+        if val == 0 and self.username_entry.get() == "Username":
+            # Deleting the Placeholder and making foreground "black"
             self.username_entry.delete(0, END)
             self.username_entry.config(fg="black")
-        if event.widget.message == 1 and self.password_entry.get() == "Password":
+        if val == 1 and self.password_entry.get() == "Password":
+            # Deleting the Placeholder, making foreground "black" and also the "show"
             self.password_entry.delete(0, END)
             self.password_entry.config(fg="black", show=self.bullet_symbol)
 
@@ -968,23 +964,23 @@ class WinSearch:
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
-        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 10))
-        self.search_label.grid(row=0, column=0, padx=(5, 35), pady=20, ipadx=10)
-        self.search_Entry = Entry(self.root, width=20, font=('Helvetica', 10))
-        self.search_Entry.grid(row=0, column=1, padx=(0, 10))
+        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 15))
+        self.search_label.grid(row=0, column=0, padx=(5, 0), pady=20)
+        self.search_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
+        self.search_Entry.grid(row=0, column=1, padx=(0, 20), pady=20)
 
         # Drop Down Box for Search Type
-        self.drop = ttk.Combobox(self.root, value=['Search by...', 'OID', 'First_Name', 'Last_Name', 'Address', 'City', 'State', 'Zipcode'])
+        self.drop = ttk.Combobox(self.root, value=['Search by...', 'OID', 'First_Name', 'Last_Name', 'Address', 'City', 'State', 'Zipcode'], font=('helvetica', 11))
         self.drop.current(0)
-        self.drop.grid(row=0, column=2, padx=(0, 20))
+        self.drop.grid(row=0, column=2, padx=(0, 27))
 
         # Buttons
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 10), command=self.close_window)
-        self.back_button.grid(row=1, column=0, padx=(10, 0), pady=15, ipadx=10)
-        self.show_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 10), command=lambda: self.show(1))
-        self.show_button.grid(row=1, column=1, padx=0, ipadx=10)
-        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 10), command=lambda: self.show(0))
-        self.show_all_button.grid(row=1, column=2, padx=(25, 30), ipadx=10)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
+        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11), command=lambda: self.show(1))
+        self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
+        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
+        self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
 
         # Add some style
         self.style = ttk.Style()
