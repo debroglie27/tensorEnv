@@ -243,7 +243,8 @@ master_frame = Frame(root)
 master_frame.pack(pady=20)
 
 # Create Playlist Box
-song_box = Listbox(master_frame, bg="black", fg="green", width=40, font=("Helvetica", 15), selectbackground="grey", selectforeground="black")
+song_box = Listbox(master_frame, bg="black", fg="green", width=40, font=("Helvetica", 15),
+                   selectbackground="grey", selectforeground="black", activestyle="none")
 song_box.grid(row=0, column=0)
 
 # Define Player Control Images
