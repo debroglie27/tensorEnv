@@ -6,20 +6,22 @@ root.title("ToDo List App")
 root.geometry('500x500+370+60')
 root['bg'] = "#90EE90"
 
-# Define our Font
+# Define our Fonts
 my_font = Font(family="Brush Script MT",
                size=30,
                weight="bold")
 
 # Create Frame
 my_frame = Frame(root)
-my_frame.pack(pady=10)
+my_frame.pack(pady=(20, 10))
 
 # Create Listbox
 my_list = Listbox(my_frame, font=my_font, width=24, height=5, bg="black",
                   fg="yellow", selectbackground="green", activestyle="none")
 my_list.pack(side=LEFT, fill=BOTH)
 
+my_list.insert(END, "Hello")
+my_list.insert(END, "GoodBye")
 my_list.insert(END, "Hello")
 my_list.insert(END, "GoodBye")
 
@@ -46,11 +48,28 @@ def add_item():
 
 
 def cross_item():
-    pass
+    # Cross Off Item
+    my_list.itemconfig(my_list.curselection(), fg="#4d4b01")
+
+    # Clear Selection Bar
+    my_list.selection_clear(0, END)
 
 
 def uncross_item():
-    pass
+    # Uncross Off Item
+    my_list.itemconfig(my_list.curselection(), fg="yellow")
+
+    # Clear Selection Bar
+    my_list.selection_clear(0, END)
+
+
+def delete_crossed():
+    count = 0
+    while count < my_list.size():
+        if my_list.itemcget(count, "fg") == "#4d4b01":
+            my_list.delete(count)
+
+        count += 1
 
 
 # Button Frame
@@ -68,5 +87,16 @@ cross_button.grid(row=0, column=1, padx=(50, 0), pady=(0, 20), ipadx=10)
 
 uncross_button = Button(button_frame, text="Uncross Item", bg='#fdebd0', font=('Helvetica', 11), command=uncross_item)
 uncross_button.grid(row=1, column=1, padx=(50, 0), ipadx=2)
+
+# Create a Menu
+my_menu = Menu(root)
+root.config(menu=my_menu)
+
+# Create file DropDown Menu
+file_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Delete Crossed", command=delete_crossed)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.quit)
 
 root.mainloop()
