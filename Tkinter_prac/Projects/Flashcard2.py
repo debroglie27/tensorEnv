@@ -28,13 +28,13 @@ class HomeScreen:
         self.root.config(menu=self.my_menu)
 
         # Create File Menu
-        self.file_menu = Menu(self.my_menu)
+        self.file_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="File", menu=self.file_menu)
         # Create Geography Menu
-        self.geography_menu = Menu(self.my_menu)
+        self.geography_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="Geography", menu=self.geography_menu)
         # Create Maths Menu
-        self.maths_menu = Menu(self.my_menu)
+        self.maths_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="Maths", menu=self.maths_menu)
 
         # Create File Menu Items
