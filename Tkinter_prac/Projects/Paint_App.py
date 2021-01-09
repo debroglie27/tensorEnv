@@ -80,7 +80,7 @@ def save_image():
         ImageGrab.grab().crop((x1, y1, x2, y2)).save(filename.name)
 
 
-my_canvas = Canvas(root, width=580, height=320, bg="white")
+my_canvas = Canvas(root, width=580, height=320, bg="white", cursor="circle")
 my_canvas.pack(pady=20)
 
 # All Frames Frame
