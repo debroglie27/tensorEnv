@@ -40,7 +40,7 @@ class Snake:
         for i in range(0, len(self.body)-1):
             prev_positions.append(self.body[i].pos)
 
-        self.body[0].pos = (self.body[0].pos[0] + diff * self.vx, self.body[0].pos[1] + diff * self.vy)
+        self.body[0].pos = (self.body[0].pos[0] + diff*4*self.vx, self.body[0].pos[1] + diff*4*self.vy)
         for i in range(1, len(self.body)):
             self.body[i].pos = prev_positions[i-1]
 
@@ -81,7 +81,7 @@ f = food(food_pos, (255, 0, 0))
 
 run = True
 while run:
-    time.sleep(0.01)
+    time.sleep(0.035)
     display_window()
     s.draw()
     s.update()
@@ -114,7 +114,7 @@ while run:
     elif s.body[0].pos[1] >= sw - diff*8 and s.vy == 1:
         s.body[0].pos = (s.body[0].pos[0], -diff*7)
 
-    if abs(s.body[0].pos[0] - f.pos[0]) < diff * 7 and abs(s.body[0].pos[1] - f.pos[1]) < diff * 7:
+    if abs(s.body[0].pos[0] - f.pos[0]) < diff * 7.5 and abs(s.body[0].pos[1] - f.pos[1]) < diff * 7.5:
         Score_value += 2
         f.update()
         s.add_box()
