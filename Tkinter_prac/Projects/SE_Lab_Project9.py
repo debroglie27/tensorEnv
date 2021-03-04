@@ -1090,9 +1090,63 @@ class WinMachineInsert:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("395x330+440+140")
+        self.root.resizable(width=False, height=False)
+
+        # All Entry Boxes
+        self.machine_id = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.machine_id.grid(row=0, column=1, pady=(15, 5), padx=(20, 0))
+        self.machine_type = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.machine_type.grid(row=1, column=1, pady=5, padx=(20, 0))
+        self.mttf = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.mttf.grid(row=2, column=1, pady=5, padx=(20, 0))
+
+        # All Labels
+        self.machine_id_label = Label(self.root, text="Machine ID:", font=('Helvetica', 15))
+        self.machine_id_label.grid(row=0, column=0, padx=(20, 0), pady=(15, 5), sticky=E)
+        self.machine_type_label = Label(self.root, text="Machine Type:", font=('Helvetica', 15))
+        self.machine_type_label.grid(row=1, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.mttf_label = Label(self.root, text="MTTF:", font=('Helvetica', 15))
+        self.mttf_label.grid(row=2, column=0, padx=(20, 0), pady=5, sticky=E)
+
+        # Back and Submit Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.grid(row=3, column=0, pady=10, columnspan=2)
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+
+        # Submit Button
+        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11),
+                                    command=self.submit)
+        self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+
+    def submit(self):
+        if self.machine_id.get() == self.machine_type.get() == self.mttf.get() == '':
+            messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
+        else:
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
+            status = "Working"
+            c.execute(query, (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), status))
+
+            self.machine_id.delete(0, END)
+            self.machine_type.delete(0, END)
+            self.mttf.delete(0, END)
+
+            messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
+
+            conn.commit()
+            conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinMachine(level, "Machine Window", self.user_oid)
+        self.root.destroy()
 
 
 class WinMachineSearch:
