@@ -300,7 +300,7 @@ class WinHome:
         self.root.title(title)
         self.root.geometry("377x360+450+120")
         self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.resizable(width=False, height=False)
 
         self.head_label = Label(self.root, text="Welcome to Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE, font=('Monotype Corsiva', 32, "bold"))
         self.head_label.pack(pady=(0, 10), ipadx=10, ipady=5)
