@@ -58,8 +58,8 @@ from tkinter import ttk
 # ADMIN: Arijeet
 # Secret Key: 12345
 
-# Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep']
-# Password = ['1234', '1999', '4321', '5555', '9876', '6969']
+# Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep', 'Anamika']
+# Password = ['1234', '1999', '4321', '5555', '9876', '6969', '5555']
 
 root = Tk()
 
@@ -1017,20 +1017,16 @@ class WinAdjuster:
 
         # Insert Search Update Delete Buttons
         self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window",
-                                                                 self.user_oid))
+                                 command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
         self.but_insert.pack(pady=(15, 0), ipadx=35)
         self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window",
-                                                                 self.user_oid))
+                                 command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
         self.but_search.pack(pady=(20, 0), ipadx=29)
         self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window",
-                                                                 self.user_oid))
+                                 command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
         self.but_update.pack(pady=(20, 0), ipadx=29)
         self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window",
-                                                                 self.user_oid))
+                                 command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
         self.but_delete.pack(pady=(20, 0), ipadx=32)
 
         # Back Button
@@ -1042,17 +1038,13 @@ class WinAdjuster:
         self.my_popup_menu = Menu(self.root, tearoff=False)
         # Insert, Search, Update and Delete
         self.my_popup_menu.add_command(label="Insert",
-                                       command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window",
-                                                                       self.user_oid))
+                                       command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
         self.my_popup_menu.add_command(label="Search",
-                                       command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window",
-                                                                       self.user_oid))
+                                       command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
         self.my_popup_menu.add_command(label="Update",
-                                       command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window",
-                                                                       self.user_oid))
+                                       command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
         self.my_popup_menu.add_command(label="Delete",
-                                       command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window",
-                                                                       self.user_oid))
+                                       command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
         self.my_popup_menu.add_separator()
 
         # Back and Exit
