@@ -333,17 +333,17 @@ class WinHome:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
+        self.root.geometry("377x290+450+130")
         self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.resizable(width=False, height=False)
 
         self.head_label = Label(self.root, text="Factory Simulation", fg="purple", bg='#add8e6', bd=4, relief=GROOVE, font=('Monotype Corsiva', 32, "bold"))
-        self.head_label.pack(pady=(0, 10), ipadx=10, ipady=5)
+        self.head_label.pack(pady=(0, 10), ipadx=28, ipady=5)
 
         self.but_machine = Button(self.root, text="Machine", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
-        self.but_machine.pack(pady=(15, 0), ipadx=35)
+        self.but_machine.pack(pady=(32, 0), ipadx=31)
         self.but_adjuster = Button(self.root, text="Adjuster", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
-        self.but_adjuster.pack(pady=(20, 0), ipadx=29)
+        self.but_adjuster.pack(pady=(26, 0), ipadx=31)
 
         # Create Menu
         self.my_menu = Menu(self.root)
@@ -925,12 +925,251 @@ class WinMachine:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
+        self.root.geometry("377x380+450+110")
+        self.root['bg'] = "#90EE90"
+        self.root.resizable(width=False, height=False)
+
+        self.head_label = Label(self.root, text="Machine Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE,
+                                font=('Monotype Corsiva', 32, "bold"))
+        self.head_label.pack(pady=(0, 10), ipadx=32, ipady=5)
+
+        # Insert Search Update Delete Buttons
+        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
+        self.but_insert.pack(pady=(15, 0), ipadx=35)
+        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
+        self.but_search.pack(pady=(20, 0), ipadx=29)
+        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
+        self.but_update.pack(pady=(20, 0), ipadx=29)
+        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
+        self.but_delete.pack(pady=(20, 0), ipadx=32)
+
+        # Back Button
+        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6",
+                               command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+        self.but_back.pack(pady=(10, 0), padx=(5, 0), ipadx=5, anchor=W)
+
+        # Add Right Click Pop Up Menu
+        self.my_popup_menu = Menu(self.root, tearoff=False)
+        # Insert, Search, Update and Delete
+        self.my_popup_menu.add_command(label="Insert",
+                                       command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Search",
+                                       command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Update",
+                                       command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Delete",
+                                       command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
+        self.my_popup_menu.add_separator()
+
+        # Back and Exit
+        self.my_popup_menu.add_command(label="Back", command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+
+        # Binding the Right click Pop Up Menu
+        self.root.bind("<Button-3>", self.my_popup)
+
+        # Finding Username for our Status Bar
+        conn = sqlite3.connect('SE_Lab_Project9.db')
+        c = conn.cursor()
+        query = 'Select Username from Users where OID=?'
+        c.execute(query, (self.user_oid,))
+
+        username = c.fetchone()[0]
+
+        conn.commit()
+        conn.close()
+
+        # Finding whether our user is an ADMIN or not
+        if self.user_oid == 1:
+            text = f'User: {username} (ADMIN) '
+        else:
+            text = f'User: {username} '
+
+        # Add Status Bar
+        self.status_bar = Label(self.root, text=text, anchor=E, bg="#dfdfdf")
+        self.status_bar.pack(fill=X, side=BOTTOM, ipady=1)
+
+    def my_popup(self, event):
+        self.my_popup_menu.tk_popup(event.x_root, event.y_root)
+
+    def new_window(self, _class, title, oid):
+        level = Tk()
+        _class(level, title, oid)
+        self.root.destroy()
+
+
+class WinAdjuster:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x380+450+110")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+        self.head_label = Label(self.root, text="Adjuster Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE,
+                                font=('Monotype Corsiva', 32, "bold"))
+        self.head_label.pack(pady=(0, 10), ipadx=32, ipady=5)
+
+        # Insert Search Update Delete Buttons
+        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window",
+                                                                 self.user_oid))
+        self.but_insert.pack(pady=(15, 0), ipadx=35)
+        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window",
+                                                                 self.user_oid))
+        self.but_search.pack(pady=(20, 0), ipadx=29)
+        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window",
+                                                                 self.user_oid))
+        self.but_update.pack(pady=(20, 0), ipadx=29)
+        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window",
+                                                                 self.user_oid))
+        self.but_delete.pack(pady=(20, 0), ipadx=32)
+
+        # Back Button
+        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6",
+                               command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+        self.but_back.pack(pady=(10, 0), padx=(5, 0), ipadx=5, anchor=W)
+
+        # Add Right Click Pop Up Menu
+        self.my_popup_menu = Menu(self.root, tearoff=False)
+        # Insert, Search, Update and Delete
+        self.my_popup_menu.add_command(label="Insert",
+                                       command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window",
+                                                                       self.user_oid))
+        self.my_popup_menu.add_command(label="Search",
+                                       command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window",
+                                                                       self.user_oid))
+        self.my_popup_menu.add_command(label="Update",
+                                       command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window",
+                                                                       self.user_oid))
+        self.my_popup_menu.add_command(label="Delete",
+                                       command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window",
+                                                                       self.user_oid))
+        self.my_popup_menu.add_separator()
+
+        # Back and Exit
+        self.my_popup_menu.add_command(label="Back",
+                                       command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+
+        # Binding the Right click Pop Up Menu
+        self.root.bind("<Button-3>", self.my_popup)
+
+        # Finding Username for our Status Bar
+        conn = sqlite3.connect('SE_Lab_Project9.db')
+        c = conn.cursor()
+        query = 'Select Username from Users where OID=?'
+        c.execute(query, (self.user_oid,))
+
+        username = c.fetchone()[0]
+
+        conn.commit()
+        conn.close()
+
+        # Finding whether our user is an ADMIN or not
+        if self.user_oid == 1:
+            text = f'User: {username} (ADMIN) '
+        else:
+            text = f'User: {username} '
+
+        # Add Status Bar
+        self.status_bar = Label(self.root, text=text, anchor=E, bg="#dfdfdf")
+        self.status_bar.pack(fill=X, side=BOTTOM, ipady=1)
+
+    def my_popup(self, event):
+        self.my_popup_menu.tk_popup(event.x_root, event.y_root)
+
+    def new_window(self, _class, title, oid):
+        level = Tk()
+        _class(level, title, oid)
+        self.root.destroy()
+
+
+class WinMachineInsert:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
         self.root.geometry("377x360+450+120")
         self.root['bg'] = "#90EE90"
         # self.root.resizable(width=False, height=False)
 
 
-class WinAdjuster:
+class WinMachineSearch:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x360+450+120")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+
+class WinMachineUpdate:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x360+450+120")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+
+class WinMachineDelete:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x360+450+120")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+
+class WinAdjusterInsert:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x360+450+120")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+
+class WinAdjusterSearch:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x360+450+120")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+
+class WinAdjusterUpdate:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("377x360+450+120")
+        self.root['bg'] = "#90EE90"
+        # self.root.resizable(width=False, height=False)
+
+
+class WinAdjusterDelete:
 
     def __init__(self, master, title, user_oid):
         self.root = master
