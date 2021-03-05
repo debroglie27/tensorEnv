@@ -1099,7 +1099,7 @@ class WinUpdate:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("390x430+440+110")
+        self.root.geometry("390x440+440+100")
         self.root.resizable(width=False, height=False)
 
         # Select Label and Entry Box
@@ -1134,17 +1134,17 @@ class WinUpdate:
 
         # All Labels
         self.f_name_label = Label(self.my_frame, text="First Name:", font=('Helvetica', 15))
-        self.f_name_label.grid(row=0, column=0, padx=(0, 20), sticky=E)
+        self.f_name_label.grid(row=0, column=0, padx=(0, 20), pady=5, sticky=E)
         self.l_name_label = Label(self.my_frame, text="Last Name:", font=('Helvetica', 15))
-        self.l_name_label.grid(row=1, column=0, padx=(0, 20), sticky=E)
+        self.l_name_label.grid(row=1, column=0, padx=(0, 20), pady=5, sticky=E)
         self.address_label = Label(self.my_frame, text="Address:", font=('Helvetica', 15))
-        self.address_label.grid(row=2, column=0, padx=(0, 20), sticky=E)
+        self.address_label.grid(row=2, column=0, padx=(0, 20), pady=5, sticky=E)
         self.city_label = Label(self.my_frame, text="City:", font=('Helvetica', 15))
-        self.city_label.grid(row=3, column=0, padx=(0, 20), sticky=E)
+        self.city_label.grid(row=3, column=0, padx=(0, 20), pady=5, sticky=E)
         self.state_label = Label(self.my_frame, text="State:", font=('Helvetica', 15))
-        self.state_label.grid(row=4, column=0, padx=(0, 20), sticky=E)
+        self.state_label.grid(row=4, column=0, padx=(0, 20), pady=5, sticky=E)
         self.zipcode_label = Label(self.my_frame, text="Zipcode:", font=('Helvetica', 15))
-        self.zipcode_label.grid(row=5, column=0, padx=(0, 20), sticky=E)
+        self.zipcode_label.grid(row=5, column=0, padx=(0, 20), pady=5, sticky=E)
 
         # Update Button
         self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
