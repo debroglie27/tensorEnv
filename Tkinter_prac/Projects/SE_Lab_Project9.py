@@ -16,16 +16,19 @@ from tkinter import ttk
 # [MTTF] FLOAT,
 # [Status] text)''')
 
-# Dropping a Table
+# Dropping a Table Machines
 # c.execute('''Drop table Machines''')
 
 # Create Table Adjusters
-# c.execute('''Create table Adjusters ([Adjuster_ID] INTEGER PRIMARY KEY,
+# c.execute('''Create table Adjusters ([Adjuster_ID] text,
 # [First_Name] text,
 # [Last_Name] text,
 # [Expertise] text,
 # [Email_id] text,
 # [Status] text)''')
+
+# Dropping a Table Adjusters
+# c.execute('''Drop table Adjusters''')
 
 # Create Table Users
 # c.execute('''Create table Users ([Username] text PRIMARY KEY,
@@ -1461,9 +1464,74 @@ class WinAdjusterInsert:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("390x320+440+150")
+        self.root.resizable(width=False, height=False)
+
+        # All Entry Boxes
+        self.adjuster_id = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.adjuster_id.grid(row=0, column=1, pady=(20, 8), padx=(20, 0))
+        self.first_name = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.first_name.grid(row=1, column=1, pady=8, padx=(20, 0))
+        self.last_name = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.last_name.grid(row=2, column=1, pady=8, padx=(20, 0))
+        self.expertise = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.expertise.grid(row=3, column=1, pady=8, padx=(20, 0))
+        self.email_id = Entry(self.root, width=20, font=('Helvetica', 15))
+        self.email_id.grid(row=4, column=1, pady=8, padx=(20, 0))
+
+        # All Labels
+        self.adjuster_id_label = Label(self.root, text="Adjuster ID:", font=('Helvetica', 15))
+        self.adjuster_id_label.grid(row=0, column=0, padx=(16, 0), pady=(20, 8), sticky=E)
+        self.first_name_label = Label(self.root, text="First Name:", font=('Helvetica', 15))
+        self.first_name_label.grid(row=1, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.last_name_label = Label(self.root, text="Last Name:", font=('Helvetica', 15))
+        self.last_name_label.grid(row=2, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.expertise_label = Label(self.root, text="Expertise:", font=('Helvetica', 15))
+        self.expertise_label.grid(row=3, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.email_id_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_id_label.grid(row=4, column=0, padx=(16, 0), pady=8, sticky=E)
+
+        # Back and Submit Button Frame
+        self.button_frame = Frame(self.root)
+        self.button_frame.grid(row=5, column=0, pady=10, columnspan=2)
+
+        # Back Button
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
+
+        # Submit Button
+        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11),
+                                    command=self.submit)
+        self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+
+    def submit(self):
+        if self.adjuster_id.get() == self.first_name.get() == self.last_name.get()\
+                == self.expertise.get() == self.email_id.get() == '':
+            messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
+        else:
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            query = "Insert Into Adjusters(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
+            status = "Idle"
+            c.execute(query, (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), status))
+
+            self.adjuster_id.delete(0, END)
+            self.first_name.delete(0, END)
+            self.last_name.delete(0, END)
+            self.expertise.delete(0, END)
+            self.email_id.delete(0, END)
+
+            messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
+
+            conn.commit()
+            conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinAdjuster(level, "Adjuster Window", self.user_oid)
+        self.root.destroy()
 
 
 class WinAdjusterSearch:
