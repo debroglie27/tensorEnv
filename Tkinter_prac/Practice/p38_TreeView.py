@@ -139,20 +139,21 @@ def remove_many():
 
 
 def select_record():
-    # Clearing the Entry Boxes
-    name_box.delete(0, END)
-    id_box.delete(0, END)
-    topping_box.delete(0, END)
+    if my_tree.selection():
+        # Clearing the Entry Boxes
+        name_box.delete(0, END)
+        id_box.delete(0, END)
+        topping_box.delete(0, END)
 
-    # Grab the Record number
-    selected = my_tree.focus()
-    # Grab the values of the record
-    values = my_tree.item(selected, "values")
+        # Grab the Record number
+        selected = my_tree.focus()
+        # Grab the values of the record
+        values = my_tree.item(selected, "values")
 
-    # Output to Entry Boxes
-    name_box.insert(0, values[0])
-    id_box.insert(0, values[1])
-    topping_box.insert(0, values[2])
+        # Output to Entry Boxes
+        name_box.insert(0, values[0])
+        id_box.insert(0, values[1])
+        topping_box.insert(0, values[2])
 
 
 def update_record():
