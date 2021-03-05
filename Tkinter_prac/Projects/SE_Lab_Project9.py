@@ -11,10 +11,13 @@ from tkinter import ttk
 # c = conn.cursor()
 
 # Create Table Machines
-# c.execute('''Create table Machines ([Machine_ID] INTEGER PRIMARY KEY,
+# c.execute('''Create table Machines ([Machine_ID] text,
 # [Machine_Type] text,
 # [MTTF] FLOAT,
 # [Status] text)''')
+
+# Dropping a Table
+# c.execute('''Drop table Machines''')
 
 # Create Table Adjusters
 # c.execute('''Create table Adjusters ([Adjuster_ID] INTEGER PRIMARY KEY,
@@ -965,7 +968,7 @@ class WinMachine:
                                        command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
         self.my_popup_menu.add_separator()
 
-        # Back and Exit
+        # Back
         self.my_popup_menu.add_command(label="Back", command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
 
         # Binding the Right click Pop Up Menu
@@ -1090,37 +1093,35 @@ class WinMachineInsert:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("395x330+440+140")
+        self.root.geometry("420x235+440+150")
         self.root.resizable(width=False, height=False)
 
         # All Entry Boxes
         self.machine_id = Entry(self.root, width=20, font=('Helvetica', 15))
-        self.machine_id.grid(row=0, column=1, pady=(15, 5), padx=(20, 0))
+        self.machine_id.grid(row=0, column=1, pady=(20, 8), padx=(20, 0))
         self.machine_type = Entry(self.root, width=20, font=('Helvetica', 15))
-        self.machine_type.grid(row=1, column=1, pady=5, padx=(20, 0))
+        self.machine_type.grid(row=1, column=1, pady=8, padx=(20, 0))
         self.mttf = Entry(self.root, width=20, font=('Helvetica', 15))
-        self.mttf.grid(row=2, column=1, pady=5, padx=(20, 0))
+        self.mttf.grid(row=2, column=1, pady=8, padx=(20, 0))
 
         # All Labels
         self.machine_id_label = Label(self.root, text="Machine ID:", font=('Helvetica', 15))
-        self.machine_id_label.grid(row=0, column=0, padx=(20, 0), pady=(15, 5), sticky=E)
+        self.machine_id_label.grid(row=0, column=0, padx=(16, 0), pady=(20, 8), sticky=E)
         self.machine_type_label = Label(self.root, text="Machine Type:", font=('Helvetica', 15))
-        self.machine_type_label.grid(row=1, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.machine_type_label.grid(row=1, column=0, padx=(16, 0), pady=8, sticky=E)
         self.mttf_label = Label(self.root, text="MTTF:", font=('Helvetica', 15))
-        self.mttf_label.grid(row=2, column=0, padx=(20, 0), pady=5, sticky=E)
+        self.mttf_label.grid(row=2, column=0, padx=(16, 0), pady=8, sticky=E)
 
         # Back and Submit Button Frame
         self.button_frame = Frame(self.root)
         self.button_frame.grid(row=3, column=0, pady=10, columnspan=2)
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
 
         # Submit Button
-        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11),
-                                    command=self.submit)
+        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11), command=self.submit)
         self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def submit(self):
@@ -1155,9 +1156,151 @@ class WinMachineSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("510x385+400+150")
+        self.root.resizable(width=False, height=False)
+
+        # Our Search Label and Search Entry
+        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 15))
+        self.search_label.grid(row=0, column=0, padx=(5, 0), pady=20)
+        self.search_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
+        self.search_Entry.grid(row=0, column=1, padx=(0, 20), pady=20)
+
+        # Drop Down Box for Search Type
+        self.drop = ttk.Combobox(self.root,
+                                 value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status'], font=('helvetica', 11))
+        self.drop.current(0)
+        self.drop.grid(row=0, column=2, padx=(0, 27))
+
+        # Buttons
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
+        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11),
+                                    command=lambda: self.show(1))
+        self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
+        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11),
+                                      command=lambda: self.show(0))
+        self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
+
+        # Create TreeView Frame
+        self.tree_frame = Frame(self.root)
+        self.tree_frame.grid(row=2, column=0, columnspan=3, pady=20, padx=10)
+
+        # TreeView ScrollBar
+        self.tree_scroll = Scrollbar(self.tree_frame)
+        self.tree_scroll.pack(side=RIGHT, fill=Y)
+
+        # Create TreeView
+        self.my_tree = ttk.Treeview(self.tree_frame, height=7, yscrollcommand=self.tree_scroll.set)
+        self.my_tree.pack()
+
+        # Configure ScrollBar
+        self.tree_scroll.config(command=self.my_tree.yview)
+
+        # Define our columns
+        self.my_tree['columns'] = ("OID", "Machine_ID", "Machine_Type", "MTTF", "Status")
+
+        # Format our columns
+        self.my_tree.column("#0", width=0, stretch=NO)
+        self.my_tree.column("OID", anchor=CENTER, width=30)
+        self.my_tree.column("Machine_ID", anchor=CENTER, width=80)
+        self.my_tree.column("Machine_Type", anchor=CENTER, width=120)
+        self.my_tree.column("MTTF", anchor=CENTER, width=80)
+        self.my_tree.column("Status", anchor=CENTER, width=100)
+
+        # Create Headings
+        self.my_tree.heading("#0", text="", anchor=CENTER)
+        self.my_tree.heading("OID", text="OID", anchor=CENTER)
+        self.my_tree.heading("Machine_ID", text="Machine_ID", anchor=CENTER)
+        self.my_tree.heading("Machine_Type", text="Machine_Type", anchor=CENTER)
+        self.my_tree.heading("MTTF", text="MTTF", anchor=CENTER)
+        self.my_tree.heading("Status", text="Status", anchor=CENTER)
+
+        # Count Variable for number of records
+        self.count = 0
+
+        # Change Status Button
+        self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11),
+                                           command=self.change_status)
+        self.change_status_button.grid(row=3, column=0, columnspan=3)
+
+    def change_status(self):
+        if self.my_tree.selection():
+            # Grab the Record number
+            selected = self.my_tree.focus()
+            # Grab the values of the record
+            values = self.my_tree.item(selected, "values")
+
+            # Finding the OID value for that record
+            oid = values[0]
+
+            if values[4] == "Working":
+                status = "Failure"
+            else:
+                status = "Working"
+
+            # Update the Treeview
+            self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status))
+
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            try:
+                query = "Update Machines set Status=? where OID=?"
+                c.execute(query, (status, oid))
+            except Exception:
+                messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
+
+            conn.commit()
+            conn.close()
+
+    def show(self, a):
+        if self.search_Entry.get() == "" and a == 1:
+            messagebox.showwarning("Warning", "Please Provide the Value to be Searched", parent=self.root)
+            return
+
+        selection = self.drop.get()
+        if selection == 'Search by...' and a == 1:
+            messagebox.showwarning("Warning", "Please Select an Option to be Searched!!!", parent=self.root)
+            return
+
+        conn = sqlite3.connect('SE_Lab_Project9.db')
+        c = conn.cursor()
+
+        if a == 0:
+            c.execute("Select OID, * from Machines")
+        else:
+            query = "select OID, * from Machines where " + selection + " LIKE ?"
+            value = '%' + self.search_Entry.get() + '%'
+            c.execute(query, (value,))
+
+        records = c.fetchall()
+
+        # Removing the Preexisting Records(if any)
+        for rec in self.my_tree.get_children():
+            self.my_tree.delete(rec)
+
+        # Resetting the Count
+        self.count = 0
+
+        if records:
+            for record in records:
+                self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record)
+                self.count += 1
+        else:
+            messagebox.showinfo("Information", "No Record Found!!!", parent=self.root)
+
+        # Clearing the Entry Box and Resetting the Drop Down Box
+        self.search_Entry.delete(0, END)
+        self.drop.current(0)
+
+        conn.commit()
+        conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinMachine(level, "Machine Window", self.user_oid)
+        self.root.destroy()
 
 
 class WinMachineUpdate:
