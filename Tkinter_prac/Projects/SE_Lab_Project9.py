@@ -1414,7 +1414,7 @@ class WinMachineDelete:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("390x160+450+150")
+        self.root.geometry("400x160+450+150")
         self.root.resizable(width=False, height=False)
 
         self.select_label = Label(self.root, text="Select OID:", font=('Helvetica', 15), anchor=E)
@@ -1817,9 +1817,49 @@ class WinAdjusterDelete:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("400x160+450+150")
+        self.root.resizable(width=False, height=False)
+
+        self.select_label = Label(self.root, text="Select OID:", font=('Helvetica', 15), anchor=E)
+        self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
+        self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
+        self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
+
+        # Back and Delete Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(90, 0), pady=30, ipadx=10)
+        self.del_button = Button(self.root, text="Delete", bg="orange", font=('Helvetica', 11),
+                                 command=self.delete_record)
+        self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
+
+    def delete_record(self):
+        if self.select_Entry.get() == '':
+            messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
+        else:
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            query1 = "Select * from Adjusters where oid=?"
+            c.execute(query1, (self.select_Entry.get(),))
+
+            if c.fetchone() is None:
+                messagebox.showerror("Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
+            else:
+                query2 = "Delete from Adjusters where oid=?"
+                c.execute(query2, (self.select_Entry.get(),))
+
+                self.select_Entry.delete(0, END)
+
+                messagebox.showinfo("Information", "Successfully Deleted", parent=self.root)
+
+            conn.commit()
+            conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinAdjuster(level, "Adjuster Window", self.user_oid)
+        self.root.destroy()
 
 
 WinLogin(root, "Login Window")
