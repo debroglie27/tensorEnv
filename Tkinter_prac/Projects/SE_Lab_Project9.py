@@ -1170,7 +1170,8 @@ class WinMachineSearch:
 
         # Drop Down Box for Search Type
         self.drop = ttk.Combobox(self.root,
-                                 value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status'], font=('helvetica', 11))
+                                 value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status'],
+                                 font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
@@ -1225,7 +1226,7 @@ class WinMachineSearch:
         # Change Status Button
         self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11),
                                            command=self.change_status)
-        self.change_status_button.grid(row=3, column=0, columnspan=3)
+        self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
     def change_status(self):
         if self.my_tree.selection():
@@ -1312,7 +1313,7 @@ class WinMachineUpdate:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("390x320+440+120")
+        self.root.geometry("400x330+440+120")
         self.root.resizable(width=False, height=False)
 
         # Select Label and Entry Box
@@ -1342,12 +1343,12 @@ class WinMachineUpdate:
         self.mttf.grid(row=2, column=1, pady=5)
 
         # All Labels
-        self.machine_id_label = Label(self.my_frame, text="First Name:", font=('Helvetica', 15))
-        self.machine_id_label.grid(row=0, column=0, padx=(0, 20), sticky=E)
-        self.machine_type_label = Label(self.my_frame, text="Last Name:", font=('Helvetica', 15))
-        self.machine_type_label.grid(row=1, column=0, padx=(0, 20), sticky=E)
-        self.mttf_label = Label(self.my_frame, text="Address:", font=('Helvetica', 15))
-        self.mttf_label.grid(row=2, column=0, padx=(0, 20), sticky=E)
+        self.machine_id_label = Label(self.my_frame, text="Machine ID:", font=('Helvetica', 15))
+        self.machine_id_label.grid(row=0, column=0, padx=(7, 20), pady=5, sticky=E)
+        self.machine_type_label = Label(self.my_frame, text="Machine Type:", font=('Helvetica', 15))
+        self.machine_type_label.grid(row=1, column=0, padx=(7, 20), pady=5, sticky=E)
+        self.mttf_label = Label(self.my_frame, text="MTTF:", font=('Helvetica', 15))
+        self.mttf_label.grid(row=2, column=0, padx=(7, 20), pady=5, sticky=E)
 
         # Update Button
         self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
@@ -1513,7 +1514,7 @@ class WinAdjusterInsert:
             conn = sqlite3.connect('SE_Lab_Project9.db')
             c = conn.cursor()
 
-            query = "Insert Into Adjusters(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
+            query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status) values(?, ?, ?, ?, ?, ?)"
             status = "Idle"
             c.execute(query, (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), status))
 
@@ -1540,9 +1541,158 @@ class WinAdjusterSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("550x385+380+150")
+        self.root.resizable(width=False, height=False)
+
+        # Our Search Label and Search Entry
+        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 15))
+        self.search_label.grid(row=0, column=0, padx=(5, 0), pady=20)
+        self.search_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
+        self.search_Entry.grid(row=0, column=1, padx=(0, 20), pady=20)
+
+        # Drop Down Box for Search Type
+        self.drop = ttk.Combobox(self.root,
+                                 value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise',
+                                        'Email_id', 'Status'],
+                                 font=('Helvetica', 11))
+        self.drop.current(0)
+        self.drop.grid(row=0, column=2, padx=(0, 27))
+
+        # Buttons (Back, Show, Show_All)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
+        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11),
+                                    command=lambda: self.show(1))
+        self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
+        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11),
+                                      command=lambda: self.show(0))
+        self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
+
+        # Create TreeView Frame
+        self.tree_frame = Frame(self.root)
+        self.tree_frame.grid(row=2, column=0, columnspan=3, pady=20, padx=10)
+
+        # TreeView ScrollBar
+        self.tree_scroll = Scrollbar(self.tree_frame)
+        self.tree_scroll.pack(side=RIGHT, fill=Y)
+
+        # Create TreeView
+        self.my_tree = ttk.Treeview(self.tree_frame, height=7, yscrollcommand=self.tree_scroll.set)
+        self.my_tree.pack()
+
+        # Configure ScrollBar
+        self.tree_scroll.config(command=self.my_tree.yview)
+
+        # Define our columns
+        self.my_tree['columns'] = ("OID", "Adjuster_ID", "First_Name", "Last_Name", "Expertise", "Email_ID", "Status")
+
+        # Format our columns
+        self.my_tree.column("#0", width=0, stretch=NO)
+        self.my_tree.column("OID", anchor=CENTER, width=30)
+        self.my_tree.column("Adjuster_ID", anchor=CENTER, width=70)
+        self.my_tree.column("First_Name", anchor=CENTER, width=80)
+        self.my_tree.column("Last_Name", anchor=CENTER, width=80)
+        self.my_tree.column("Expertise", anchor=CENTER, width=70)
+        self.my_tree.column("Email_ID", anchor=CENTER, width=120)
+        self.my_tree.column("Status", anchor=CENTER, width=60)
+
+        # Create Headings
+        self.my_tree.heading("#0", text="", anchor=CENTER)
+        self.my_tree.heading("OID", text="OID", anchor=CENTER)
+        self.my_tree.heading("Adjuster_ID", text="Adjuster_ID", anchor=CENTER)
+        self.my_tree.heading("First_Name", text="First Name", anchor=CENTER)
+        self.my_tree.heading("Last_Name", text="Last Name", anchor=CENTER)
+        self.my_tree.heading("Expertise", text="Expertise", anchor=CENTER)
+        self.my_tree.heading("Email_ID", text="Email_ID", anchor=CENTER)
+        self.my_tree.heading("Status", text="Status", anchor=CENTER)
+
+        # Count Variable for number of records
+        self.count = 0
+
+        # Change Status Button
+        self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11),
+                                           command=self.change_status)
+        self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
+
+    def change_status(self):
+        pass
+        # if self.my_tree.selection():
+        #     # Grab the Record number
+        #     selected = self.my_tree.focus()
+        #     # Grab the values of the record
+        #     values = self.my_tree.item(selected, "values")
+        #
+        #     # Finding the OID value for that record
+        #     oid = values[0]
+        #
+        #     if values[4] == "Working":
+        #         status = "Failure"
+        #     else:
+        #         status = "Working"
+        #
+        #     # Update the Treeview
+        #     self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status))
+        #
+        #     conn = sqlite3.connect('SE_Lab_Project9.db')
+        #     c = conn.cursor()
+        #
+        #     try:
+        #         query = "Update Machines set Status=? where OID=?"
+        #         c.execute(query, (status, oid))
+        #     except Exception:
+        #         messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
+        #
+        #     conn.commit()
+        #     conn.close()
+
+    def show(self, a):
+        if self.search_Entry.get() == "" and a == 1:
+            messagebox.showwarning("Warning", "Please Provide the Value to be Searched", parent=self.root)
+            return
+
+        selection = self.drop.get()
+        if selection == 'Search by...' and a == 1:
+            messagebox.showwarning("Warning", "Please Select an Option to be Searched!!!", parent=self.root)
+            return
+
+        conn = sqlite3.connect('SE_Lab_Project9.db')
+        c = conn.cursor()
+
+        if a == 0:
+            c.execute("Select OID, * from Adjusters")
+        else:
+            query = "select OID, * from Adjusters where " + selection + " LIKE ?"
+            value = '%' + self.search_Entry.get() + '%'
+            c.execute(query, (value,))
+
+        records = c.fetchall()
+
+        # Removing the Preexisting Records(if any)
+        for rec in self.my_tree.get_children():
+            self.my_tree.delete(rec)
+
+        # Resetting the Count
+        self.count = 0
+
+        if records:
+            for record in records:
+                self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record)
+                self.count += 1
+        else:
+            messagebox.showinfo("Information", "No Record Found!!!", parent=self.root)
+
+        # Clearing the Entry Box and Resetting the Drop Down Box
+        self.search_Entry.delete(0, END)
+        self.drop.current(0)
+
+        conn.commit()
+        conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinAdjuster(level, "Adjuster Window", self.user_oid)
+        self.root.destroy()
 
 
 class WinAdjusterUpdate:
@@ -1551,9 +1701,114 @@ class WinAdjusterUpdate:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("390x410+440+100")
+        self.root.resizable(width=False, height=False)
+
+        # Select Label and Entry Box
+        self.select_label = Label(self.root, text="Select OID:", anchor=E, font=('Helvetica', 15))
+        self.select_label.grid(row=0, column=0, padx=(5, 25), pady=(20, 10), ipadx=18)
+        self.select_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
+        self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
+
+        # Back and Show Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(90, 0), pady=(10, 30), ipadx=6)
+        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11),
+                                  command=self.display)
+        self.show_button.grid(row=1, column=1, padx=(0, 60), pady=(10, 30), ipadx=6)
+
+        # Label and Entry Frame
+        self.my_frame = Frame(self.root)
+        self.my_frame.grid(row=2, column=0, columnspan=2)
+
+        # All Entry Boxes
+        self.adjuster_id = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.adjuster_id.grid(row=0, column=1, pady=5)
+        self.first_name = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.first_name.grid(row=1, column=1, pady=5)
+        self.last_name = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.last_name.grid(row=2, column=1, pady=5)
+        self.expertise = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.expertise.grid(row=3, column=1, pady=5)
+        self.email_id = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.email_id.grid(row=4, column=1, pady=5)
+
+        # All Labels
+        self.adjuster_id_label = Label(self.my_frame, text="Adjuster ID:", font=('Helvetica', 15))
+        self.adjuster_id_label.grid(row=0, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.first_name_label = Label(self.my_frame, text="First Name:", font=('Helvetica', 15))
+        self.first_name_label.grid(row=1, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.last_name_label = Label(self.my_frame, text="Last Name:", font=('Helvetica', 15))
+        self.last_name_label.grid(row=2, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.expertise_label = Label(self.my_frame, text="Expertise:", font=('Helvetica', 15))
+        self.expertise_label.grid(row=3, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.email_id_label = Label(self.my_frame, text="Email_ID:", font=('Helvetica', 15))
+        self.email_id_label.grid(row=4, column=0, padx=(0, 20), pady=5, sticky=E)
+
+        # Update Button
+        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
+        self.update_button.grid(row=3, column=0, pady=25, ipadx=10, columnspan=2)
+
+    def display(self):
+        self.adjuster_id.delete(0, END)
+        self.first_name.delete(0, END)
+        self.last_name.delete(0, END)
+        self.expertise.delete(0, END)
+        self.email_id.delete(0, END)
+
+        if self.select_Entry.get() == '':
+            messagebox.showwarning("Warning", "Please Select an ID!", parent=self.root)
+
+        else:
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            c.execute("Select * from Adjusters where OID=?", self.select_Entry.get())
+            record = c.fetchone()
+
+            if not record:
+                messagebox.showinfo("Information", "No Record Found!", parent=self.root)
+            else:
+                self.adjuster_id.insert(0, record[0])
+                self.first_name.insert(0, record[1])
+                self.last_name.insert(0, record[2])
+                self.expertise.insert(0, record[3])
+                self.email_id.insert(0, record[4])
+
+            conn.commit()
+            conn.close()
+
+    def update(self):
+        if self.select_Entry.get() == '':
+            messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
+        elif self.adjuster_id.get() == self.first_name.get() == self.last_name.get()\
+                == self.expertise.get() == self.email_id.get() == '':
+            messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
+        else:
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            query = '''update Adjusters set Adjuster_ID = ?, First_Name = ?, Last_Name = ?, Expertise = ?, Email_id = ? where OID = ?'''
+            e = (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), self.select_Entry.get())
+            c.execute(query, e)
+
+            self.adjuster_id.delete(0, END)
+            self.first_name.delete(0, END)
+            self.last_name.delete(0, END)
+            self.expertise.delete(0, END)
+            self.email_id.delete(0, END)
+            self.select_Entry.delete(0, END)
+
+            messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
+
+            conn.commit()
+            conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinAdjuster(level, "Adjuster Window", self.user_oid)
+        self.root.destroy()
 
 
 class WinAdjusterDelete:
