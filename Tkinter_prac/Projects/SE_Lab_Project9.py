@@ -1171,7 +1171,7 @@ class WinMachineSearch:
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
-        # Buttons
+        # Buttons (Back, Show, Show_All)
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
                                   command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
@@ -1309,9 +1309,99 @@ class WinMachineUpdate:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x360+450+120")
-        self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.geometry("390x320+440+120")
+        self.root.resizable(width=False, height=False)
+
+        # Select Label and Entry Box
+        self.select_label = Label(self.root, text="Select OID:", anchor=E, font=('Helvetica', 15))
+        self.select_label.grid(row=0, column=0, padx=(5, 25), pady=(20, 10), ipadx=18)
+        self.select_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
+        self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
+
+        # Back and Show Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=1, column=0, padx=(90, 0), pady=(10, 30), ipadx=6)
+        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11),
+                                  command=self.display)
+        self.show_button.grid(row=1, column=1, padx=(0, 60), pady=(10, 30), ipadx=6)
+
+        # Label and Entry Frame
+        self.my_frame = Frame(self.root)
+        self.my_frame.grid(row=2, column=0, columnspan=2)
+
+        # All Entry Boxes
+        self.machine_id = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.machine_id.grid(row=0, column=1, pady=5)
+        self.machine_type = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.machine_type.grid(row=1, column=1, pady=5)
+        self.mttf = Entry(self.my_frame, width=20, font=('Helvetica', 15))
+        self.mttf.grid(row=2, column=1, pady=5)
+
+        # All Labels
+        self.machine_id_label = Label(self.my_frame, text="First Name:", font=('Helvetica', 15))
+        self.machine_id_label.grid(row=0, column=0, padx=(0, 20), sticky=E)
+        self.machine_type_label = Label(self.my_frame, text="Last Name:", font=('Helvetica', 15))
+        self.machine_type_label.grid(row=1, column=0, padx=(0, 20), sticky=E)
+        self.mttf_label = Label(self.my_frame, text="Address:", font=('Helvetica', 15))
+        self.mttf_label.grid(row=2, column=0, padx=(0, 20), sticky=E)
+
+        # Update Button
+        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
+        self.update_button.grid(row=3, column=0, pady=25, ipadx=10, columnspan=2)
+
+    def display(self):
+        self.machine_id.delete(0, END)
+        self.machine_type.delete(0, END)
+        self.mttf.delete(0, END)
+
+        if self.select_Entry.get() == '':
+            messagebox.showwarning("Warning", "Please Select an ID!", parent=self.root)
+
+        else:
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            c.execute("Select * from Machines where OID=?", self.select_Entry.get())
+            record = c.fetchone()
+
+            if not record:
+                messagebox.showinfo("Information", "No Record Found!", parent=self.root)
+            else:
+                self.machine_id.insert(0, record[0])
+                self.machine_type.insert(0, record[1])
+                self.mttf.insert(0, record[2])
+
+            conn.commit()
+            conn.close()
+
+    def update(self):
+        if self.select_Entry.get() == '':
+            messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
+        elif self.machine_id.get() == self.machine_type.get() == self.mttf.get() == '':
+            messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
+        else:
+            conn = sqlite3.connect('address_book.db')
+            c = conn.cursor()
+
+            query = '''update addresses set Machine_ID = ?, Machine_Type = ?, mttf = ? where OID = ?'''
+            e = (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), self.select_Entry.get())
+            c.execute(query, e)
+
+            self.machine_id.delete(0, END)
+            self.machine_type.delete(0, END)
+            self.mttf.delete(0, END)
+            self.select_Entry.delete(0, END)
+
+            messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
+
+            conn.commit()
+            conn.close()
+
+    def close_window(self):
+        level = Tk()
+        WinMachine(level, "Machine Window", self.user_oid)
+        self.root.destroy()
 
 
 class WinMachineDelete:
