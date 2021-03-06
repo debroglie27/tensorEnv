@@ -11,7 +11,7 @@ from tkinter import ttk
 # c = conn.cursor()
 
 # Create Table Machines
-# c.execute('''Create table Machines ([Machine_ID] text,
+# c.execute('''Create table Machines ([Machine_ID] text PRIMARY KEY,
 # [Machine_Type] text,
 # [MTTF] FLOAT,
 # [Status] text)''')
@@ -20,7 +20,7 @@ from tkinter import ttk
 # c.execute('''Drop table Machines''')
 
 # Create Table Adjusters
-# c.execute('''Create table Adjusters ([Adjuster_ID] text PRIMARY Key,
+# c.execute('''Create table Adjusters ([Adjuster_ID] text PRIMARY KEY,
 # [First_Name] text,
 # [Last_Name] text,
 # [Expertise] text,
@@ -1221,21 +1221,24 @@ class WinMachineInsert:
         if self.machine_id.get() == self.machine_type.get() == self.mttf.get() == '':
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
-            conn = sqlite3.connect('SE_Lab_Project9.db')
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect('SE_Lab_Project9.db')
+                c = conn.cursor()
 
-            query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
-            status = "Working"
-            c.execute(query, (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), status))
+                query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
+                status = "Working"
+                c.execute(query, (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), status))
 
-            self.machine_id.delete(0, END)
-            self.machine_type.delete(0, END)
-            self.mttf.delete(0, END)
+                self.machine_id.delete(0, END)
+                self.machine_type.delete(0, END)
+                self.mttf.delete(0, END)
 
-            messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
+                messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning("Warning", "Please Try Again!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1489,22 +1492,25 @@ class WinMachineUpdate:
         elif self.machine_id.get() == self.machine_type.get() == self.mttf.get() == '':
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
-            conn = sqlite3.connect('SE_Lab_Project9.db')
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect('SE_Lab_Project9.db')
+                c = conn.cursor()
 
-            query = '''update Machines set Machine_ID = ?, Machine_Type = ?, mttf = ? where OID = ?'''
-            e = (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), self.select_Entry.get())
-            c.execute(query, e)
+                query = '''update Machines set Machine_ID = ?, Machine_Type = ?, mttf = ? where OID = ?'''
+                e = (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), self.select_Entry.get())
+                c.execute(query, e)
 
-            self.machine_id.delete(0, END)
-            self.machine_type.delete(0, END)
-            self.mttf.delete(0, END)
-            self.select_Entry.delete(0, END)
+                self.machine_id.delete(0, END)
+                self.machine_type.delete(0, END)
+                self.mttf.delete(0, END)
+                self.select_Entry.delete(0, END)
 
-            messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
+                messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning("Warning", "Please Try Again!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1615,23 +1621,26 @@ class WinAdjusterInsert:
                 == self.expertise.get() == self.email_id.get() == '':
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
-            conn = sqlite3.connect('SE_Lab_Project9.db')
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect('SE_Lab_Project9.db')
+                c = conn.cursor()
 
-            query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status) values(?, ?, ?, ?, ?, ?)"
-            status = "Idle"
-            c.execute(query, (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), status))
+                query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status) values(?, ?, ?, ?, ?, ?)"
+                status = "Idle"
+                c.execute(query, (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), status))
 
-            self.adjuster_id.delete(0, END)
-            self.first_name.delete(0, END)
-            self.last_name.delete(0, END)
-            self.expertise.delete(0, END)
-            self.email_id.delete(0, END)
+                self.adjuster_id.delete(0, END)
+                self.first_name.delete(0, END)
+                self.last_name.delete(0, END)
+                self.expertise.delete(0, END)
+                self.email_id.delete(0, END)
 
-            messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
+                messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning("Warning", "Please Try Again!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1928,24 +1937,27 @@ class WinAdjusterUpdate:
                 == self.expertise.get() == self.email_id.get() == '':
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
-            conn = sqlite3.connect('SE_Lab_Project9.db')
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect('SE_Lab_Project9.db')
+                c = conn.cursor()
 
-            query = '''update Adjusters set Adjuster_ID = ?, First_Name = ?, Last_Name = ?, Expertise = ?, Email_id = ? where OID = ?'''
-            e = (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), self.select_Entry.get())
-            c.execute(query, e)
+                query = '''update Adjusters set Adjuster_ID = ?, First_Name = ?, Last_Name = ?, Expertise = ?, Email_id = ? where OID = ?'''
+                e = (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), self.select_Entry.get())
+                c.execute(query, e)
 
-            self.adjuster_id.delete(0, END)
-            self.first_name.delete(0, END)
-            self.last_name.delete(0, END)
-            self.expertise.delete(0, END)
-            self.email_id.delete(0, END)
-            self.select_Entry.delete(0, END)
+                self.adjuster_id.delete(0, END)
+                self.first_name.delete(0, END)
+                self.last_name.delete(0, END)
+                self.expertise.delete(0, END)
+                self.email_id.delete(0, END)
+                self.select_Entry.delete(0, END)
 
-            messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
+                messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning("Warning", "Please Try Again!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -2004,7 +2016,7 @@ class WinAdjusterDelete:
         self.root.destroy()
 
 
-# This will put Failed machines inside a list
+# # This will put Failed machines inside a list
 connection = sqlite3.connect('SE_Lab_Project9.db')
 cur = connection.cursor()
 
