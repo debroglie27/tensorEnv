@@ -35,6 +35,10 @@ from tkinter import ttk
 # [Email_id] text,
 # [Password] text)''')
 
+# Create Table Maintenance
+# c.execute('''Create table Maintenance ([Machine_ID] text,
+# [Adjuster_ID] text)''')
+
 # Create Table Secret_Key
 # c.execute('''Create table Secret_Key ([secret_key] text)''')
 
@@ -70,6 +74,7 @@ from tkinter import ttk
 root = Tk()
 
 
+# Window for Login
 class WinLogin:
 
     def __init__(self, master, title):
@@ -156,7 +161,7 @@ class WinLogin:
         self.root.destroy()
 
 
-# Forgot Password Window
+# Window for Forgot Password
 class WinForgotPass:
 
     def __init__(self, master, title):
@@ -333,23 +338,31 @@ class WinSignup:
         self.root.destroy()
 
 
+# Window for Home
 class WinHome:
 
     def __init__(self, master, title, user_oid):
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x290+450+130")
+        self.root.geometry("377x340+450+130")
         self.root['bg'] = "#90EE90"
         self.root.resizable(width=False, height=False)
 
+        # Heading Label
         self.head_label = Label(self.root, text="Factory Simulation", fg="purple", bg='#add8e6', bd=4, relief=GROOVE, font=('Monotype Corsiva', 32, "bold"))
         self.head_label.pack(pady=(0, 10), ipadx=28, ipady=5)
 
-        self.but_machine = Button(self.root, text="Machine", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
-        self.but_machine.pack(pady=(32, 0), ipadx=31)
-        self.but_adjuster = Button(self.root, text="Adjuster", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
-        self.but_adjuster.pack(pady=(26, 0), ipadx=31)
+        # Machine, Adjuster and Maintenance Window Button
+        self.but_machine = Button(self.root, text="Machine", font=('Helvetica', 15), bg='#fdebd0',
+                                  command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
+        self.but_machine.pack(pady=(32, 0), ipadx=32)
+        self.but_adjuster = Button(self.root, text="Adjuster", font=('Helvetica', 15), bg='#fdebd0',
+                                   command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
+        self.but_adjuster.pack(pady=(26, 0), ipadx=32)
+        self.but_maintenance = Button(self.root, text="Maintenance", font=('Helvetica', 15), bg='#fdebd0',
+                                      command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
+        self.but_maintenance.pack(pady=(26, 0), ipadx=12)
 
         # Create Menu
         self.my_menu = Menu(self.root)
@@ -441,6 +454,7 @@ class WinHome:
         self.root.destroy()
 
 
+# Window for Displaying User Details
 class WinUserDetails:
 
     def __init__(self, master, title, user_oid):
@@ -532,6 +546,7 @@ class WinUserDetails:
         self.close_window()
 
 
+# Window for Changing Password
 class WinChangePassword:
 
     def __init__(self, master, title, user_oid):
@@ -620,6 +635,7 @@ class WinChangePassword:
         self.close_window()
 
 
+# Window for Displaying All User Details
 class WinAllUserDetails:
 
     def __init__(self, master, title, user_oid):
@@ -740,6 +756,7 @@ class WinAllUserDetails:
             messagebox.showinfo("Information", "Please select a record to remove!!!")
 
 
+# Window for Changing Secret Key
 class WinChangeSecretKey:
 
     def __init__(self, master, title, user_oid):
@@ -838,6 +855,7 @@ class WinChangeSecretKey:
         self.close_window()
 
 
+# Window for Forgetting Secret Key
 class WinForgotSecretKey:
 
     def __init__(self, master, title, user_oid):
@@ -925,6 +943,7 @@ class WinForgotSecretKey:
         self.root.destroy()
 
 
+# Window for Machine Database
 class WinMachine:
 
     def __init__(self, master, title, user_oid):
@@ -1007,6 +1026,7 @@ class WinMachine:
         self.root.destroy()
 
 
+# Window for Adjuster Database
 class WinAdjuster:
 
     def __init__(self, master, title, user_oid):
@@ -1015,7 +1035,7 @@ class WinAdjuster:
         self.root.title(title)
         self.root.geometry("377x380+450+110")
         self.root['bg'] = "#90EE90"
-        # self.root.resizable(width=False, height=False)
+        self.root.resizable(width=False, height=False)
 
         self.head_label = Label(self.root, text="Adjuster Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE,
                                 font=('Monotype Corsiva', 32, "bold"))
@@ -1087,6 +1107,76 @@ class WinAdjuster:
     def new_window(self, _class, title, oid):
         level = Tk()
         _class(level, title, oid)
+        self.root.destroy()
+
+
+# Window for Maintenance Database
+class WinMaintenance:
+
+    def __init__(self, master, title, user_oid):
+        self.root = master
+        self.user_oid = user_oid
+        self.root.title(title)
+        self.root.geometry("320x250+480+150")
+        self.root.resizable(width=False, height=False)
+
+        # Create TreeView Frame
+        self.tree_frame = Frame(self.root)
+        self.tree_frame.pack(pady=(20, 0), padx=10)
+
+        # TreeView ScrollBar
+        self.tree_scroll = Scrollbar(self.tree_frame)
+        self.tree_scroll.pack(side=RIGHT, fill=Y)
+
+        # Create TreeView
+        self.my_tree = ttk.Treeview(self.tree_frame, height=6, yscrollcommand=self.tree_scroll.set)
+        self.my_tree.pack()
+
+        # Configure ScrollBar
+        self.tree_scroll.config(command=self.my_tree.yview)
+
+        # Define our columns
+        self.my_tree['columns'] = ("OID", "Machine_ID", "Adjuster_ID")
+
+        # Format our columns
+        self.my_tree.column("#0", width=0, stretch=NO)
+        self.my_tree.column("OID", anchor=CENTER, width=40)
+        self.my_tree.column("Machine_ID", anchor=CENTER, width=110)
+        self.my_tree.column("Adjuster_ID", anchor=CENTER, width=110)
+
+        # Create Headings
+        self.my_tree.heading("#0", text="", anchor=CENTER)
+        self.my_tree.heading("OID", text="OID", anchor=CENTER)
+        self.my_tree.heading("Machine_ID", text="Machine_ID", anchor=CENTER)
+        self.my_tree.heading("Adjuster_ID", text="Adjuster_ID", anchor=CENTER)
+
+        # Count Variable for number of records
+        self.count = 0
+
+        conn = sqlite3.connect('SE_Lab_Project9.db')
+        c = conn.cursor()
+
+        c.execute("Select OID, Machine_ID, Adjuster_ID from Maintenance")
+        records = c.fetchall()
+
+        conn.commit()
+        conn.close()
+
+        # Resetting the Count
+        self.count = 0
+
+        for record in records:
+            self.my_tree.insert(parent='', index='end', iid=self.count, text="", values=record)
+            self.count += 1
+
+        # Back Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=("Helvetica", 11),
+                                  command=self.close_window)
+        self.back_button.pack(pady=(25, 0), ipadx=10)
+
+    def close_window(self):
+        level = Tk()
+        WinHome(level, "Home Window", self.user_oid)
         self.root.destroy()
 
 
