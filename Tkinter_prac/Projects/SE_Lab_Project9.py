@@ -20,7 +20,7 @@ from tkinter import ttk
 # c.execute('''Drop table Machines''')
 
 # Create Table Adjusters
-# c.execute('''Create table Adjusters ([Adjuster_ID] text,
+# c.execute('''Create table Adjusters ([Adjuster_ID] text PRIMARY Key,
 # [First_Name] text,
 # [Last_Name] text,
 # [Expertise] text,
@@ -1249,7 +1249,7 @@ class WinMachineSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("510x385+400+150")
+        self.root.geometry("510x385+400+120")
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
@@ -1328,16 +1328,30 @@ class WinMachineSearch:
             # Finding the OID value for that record
             oid = values[0]
 
-            if values[4] == "Working":
+            conn = sqlite3.connect('SE_Lab_Project9.db')
+            c = conn.cursor()
+
+            if values[4] == "U/M":
+                return
+            elif values[4] == "Working":
                 status = "Failure"
+                try:
+                    query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
+                    c.execute(query, (oid,))
+                    machine_failure_list.append(c.fetchone())
+                except Exception:
+                    messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
             else:
                 status = "Working"
+                try:
+                    query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
+                    c.execute(query, (oid,))
+                    machine_failure_list.pop(machine_failure_list.index(c.fetchone()))
+                except Exception:
+                    messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
 
             # Update the Treeview
             self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status))
-
-            conn = sqlite3.connect('SE_Lab_Project9.db')
-            c = conn.cursor()
 
             try:
                 query = "Update Machines set Status=? where OID=?"
@@ -1631,7 +1645,7 @@ class WinAdjusterSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("550x385+380+150")
+        self.root.geometry("550x385+380+120")
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
@@ -1706,35 +1720,73 @@ class WinAdjusterSearch:
         self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
     def change_status(self):
-        pass
-        # if self.my_tree.selection():
-        #     # Grab the Record number
-        #     selected = self.my_tree.focus()
-        #     # Grab the values of the record
-        #     values = self.my_tree.item(selected, "values")
-        #
-        #     # Finding the OID value for that record
-        #     oid = values[0]
-        #
-        #     if values[4] == "Working":
-        #         status = "Failure"
-        #     else:
-        #         status = "Working"
-        #
-        #     # Update the Treeview
-        #     self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status))
-        #
-        #     conn = sqlite3.connect('SE_Lab_Project9.db')
-        #     c = conn.cursor()
-        #
-        #     try:
-        #         query = "Update Machines set Status=? where OID=?"
-        #         c.execute(query, (status, oid))
-        #     except Exception:
-        #         messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
-        #
-        #     conn.commit()
-        #     conn.close()
+        if self.my_tree.selection():
+            # Grab the Record number
+            selected = self.my_tree.focus()
+            # Grab the values of the record
+            values = self.my_tree.item(selected, "values")
+
+            # Finding the OID and Adjuster_ID value for that record
+            oid = values[0]
+            adjuster_id = values[1]
+
+            if values[6] == "Idle":
+                for machine in machine_failure_list:
+                    # Machine Type == Adjuster Expertise
+                    if machine[2] == values[4]:
+                        # Finding Machine_ID for which Adjuster Expertise matched
+                        machine_id = machine_failure_list.pop(machine_failure_list.index(machine))[1]
+                        status = "Busy"
+
+                        # Update the Treeview
+                        self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
+                                                                     values[4], values[5], status))
+
+                        conn = sqlite3.connect('SE_Lab_Project9.db')
+                        c = conn.cursor()
+
+                        try:
+                            query = "Update Adjusters set Status=? where OID=?"
+                            c.execute(query, (status, oid))
+
+                            query = "Update Machines set Status=? where Machine_ID=?"
+                            c.execute(query, ("U/M", machine_id))
+
+                            query = "Insert Into Maintenance(Machine_ID, Adjuster_ID) values(?, ?)"
+                            c.execute(query, (machine_id, adjuster_id))
+                        except Exception:
+                            messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
+
+                        conn.commit()
+                        conn.close()
+            else:
+                status = "Idle"
+
+                # Update the Treeview
+                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
+                                                             values[4], values[5], status))
+
+                conn = sqlite3.connect('SE_Lab_Project9.db')
+                c = conn.cursor()
+
+                try:
+                    query = "Update Adjusters set Status=? where OID=?"
+                    c.execute(query, (status, oid))
+
+                    query = "Select Machine_ID from Maintenance where Adjuster_ID=?"
+                    c.execute(query, (adjuster_id,))
+                    machine_id = c.fetchone()[0]
+
+                    query = "Delete from Maintenance where Adjuster_ID=?"
+                    c.execute(query, (adjuster_id,))
+
+                    query = "Update Machines set Status=? where Machine_ID=?"
+                    c.execute(query, ("Working", machine_id))
+                except Exception:
+                    messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
+
+                conn.commit()
+                conn.close()
 
     def show(self, a):
         if self.search_Entry.get() == "" and a == 1:
@@ -1951,6 +2003,18 @@ class WinAdjusterDelete:
         WinAdjuster(level, "Adjuster Window", self.user_oid)
         self.root.destroy()
 
+
+# This will put Failed machines inside a list
+connection = sqlite3.connect('SE_Lab_Project9.db')
+cur = connection.cursor()
+
+# Query for selecting Machines that has failed
+q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
+cur.execute(q, ("Failure",))
+machine_failure_list = cur.fetchall()
+
+connection.commit()
+connection.close()
 
 WinLogin(root, "Login Window")
 
