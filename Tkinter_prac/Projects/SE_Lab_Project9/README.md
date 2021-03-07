@@ -68,6 +68,31 @@ Below we have the Status Bar displaying the current User.
 
 ---
 ### User Details Window:
+This Window displays the details of the Current User and allows  
+the User to change the details. 
 
 ![User Details Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/User_Details.png)
+
+**Change Button:** Allows the User to edit his/her details.  
+**Save Button:** Allows the User to Save the changes made.  
+**Back Button:** Takes the User back to *"Home Window"*.
+
+---
+### Change Password Window:
+This Window allows the User to change his/her Password.  
+The User needs to first provide the Current Password, then  
+type in the New Password and finally Confirm the New Password.
+
+An Error Message will be displayed if the User does not type  
+the correct Current Password or the New Password and Confirm   
+Password does not match.
+
+![Change Password Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Change_Password.png)
+
+**Save Button:** Changes the User's Password  
+**Back Button:** Takes the User back to *"Home Window"*.
+
+---
+### All User Details Window
+
 
