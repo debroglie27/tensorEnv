@@ -159,5 +159,15 @@ The User can Insert, Search, Update and Delete records.
 **Delete Button:** Opens *"Adjuster Delete Window"*  
 **Back Button:** Takes the User back to *"Home Window"*.
 
+---
+### Maintenance Window:
+This Window allows the User to view the Maintenance Table.
+Here the User can view which Machine is under maintenance and is  
+being fixed by which Adjuster.
 
+![Maintenance Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Maintenance.png)
 
+**Back Button:** Takes the User back to *"Home Window"*.
+
+---
+### Machine Insert Window:
