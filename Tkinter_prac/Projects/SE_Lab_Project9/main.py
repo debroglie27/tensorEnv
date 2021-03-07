@@ -374,6 +374,7 @@ class WinHome:
         # Add File Menu Items
         self.file_menu.add_command(label="Machine", command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
         self.file_menu.add_command(label="Adjuster", command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
+        self.file_menu.add_command(label="Maintenance", command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
         self.file_menu.add_command(label="Exit", command=self.root.quit)
@@ -399,6 +400,7 @@ class WinHome:
         # Insert, Search, Update and Delete
         self.my_popup_menu.add_command(label="Machine", command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
         self.my_popup_menu.add_command(label="Adjuster", command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Maintenance", command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.my_popup_menu.add_separator()
         # User Details and Change Password
         self.my_popup_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
