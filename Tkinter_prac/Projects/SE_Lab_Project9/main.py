@@ -189,7 +189,7 @@ class WinForgotPass:
         self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
-        env_path = Path('../../../openCV_venv/.env')
+        env_path = Path('../../../../openCV_venv/.env')
         load_dotenv(dotenv_path=env_path)
 
         self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
@@ -887,7 +887,7 @@ class WinForgotSecretKey:
         self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
-        env_path = Path('../../../openCV_venv/.env')
+        env_path = Path('../../../../openCV_venv/.env')
         load_dotenv(dotenv_path=env_path)
 
         self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
@@ -1779,16 +1779,20 @@ class WinAdjusterSearch:
                 c = conn.cursor()
 
                 try:
+                    # Making Status of the Adjuster "Idle"
                     query = "Update Adjusters set Status=? where OID=?"
                     c.execute(query, (status, oid))
 
+                    # Finding corresponding Machine_ID for Adjuster_ID
                     query = "Select Machine_ID from Maintenance where Adjuster_ID=?"
                     c.execute(query, (adjuster_id,))
                     machine_id = c.fetchone()[0]
 
+                    # Deleting the record from Maintenance Table for given Adjuster_ID
                     query = "Delete from Maintenance where Adjuster_ID=?"
                     c.execute(query, (adjuster_id,))
 
+                    # Updating the status of Machine
                     query = "Update Machines set Status=? where Machine_ID=?"
                     c.execute(query, ("Working", machine_id))
                 except Exception:
@@ -1974,6 +1978,7 @@ class WinAdjusterDelete:
         self.root.geometry("400x160+450+150")
         self.root.resizable(width=False, height=False)
 
+        # Select Label and Entry
         self.select_label = Label(self.root, text="Select OID:", font=('Helvetica', 15), anchor=E)
         self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
         self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
@@ -1988,18 +1993,22 @@ class WinAdjusterDelete:
         self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
 
     def delete_record(self):
+        # Checking if an OID was given
         if self.select_Entry.get() == '':
             messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
         else:
             conn = sqlite3.connect('SE_Lab_Project9.db')
             c = conn.cursor()
 
+            # Selecting Adjuster whose OID was given
             query1 = "Select * from Adjusters where oid=?"
             c.execute(query1, (self.select_Entry.get(),))
 
+            # Checking whether OID given has any Adjuster corresspinding to it
             if c.fetchone() is None:
                 messagebox.showerror("Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
             else:
+                # Deleting the Adjuster with corresponding OID
                 query2 = "Delete from Adjusters where oid=?"
                 c.execute(query2, (self.select_Entry.get(),))
 
@@ -2016,7 +2025,7 @@ class WinAdjusterDelete:
         self.root.destroy()
 
 
-# # This will put Failed machines inside a list
+# This will put Failed machines inside a list
 connection = sqlite3.connect('SE_Lab_Project9.db')
 cur = connection.cursor()
 
