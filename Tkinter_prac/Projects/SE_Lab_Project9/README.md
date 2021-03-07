@@ -21,10 +21,10 @@ If wrong Secret Key is provided then an Error message will be displayed.
 
 ![SignUp Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/SignUp.png)
 
-**Submit Button:** After filling the details clicking here will create your account  
-**Back Button:** Clicking here will allow us to go back to *Login Window*
+**Submit Button:** After filling the details clicking here will create your account.  
+**Back Button:** Clicking here will allow us to go back to *Login Window*.
 
 ---
 ### Forgot Password Window:
 
-![SignUp Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Password.png)
+![Forgot Password Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Password.png)
