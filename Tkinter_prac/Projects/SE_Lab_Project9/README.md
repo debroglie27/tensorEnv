@@ -14,9 +14,8 @@ then an Error Message will be displayed
 ---
 ### SignUp Window:
 This Window allows a New User to create an account by providing  
-their details and *The Secret Key*. The Secret Key is given by  
-the Admin so that not anyone can come and make account and access  
-anything.
+their details and *The Secret Key*. The Secret Key is given by the Admin  
+so that not anyone can come and make account and access anything.
 
 If wrong Secret Key is provided then an Error message will be displayed.
 
