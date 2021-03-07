@@ -122,7 +122,7 @@ Secret Key does not match.
 
 ---
 ### Forgot Secret Key Window:
-In this Window Admin needs to provide his/her Email_ID, using which we   
+In this Window Admin needs to provide his/her Email_ID, using which he/she   
 created his/her account, and the Secret Key will be sent to that Email_ID.
 
 If Incorrect Email_ID is provided then an Error Message is displayed.
@@ -135,3 +135,29 @@ to Admin's Email_ID.
 
 ---
 ### Machine Window:
+This Window allows the User to manipulate the Machine Table.  
+The User can Insert, Search, Update and Delete records.
+
+![Machine Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Machine.png)
+
+**Insert Button:** Opens *"Machine Insert Window"*  
+**Search Button:** Opens *"Machine Search Window"*  
+**Update Button:** Opens *"Machine Update Window"*  
+**Delete Button:** Opens *"Machine Delete Window"*  
+**Back Button:** Takes the User back to *"Home Window"*.
+
+---
+### Adjuster Window:
+This Window allows the User to manipulate the Adjuster Table.  
+The User can Insert, Search, Update and Delete records.
+
+![Adjuster Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster.png)
+
+**Insert Button:** Opens *"Adjuster Insert Window"*  
+**Search Button:** Opens *"Adjuster Search Window"*  
+**Update Button:** Opens *"Adjuster Update Window"*  
+**Delete Button:** Opens *"Adjuster Delete Window"*  
+**Back Button:** Takes the User back to *"Home Window"*.
+
+
+
