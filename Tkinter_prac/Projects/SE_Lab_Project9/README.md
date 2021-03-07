@@ -33,8 +33,7 @@ If Incorrect Email_ID is provided then an Error Message is displayed.
 
 ![Forgot Password Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Password.png)
 
-**Send Button:** After providing the Email_ID, clicking will send our password  
-to our Email_ID.  
+**Send Button:** After providing the Email_ID, clicking will send our password to our Email_ID.  
 **Back Button:** Clicking here will allow us to go back to *"Login Window"*
 
 ---
@@ -99,8 +98,7 @@ can see the details of all the Users having account.
 
 ![All User Details Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/All_User_Details.png)
 
-**Remove Button:** After selecting a particular User, allows the Admin 
-to remove that particular User.
+**Remove Button:** After selecting a particular User, allows the Admin to remove that particular User.
 **Back Button:** Takes the User back to *"Home Window"*.
 
 ---
@@ -129,8 +127,7 @@ If Incorrect Email_ID is provided then an Error Message is displayed.
 
 ![Forgot Secret Key Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Secret_Key.png)
 
-**Send Button:** After providing the Email_ID, clicking will send the Secret Key  
-to Admin's Email_ID.  
+**Send Button:** After providing the Email_ID, clicking will send the Secret Key to Admin's Email_ID.  
 **Back Button:** Clicking here will allow us to go back to *"Change Secret Key Window"*
 
 ---
@@ -171,3 +168,78 @@ being fixed by which Adjuster.
 
 ---
 ### Machine Insert Window:
+This Window lets us Insert Data into the Machine Table.  
+The User fill in the details and click the submit button to  
+add the record inside the table.
+
+![Machine Insert Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Machine_Insert.png)
+
+**Submit Button:** Inserts the Data filled into the Machine Table.  
+**Back Button:** Takes the User back to *"Machine Window"*.
+
+---
+### Machine Search Window:
+This Window allows the User to search for a particular Machine.  
+We have to first select the *Search by* option, then type the  
+search value and finally click on the *Search Button* to display  
+searched Machine.
+
+We can also display everything inside the Machine Table by Clicking  
+the *Show All Button*.
+
+Finally, we can change status of Machine by selecting the particular  
+record and pressing the *Change Status Button*.
+
+![Machine Search Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Machine_Search.png)
+
+**Search Button:** Allows us to make searches based on our search value.  
+**Show All Button:** Displays every record in Machine Table.  
+**Change Status Button:** Changes the Status of the Machine which was selected.  
+**Back Button:** Takes the User back to *"Machine Window"*.
+
+---
+### Machine Update Window:
+This Window allows the User to Update a record in the Machine Table.  
+We first type in the OID of the record which we are interested in  
+updating, then we press the *Show Button* to display the details.
+
+Now we can update the record by editing the Entry Fields.   
+Finally, pressing the *Update Button* will update the record.
+
+![Machine Update Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Machine_Update.png)
+
+**Show Button:** Displays the record details for the corresponding OID value provided.  
+**Update Button:** Updates the record.   
+**Back Button:** Takes the User back to *"Machine Window"*.
+
+---
+### Machine Delete Window:
+This Window allows the User to Delete a record in the Machine Table.  
+The User provides the OID value for the record to be Deleted and  
+pressing the *Delete Button* deletes the record.
+
+![Machine Delete Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Machine_Delete.png)
+
+**Delete Button:** Deletes the record for which OID was provided.  
+**Back Button:** Takes the User back to *"Machine Window"*.
+
+---
+### Adjuster Insert Window:
+
+![Adjuster Insert Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Insert.png)
+
+---
+### Adjuster Search Window:
+
+![Adjuster Search Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Search.png)
+
+---
+### Adjuster Update Window:
+
+![Adjuster Update Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Update.png)
+
+---
+### Adjuster Delete Window:
+
+![Adjuster Delete Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Delete.png)
+
