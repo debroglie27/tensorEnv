@@ -17,7 +17,7 @@ This Window allows a New User to create an account by providing
 their details and *The Secret Key*. The Secret Key is given by the Admin  
 so that not anyone can come and make account and access anything.
 
-If wrong Secret Key is provided then an Error message will be displayed.
+If Incorrect Secret Key is provided then an Error message will be displayed.
 
 ![SignUp Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/SignUp.png)
 
@@ -26,5 +26,17 @@ If wrong Secret Key is provided then an Error message will be displayed.
 
 ---
 ### Forgot Password Window:
+In this Window we need to provide our Email_ID, using which we created  
+our account, and our Password will be sent to that Email_ID.
+
+If Incorrect Email_ID is provided then an Error Message is displayed.
 
 ![Forgot Password Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Password.png)
+
+**Send Button:** After providing the Email_ID, clicking will send our password  
+to our Email_ID.  
+**Back Button:** Clicking here will allow us to go back to *Login Window*
+
+---
+### Home Window:
+
