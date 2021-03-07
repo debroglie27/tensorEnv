@@ -1,4 +1,7 @@
 ## Welcome to SE Lab Project "Factory Simulation":
+This Project Simulates a Factory with Machines, which can fail due to  
+some issue, and Adjusters which fixes those issues to keep the Machines Running.  
+Finally, The Service Manager maintains and manages everything.
 
 ---
 ### Login Window:
@@ -225,21 +228,63 @@ pressing the *Delete Button* deletes the record.
 
 ---
 ### Adjuster Insert Window:
+This Window lets us Insert Data into the Adjuster Table.  
+The User fill in the details and click the submit button to  
+add the record inside the table.
 
 ![Adjuster Insert Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Insert.png)
 
+**Submit Button:** Inserts the Data filled into the Adjuster Table.  
+**Back Button:** Takes the User back to *"Adjuster Window"*.
+
 ---
 ### Adjuster Search Window:
+This Window allows the User to search for a particular Adjuster.  
+We have to first select the *Search by* option, then type the  
+search value and finally click on the *Search Button* to display  
+searched Adjuster.
+
+We can also display everything inside the Adjuster Table by Clicking  
+the *Show All Button*.
+
+Finally, we can change status of Adjuster by selecting the particular  
+record and pressing the *Change Status Button*.  
+Firstly, status will change to "Busy" only when there is a Machine with Status   
+"Failure", and the Machine Type and Adjuster Expertise should match. Secondly,    
+status will change to "Idle" if initially it was "Busy".
 
 ![Adjuster Search Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Search.png)
 
+**Search Button:** Allows us to make searches based on our search value.  
+**Show All Button:** Displays every record in Adjuster Table.  
+**Change Status Button:** Changes the Status of the Adjuster which was selected.  
+**Back Button:** Takes the User back to *"Adjuster Window"*.
+
 ---
 ### Adjuster Update Window:
+This Window allows the User to Update a record in the Adjuster Table.  
+We first type in the OID of the record which we are interested in  
+updating, then we press the *Show Button* to display the details.
+
+Now we can update the record by editing the Entry Fields.   
+Finally, pressing the *Update Button* will update the record.
 
 ![Adjuster Update Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Update.png)
 
+**Show Button:** Displays the record details for the corresponding OID value provided.  
+**Update Button:** Updates the record.   
+**Back Button:** Takes the User back to *"Adjuster Window"*.
+
 ---
 ### Adjuster Delete Window:
+This Window allows the User to Delete a record in the Adjuster Table.  
+The User provides the OID value for the record to be Deleted and  
+pressing the *Delete Button* deletes the record.
 
 ![Adjuster Delete Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Delete.png)
 
+**Delete Button:** Deletes the record for which OID was provided.  
+**Back Button:** Takes the User back to *"Adjuster Window"*.
+
+---
+### THE END, Thank You for reading through The Project.
