@@ -93,6 +93,45 @@ Password does not match.
 **Back Button:** Takes the User back to *"Home Window"*.
 
 ---
-### All User Details Window
+### All User Details Window:
+This Window is accessible only to the Admin and here the Admin  
+can see the details of all the Users having account.
 
+![All User Details Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/All_User_Details.png)
 
+**Remove Button:** After selecting a particular User, allows the Admin 
+to remove that particular User.
+**Back Button:** Takes the User back to *"Home Window"*.
+
+---
+### Change Secret Key Window:
+This Window is accessible only to the Admin.  
+It allows the Admin to change his/her Password.  
+The User needs to first provide the Current Secret Key, then  
+type in the New Secret key and finally Confirm the New Secret Key.
+
+An Error Message will be displayed if the Admin does not type  
+the correct Current Secret Key or the New Secret Key and Confirm   
+Secret Key does not match.
+
+![Change Secret Key Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Change_Secret_Key.png)
+
+**Forgot Secret key Button:** Opens *"Forgot Secret Key Window"*  
+**Save Button:** Changes the Secret Key  
+**Back Button:** Takes the User back to *"Home Window"*.
+
+---
+### Forgot Secret Key Window:
+In this Window Admin needs to provide his/her Email_ID, using which we   
+created his/her account, and the Secret Key will be sent to that Email_ID.
+
+If Incorrect Email_ID is provided then an Error Message is displayed.
+
+![Forgot Secret Key Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Secret_Key.png)
+
+**Send Button:** After providing the Email_ID, clicking will send the Secret Key  
+to Admin's Email_ID.  
+**Back Button:** Clicking here will allow us to go back to *"Change Secret Key Window"*
+
+---
+### Machine Window:
