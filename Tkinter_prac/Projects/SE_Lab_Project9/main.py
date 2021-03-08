@@ -7,7 +7,7 @@ import sqlite3
 from tkinter import messagebox
 from tkinter import ttk
 
-# conn = sqlite3.connect('FS_Database.db')
+# conn = sqlite3.connect('FS_DATABASE.db')
 # c = conn.cursor()
 
 # Create Table Machines
@@ -130,7 +130,7 @@ class WinLogin:
         password = self.password_entry.get()
 
         try:
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             # Finding Password and OID for the given Username
@@ -201,7 +201,7 @@ class WinForgotPass:
         email = self.email_entry.get()
 
         try:
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             # Finding Password for the given Email_id
@@ -301,7 +301,7 @@ class WinSignup:
         self.email_entry.delete(0, END)
         self.secret_entry.delete(0, END)
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         # Finding Secret Key
@@ -313,7 +313,7 @@ class WinSignup:
             messagebox.showerror("Error", "Secret Key Incorrect!!!", parent=self.root)
         else:
             try:
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 # Inserting Details of New User
@@ -422,7 +422,7 @@ class WinHome:
         self.root.bind("<Button-3>", self.my_popup)
 
         # Finding Username for our Status Bar
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
         query = 'Select Username from Users where OID=?'
         c.execute(query, (self.user_oid,))
@@ -486,7 +486,7 @@ class WinUserDetails:
                                      command=lambda: self.change_entry(1))
         self.change_button2.grid(row=1, column=2, padx=5, pady=20)
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         # Finding Details of User
@@ -532,7 +532,7 @@ class WinUserDetails:
             self.email_entry.config(state=NORMAL)
 
     def save_details(self):
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         # Updating the database with new values
@@ -609,7 +609,7 @@ class WinChangePassword:
         self.new_password_entry.delete(0, END)
         self.confirm_password_entry.delete(0, END)
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         # Finding password the given user
@@ -698,7 +698,7 @@ class WinAllUserDetails:
         self.my_tree.tag_configure('oddrow', background="white")
         self.my_tree.tag_configure('evenrow', background="lightblue")
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         c.execute("Select OID, Username, Email_id from Users where oid <> 1")
@@ -742,7 +742,7 @@ class WinAllUserDetails:
                 # Getting the OID from the record
                 OID = self.my_tree.item(record)['values'][0]
 
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 c.execute("Delete from Users where oid=?", (OID,))
@@ -831,7 +831,7 @@ class WinChangeSecretKey:
         self.new_secret_key_entry.delete(0, END)
         self.confirm_secret_key_entry.delete(0, END)
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         c.execute('''Select secret_key from Secret_Key''')
@@ -899,7 +899,7 @@ class WinForgotSecretKey:
         messagebox.showinfo("Information", "It may take some time\nPlease Wait!!!", parent=self.root)
         email = self.email_entry.get()
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         query = 'select oid from Users where email_id=?'
@@ -999,7 +999,7 @@ class WinMachine:
         self.root.bind("<Button-3>", self.my_popup)
 
         # Finding Username for our Status Bar
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
         query = 'Select Username from Users where OID=?'
         c.execute(query, (self.user_oid,))
@@ -1083,7 +1083,7 @@ class WinAdjuster:
         self.root.bind("<Button-3>", self.my_popup)
 
         # Finding Username for our Status Bar
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
         query = 'Select Username from Users where OID=?'
         c.execute(query, (self.user_oid,))
@@ -1155,7 +1155,7 @@ class WinMaintenance:
         # Count Variable for number of records
         self.count = 0
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         c.execute("Select OID, Machine_ID, Adjuster_ID from Maintenance")
@@ -1224,7 +1224,7 @@ class WinMachineInsert:
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
             try:
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
@@ -1333,7 +1333,7 @@ class WinMachineSearch:
             # Finding the OID value for that record
             oid = values[0]
 
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             if values[4] == "U/M":
@@ -1377,7 +1377,7 @@ class WinMachineSearch:
             messagebox.showwarning("Warning", "Please Select an Option to be Searched!!!", parent=self.root)
             return
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         if a == 0:
@@ -1472,7 +1472,7 @@ class WinMachineUpdate:
             messagebox.showwarning("Warning", "Please Select an ID!", parent=self.root)
 
         else:
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             c.execute("Select * from Machines where OID=?", self.select_Entry.get())
@@ -1495,7 +1495,7 @@ class WinMachineUpdate:
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
             try:
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 query = '''update Machines set Machine_ID = ?, Machine_Type = ?, mttf = ? where OID = ?'''
@@ -1546,7 +1546,7 @@ class WinMachineDelete:
         if self.select_Entry.get() == '':
             messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
         else:
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             query1 = "Select * from Machines where oid=?"
@@ -1624,7 +1624,7 @@ class WinAdjusterInsert:
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
             try:
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status) values(?, ?, ?, ?, ?, ?)"
@@ -1753,7 +1753,7 @@ class WinAdjusterSearch:
                         self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
                                                                      values[4], values[5], status))
 
-                        conn = sqlite3.connect('FS_Database.db')
+                        conn = sqlite3.connect('FS_DATABASE.db')
                         c = conn.cursor()
 
                         try:
@@ -1777,7 +1777,7 @@ class WinAdjusterSearch:
                 self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
                                                              values[4], values[5], status))
 
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 try:
@@ -1813,7 +1813,7 @@ class WinAdjusterSearch:
             messagebox.showwarning("Warning", "Please Select an Option to be Searched!!!", parent=self.root)
             return
 
-        conn = sqlite3.connect('FS_Database.db')
+        conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
         if a == 0:
@@ -1918,7 +1918,7 @@ class WinAdjusterUpdate:
             messagebox.showwarning("Warning", "Please Select an ID!", parent=self.root)
 
         else:
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             c.execute("Select * from Adjusters where OID=?", self.select_Entry.get())
@@ -1944,7 +1944,7 @@ class WinAdjusterUpdate:
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
             try:
-                conn = sqlite3.connect('FS_Database.db')
+                conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
 
                 query = '''update Adjusters set Adjuster_ID = ?, First_Name = ?, Last_Name = ?, Expertise = ?, Email_id = ? where OID = ?'''
@@ -1999,7 +1999,7 @@ class WinAdjusterDelete:
         if self.select_Entry.get() == '':
             messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
         else:
-            conn = sqlite3.connect('FS_Database.db')
+            conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             # Selecting Adjuster whose OID was given
@@ -2028,7 +2028,7 @@ class WinAdjusterDelete:
 
 
 # This will put Failed machines inside a list
-connection = sqlite3.connect('FS_Database.db')
+connection = sqlite3.connect('FS_DATABASE.db')
 cur = connection.cursor()
 
 # Query for selecting Machines that has failed
