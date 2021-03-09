@@ -287,4 +287,5 @@ pressing the *Delete Button* deletes the record.
 **Back Button:** Takes the User back to *"Adjuster Window"*.
 
 ---
-### THE END, Thank You for reading through The Project.
+## THE END 
+### Thank You for reading through The Project.
