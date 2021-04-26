@@ -218,7 +218,7 @@ Finally, pressing the *Update Button* will update the record.
 ---
 ### Machine Delete Window:
 This Window allows the User to Delete a record in the Machine Table.  
-The User provides the OID value for the record to be Deleted and  
+The User provides the Machine_ID value for the record to be Deleted and  
 pressing the *Delete Button* deletes the record.
 
 ![Machine Delete Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Machine_Delete.png)
@@ -278,7 +278,7 @@ Finally, pressing the *Update Button* will update the record.
 ---
 ### Adjuster Delete Window:
 This Window allows the User to Delete a record in the Adjuster Table.  
-The User provides the OID value for the record to be Deleted and  
+The User provides the Adjuster_ID value for the record to be Deleted and  
 pressing the *Delete Button* deletes the record.
 
 ![Adjuster Delete Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Adjuster_Delete.png)
