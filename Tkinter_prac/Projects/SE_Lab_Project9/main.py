@@ -1,3 +1,13 @@
+#########################################################################################
+#########################################################################################
+
+# ********** FACTORY SIMULATION PROJECT **********
+# Written By: Arijeet De
+# Last Updated: 26/04/2021
+
+#########################################################################################
+#########################################################################################
+
 import os
 import smtplib
 from pathlib import Path
@@ -6,6 +16,9 @@ from tkinter import *
 import sqlite3
 from tkinter import messagebox
 from tkinter import ttk
+
+###########################################################################################
+###########################################################################################
 
 # conn = sqlite3.connect('FS_DATABASE.db')
 # c = conn.cursor()
@@ -71,7 +84,8 @@ from tkinter import ttk
 # Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep', 'Anamika']
 # Password = ['1234', '1999', '4321', '5555', '9876', '6969', '5555']
 
-root = Tk()
+###########################################################################################
+###########################################################################################
 
 
 # Window for Login
@@ -80,7 +94,7 @@ class WinLogin:
     def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry("370x230+450+150")
+        self.root.geometry("380x230+450+150")
         self.root.resizable(width=False, height=False)
 
         # Bullet Symbol
@@ -88,19 +102,19 @@ class WinLogin:
 
         # Username Label and Entry
         self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0))
+        self.username_label.grid(row=0, column=0, padx=(15, 10), pady=(30, 0), sticky=E)
         self.username_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15), validate="focusin", validatecommand=lambda: self.placeholder_vanish(0))
         self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
         self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
-        self.password_label.grid(row=1, column=0, padx=10, pady=10)
+        self.password_label.grid(row=1, column=0, padx=(15, 10), pady=10, sticky=E)
         self.password_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15), validate="focusin", validatecommand=lambda: self.placeholder_vanish(1))
         self.password_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=3)
 
         # Login Button
         self.login_button = Button(self.root, text="Login", bg="#90EE90", font=('Helvetica', 11), command=self.login_check)
-        self.login_button.grid(row=2, column=0, columnspan=2, pady=20, padx=(35, 0), ipadx=6)
+        self.login_button.grid(row=2, column=0, columnspan=2, pady=20, padx=(25, 0), ipadx=6)
 
         # SignUp Button
         self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=('Helvetica', 11), command=lambda: self.forgot_signup_window(WinSignup, "SignUp Window"))
@@ -142,6 +156,7 @@ class WinLogin:
             conn.commit()
             conn.close()
 
+            # Checking whether password provided matched
             if record == password:
                 self.new_window(WinHome, "Home Window", oid)
             else:
@@ -1182,6 +1197,7 @@ class WinMaintenance:
         self.root.destroy()
 
 
+# Window for Inserting into Machine Table
 class WinMachineInsert:
 
     def __init__(self, master, title, user_oid):
@@ -1220,8 +1236,9 @@ class WinMachineInsert:
         self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def submit(self):
-        if self.machine_id.get() == self.machine_type.get() == self.mttf.get() == '':
-            messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
+        # If any of the entry boxes not filled then warning message shown
+        if self.machine_id.get() == '' or self.machine_type.get() == '' or self.mttf.get() == '':
+            messagebox.showwarning("Warning", "Please Fill ALL The Details!", parent=self.root)
         else:
             try:
                 conn = sqlite3.connect('FS_DATABASE.db')
@@ -1231,10 +1248,12 @@ class WinMachineInsert:
                 status = "Working"
                 c.execute(query, (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), status))
 
+                # Clearing the originally filled values
                 self.machine_id.delete(0, END)
                 self.machine_type.delete(0, END)
                 self.mttf.delete(0, END)
 
+                # Displaying confirmation message informing Successful Insertion
                 messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
 
                 conn.commit()
@@ -1248,6 +1267,7 @@ class WinMachineInsert:
         self.root.destroy()
 
 
+# Window for Searching the Machine Table
 class WinMachineSearch:
 
     def __init__(self, master, title, user_oid):
@@ -1416,6 +1436,7 @@ class WinMachineSearch:
         self.root.destroy()
 
 
+# Window for Updating the Machine Table
 class WinMachineUpdate:
 
     def __init__(self, master, title, user_oid):
@@ -1520,6 +1541,7 @@ class WinMachineUpdate:
         self.root.destroy()
 
 
+# Window for Deleting from Machine Table
 class WinMachineDelete:
 
     def __init__(self, master, title, user_oid):
@@ -1529,7 +1551,7 @@ class WinMachineDelete:
         self.root.geometry("400x160+450+150")
         self.root.resizable(width=False, height=False)
 
-        self.select_label = Label(self.root, text="Select OID:", font=('Helvetica', 15), anchor=E)
+        self.select_label = Label(self.root, text="Select MID:", font=('Helvetica', 15), anchor=E)
         self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
         self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
@@ -1544,18 +1566,18 @@ class WinMachineDelete:
 
     def delete_record(self):
         if self.select_Entry.get() == '':
-            messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
+            messagebox.showwarning("Warning", "Please Select a Machine_ID!", parent=self.root)
         else:
             conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
-            query1 = "Select * from Machines where oid=?"
+            query1 = "Select * from Machines where Machine_ID=?"
             c.execute(query1, (self.select_Entry.get(),))
 
             if c.fetchone() is None:
                 messagebox.showerror("Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
             else:
-                query2 = "Delete from Machines where oid=?"
+                query2 = "Delete from Machines where Machine_ID=?"
                 c.execute(query2, (self.select_Entry.get(),))
 
                 self.select_Entry.delete(0, END)
@@ -1571,6 +1593,7 @@ class WinMachineDelete:
         self.root.destroy()
 
 
+# Window for Inserting into Adjuster Table
 class WinAdjusterInsert:
 
     def __init__(self, master, title, user_oid):
@@ -1619,8 +1642,9 @@ class WinAdjusterInsert:
         self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def submit(self):
-        if self.adjuster_id.get() == self.first_name.get() == self.last_name.get()\
-                == self.expertise.get() == self.email_id.get() == '':
+        # if any entry not filled then warning message displayed
+        if self.adjuster_id.get() == '' or self.first_name.get() == '' or self.last_name.get() == '' or\
+                self.expertise.get() == '' or self.email_id.get() == '':
             messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
             try:
@@ -1631,6 +1655,7 @@ class WinAdjusterInsert:
                 status = "Idle"
                 c.execute(query, (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(), self.expertise.get(), self.email_id.get(), status))
 
+                # Clearing the originally filled values
                 self.adjuster_id.delete(0, END)
                 self.first_name.delete(0, END)
                 self.last_name.delete(0, END)
@@ -1650,6 +1675,7 @@ class WinAdjusterInsert:
         self.root.destroy()
 
 
+# Window for Searching the Adjuster Table
 class WinAdjusterSearch:
 
     def __init__(self, master, title, user_oid):
@@ -1852,6 +1878,7 @@ class WinAdjusterSearch:
         self.root.destroy()
 
 
+# Window for Updating the Adjuster Table
 class WinAdjusterUpdate:
 
     def __init__(self, master, title, user_oid):
@@ -1971,6 +1998,7 @@ class WinAdjusterUpdate:
         self.root.destroy()
 
 
+# Window for Deleting from Adjuster Table
 class WinAdjusterDelete:
 
     def __init__(self, master, title, user_oid):
@@ -1981,7 +2009,7 @@ class WinAdjusterDelete:
         self.root.resizable(width=False, height=False)
 
         # Select Label and Entry
-        self.select_label = Label(self.root, text="Select OID:", font=('Helvetica', 15), anchor=E)
+        self.select_label = Label(self.root, text="Select AID:", font=('Helvetica', 15), anchor=E)
         self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
         self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
@@ -1997,21 +2025,21 @@ class WinAdjusterDelete:
     def delete_record(self):
         # Checking if an OID was given
         if self.select_Entry.get() == '':
-            messagebox.showwarning("Warning", "Please Select an OID!", parent=self.root)
+            messagebox.showwarning("Warning", "Please Select an AID!", parent=self.root)
         else:
             conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
             # Selecting Adjuster whose OID was given
-            query1 = "Select * from Adjusters where oid=?"
+            query1 = "Select * from Adjusters where Adjuster_ID=?"
             c.execute(query1, (self.select_Entry.get(),))
 
-            # Checking whether OID given has any Adjuster corresspinding to it
+            # Checking whether AID given has any Adjuster corresponding to it
             if c.fetchone() is None:
                 messagebox.showerror("Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
             else:
-                # Deleting the Adjuster with corresponding OID
-                query2 = "Delete from Adjusters where oid=?"
+                # Deleting the Adjuster with corresponding AID
+                query2 = "Delete from Adjusters where Adjuster_ID=?"
                 c.execute(query2, (self.select_Entry.get(),))
 
                 self.select_Entry.delete(0, END)
@@ -2027,18 +2055,23 @@ class WinAdjusterDelete:
         self.root.destroy()
 
 
-# This will put Failed machines inside a list
-connection = sqlite3.connect('FS_DATABASE.db')
-cur = connection.cursor()
+if __name__ == "__main__":
+    # Initialising the Interface
+    root = Tk()
 
-# Query for selecting Machines that has failed
-q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
-cur.execute(q, ("Failure",))
-machine_failure_list = cur.fetchall()
+    # This will put Failed machines inside a list
+    connection = sqlite3.connect('FS_DATABASE.db')
+    cur = connection.cursor()
 
-connection.commit()
-connection.close()
+    # Query for selecting Machines that has failed
+    q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
+    cur.execute(q, ("Failure",))
+    machine_failure_list = cur.fetchall()
 
-WinLogin(root, "Login Window")
+    connection.commit()
+    connection.close()
 
-mainloop()
+    # The First Window which appears
+    WinLogin(root, "Login Window")
+
+    mainloop()
