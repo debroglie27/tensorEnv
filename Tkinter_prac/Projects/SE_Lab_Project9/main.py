@@ -2250,11 +2250,11 @@ class WinAdjusterDelete:
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
         # Back and Delete Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=(
+            'Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(90, 0), pady=30, ipadx=10)
-        self.del_button = Button(self.root, text="Delete", bg="orange", font=('Helvetica', 11),
-                                 command=self.delete_record)
+        self.del_button = Button(self.root, text="Delete", bg="orange", font=(
+            'Helvetica', 11), command=self.delete_record)
         self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
 
     def delete_record(self):
