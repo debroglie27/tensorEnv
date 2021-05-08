@@ -1,12 +1,12 @@
-#########################################################################################
-#########################################################################################
+########################################################################################
+########################################################################################
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
 # Last Updated: 26/04/2021
 
-#########################################################################################
-#########################################################################################
+########################################################################################
+########################################################################################
 
 import os
 import smtplib
@@ -17,8 +17,8 @@ import sqlite3
 from tkinter import messagebox
 from tkinter import ttk
 
-###########################################################################################
-###########################################################################################
+########################################################################################
+########################################################################################
 
 # conn = sqlite3.connect('FS_DATABASE.db')
 # c = conn.cursor()
@@ -89,13 +89,10 @@ from tkinter import ttk
 # Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep', 'Anamika']
 # Password = ['1234', '5678', '4321', '5555', '9876', '6969', '6666']
 
-###########################################################################################
-###########################################################################################
+########################################################################################
+########################################################################################
 
-# '''
 # Window for Login
-
-
 class WinLogin:
 
     def __init__(self, master, title):
@@ -131,7 +128,7 @@ class WinLogin:
         self.login_button = Button(self.root, text="Login", bg="#90EE90", font=(
             'Helvetica', 11), command=self.login_check)
         self.login_button.grid(row=2, column=0, columnspan=2,
-                               pady=20, padx=(25, 0), ipadx=6)
+            pady=20, padx=(25, 0), ipadx=6)
 
         # SignUp Button
         self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=(
@@ -140,8 +137,7 @@ class WinLogin:
             row=2, column=2, columnspan=2, pady=20, padx=(0, 50), ipadx=6)
 
         # Forgot Password Button
-        self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT,
-                                         command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
+        self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
         self.forgot_pass_button.grid(
             row=3, column=1, padx=(0, 30), columnspan=2)
 
@@ -226,13 +222,13 @@ class WinForgotPass:
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=(
             'Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=2, column=0, columnspan=2,
-                              pady=10, padx=(40, 0), ipadx=10)
+            pady=10, padx=(40, 0), ipadx=10)
 
         # Send Button
         self.send_button = Button(self.root, text="Send", bg="#90EE90", font=(
             'Helvetica', 11), command=self.email_check)
         self.send_button.grid(row=2, column=2, columnspan=2,
-                              pady=10, padx=(0, 60), ipadx=10)
+            pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
         env_path = Path('../../../../openCV_venv/.env')
@@ -269,7 +265,7 @@ class WinForgotPass:
                     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                         smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
-                        subject = 'Forgot Password: Factory Simulation'
+                        subject = 'Forgot Password: Factory Simulation Software'
                         body = f'Dear User\n\nPlease find your Password of your Factory Simulation Account\n\nPassword: {user_password[0]}'
 
                         msg = f'Subject: {subject}\n\n{body}'
@@ -337,17 +333,17 @@ class WinSignup:
         self.secret_label = Label(
             self.root, text="Secret Key:", font=('Helvetica', 15))
         self.secret_label.grid(row=3, column=0, padx=10,
-                               pady=(20, 10), sticky=E)
+            pady=(20, 10), sticky=E)
         self.secret_entry = Entry(
             self.root, show=self.bullet_symbol, font=('Helvetica', 15))
         self.secret_entry.grid(row=3, column=1, padx=10,
-                               pady=(20, 10), columnspan=3)
+            pady=(20, 10), columnspan=3)
 
         # Back Button
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=(
             'Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=4, column=0, columnspan=2,
-                              pady=20, padx=(30, 0), ipadx=4)
+            pady=20, padx=(30, 0), ipadx=4)
 
         # Submit Button
         self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=(
@@ -425,14 +421,11 @@ class WinHome:
         self.head_label.pack(pady=(0, 10), ipadx=28, ipady=5)
 
         # Machine, Adjuster and Maintenance Window Button
-        self.but_machine = Button(self.root, text="Machine", font=('Helvetica', 15), bg='#fdebd0',
-                                  command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
+        self.but_machine = Button(self.root, text="Machine", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
         self.but_machine.pack(pady=(32, 0), ipadx=32)
-        self.but_adjuster = Button(self.root, text="Adjuster", font=('Helvetica', 15), bg='#fdebd0',
-                                   command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
+        self.but_adjuster = Button(self.root, text="Adjuster", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
         self.but_adjuster.pack(pady=(26, 0), ipadx=32)
-        self.but_maintenance = Button(self.root, text="Maintenance", font=('Helvetica', 15), bg='#fdebd0',
-                                      command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
+        self.but_maintenance = Button(self.root, text="Maintenance", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.but_maintenance.pack(pady=(26, 0), ipadx=12)
 
         # Create Menu
@@ -573,11 +566,9 @@ class WinUserDetails:
         self.email_entry.grid(row=1, column=1, padx=10, pady=20, sticky=W)
 
         # Change Buttons
-        self.change_button1 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange",
-                                     command=lambda: self.change_entry(0))
+        self.change_button1 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange", command=lambda: self.change_entry(0))
         self.change_button1.grid(row=0, column=2, padx=5, pady=(30, 0))
-        self.change_button2 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange",
-                                     command=lambda: self.change_entry(1))
+        self.change_button2 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange", command=lambda: self.change_entry(1))
         self.change_button2.grid(row=1, column=2, padx=5, pady=20)
 
         conn = sqlite3.connect('FS_DATABASE.db')
@@ -605,13 +596,11 @@ class WinUserDetails:
         self.button_frame.grid(row=2, column=0, columnspan=3)
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
 
         # Save Button
-        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11),
-                                  command=self.save_details)
+        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.save_details)
         self.save_button.grid(row=0, column=1, pady=20, padx=(40, 0), ipadx=5)
 
     def close_window(self):
@@ -691,13 +680,11 @@ class WinChangePassword:
         self.button_frame.grid(row=3, column=0, pady=20, columnspan=2)
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
 
         # Save Button
-        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11),
-                                  command=self.change_password)
+        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_password)
         self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def close_window(self):
@@ -835,8 +822,7 @@ class WinAllUserDetails:
         self.button_frame.pack(pady=(20, 10))
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.grid(row=0, column=0, pady=10, padx=(5, 45), ipadx=5)
 
         # Remove Button
@@ -897,10 +883,8 @@ class WinChangeSecretKey:
             row=0, column=1, padx=10, pady=(30, 10), sticky=W)
 
         # Forgot Secret Key Button
-        self.forgot_secret_key_button = Button(self.root, text="Forgot Secret Key?", fg="blue", relief=FLAT,
-                                               command=lambda: self.new_window(WinForgotSecretKey,
-                                                                               "Forgot Secret Key Window",
-                                                                               self.user_oid))
+        self.forgot_secret_key_button = Button(self.root, text="Forgot Secret Key?", fg="blue", relief=FLAT, command=lambda: self.new_window(WinForgotSecretKey,
+            "Forgot Secret Key Window", self.user_oid))
         self.forgot_secret_key_button.grid(row=1, column=0, columnspan=2)
 
         # New Password Label and Entry
@@ -928,13 +912,11 @@ class WinChangeSecretKey:
         self.button_frame.grid(row=4, column=0, pady=20, columnspan=2)
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.grid(row=0, column=0, padx=(10, 40), ipadx=5)
 
         # Save Button
-        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11),
-                                  command=self.change_secret_key)
+        self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_secret_key)
         self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def new_window(self, _class, title, oid):
@@ -998,8 +980,7 @@ class WinForgotSecretKey:
         self.root.resizable(width=False, height=False)
 
         # Instruction Label
-        self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere Secret Key will be shared.",
-                                       font=('Helvetica', 13), fg="green")
+        self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere Secret Key will be shared.", font=('Helvetica', 13), fg="green")
         self.instruction_label.grid(
             row=0, column=0, padx=57, pady=(20, 0), columnspan=4)
 
@@ -1012,16 +993,14 @@ class WinForgotSecretKey:
             0, 30), pady=20, columnspan=3)
 
         # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=2, column=0, columnspan=2,
-                              pady=10, padx=(40, 0), ipadx=10)
+            pady=10, padx=(40, 0), ipadx=10)
 
         # Send Button
-        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11),
-                                  command=self.email_check)
+        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11), command=self.email_check)
         self.send_button.grid(row=2, column=2, columnspan=2,
-                              pady=10, padx=(0, 60), ipadx=10)
+            pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
         env_path = Path('../../../../openCV_venv/.env')
@@ -1060,7 +1039,7 @@ class WinForgotSecretKey:
                     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                         smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
-                        subject = 'Forgot Secret Key: Address Database'
+                        subject = 'Forgot Secret Key: Factory Simulation Software'
                         body = f'Dear User\n\nPlease find the Secret Key of the Address Database Account\n\nSecret Key: {secret_key[0]}'
 
                         msg = f'Subject: {subject}\n\n{body}'
@@ -1101,35 +1080,30 @@ class WinMachine:
         self.head_label.pack(pady=(0, 10), ipadx=32, ipady=5)
 
         # Insert Search Update Delete Buttons
-        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
+        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
         self.but_insert.pack(pady=(15, 0), ipadx=35)
-        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
+        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
         self.but_search.pack(pady=(20, 0), ipadx=29)
-        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
+        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
         self.but_update.pack(pady=(20, 0), ipadx=29)
-        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
+        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
         self.but_delete.pack(pady=(20, 0), ipadx=32)
 
         # Back Button
-        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6",
-                               command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6", command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
         self.but_back.pack(pady=(10, 0), padx=(5, 0), ipadx=5, anchor=W)
 
         # Add Right Click Pop Up Menu
         self.my_popup_menu = Menu(self.root, tearoff=False)
         # Insert, Search, Update and Delete
         self.my_popup_menu.add_command(label="Insert",
-                                       command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
+                                    command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
         self.my_popup_menu.add_command(label="Search",
-                                       command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
+            command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
         self.my_popup_menu.add_command(label="Update",
-                                       command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
+            command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
         self.my_popup_menu.add_command(label="Delete",
-                                       command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
+            command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
         self.my_popup_menu.add_separator()
 
         # Back
@@ -1185,40 +1159,35 @@ class WinAdjuster:
         self.head_label.pack(pady=(0, 10), ipadx=32, ipady=5)
 
         # Insert Search Update Delete Buttons
-        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
+        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
         self.but_insert.pack(pady=(15, 0), ipadx=35)
-        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
+        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
         self.but_search.pack(pady=(20, 0), ipadx=29)
-        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
+        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
         self.but_update.pack(pady=(20, 0), ipadx=29)
-        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0',
-                                 command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
+        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
         self.but_delete.pack(pady=(20, 0), ipadx=32)
 
         # Back Button
-        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6",
-                               command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6", command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
         self.but_back.pack(pady=(10, 0), padx=(5, 0), ipadx=5, anchor=W)
 
         # Add Right Click Pop Up Menu
         self.my_popup_menu = Menu(self.root, tearoff=False)
         # Insert, Search, Update and Delete
         self.my_popup_menu.add_command(label="Insert",
-                                       command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
+            command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
         self.my_popup_menu.add_command(label="Search",
-                                       command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
+            command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
         self.my_popup_menu.add_command(label="Update",
-                                       command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
+            command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
         self.my_popup_menu.add_command(label="Delete",
-                                       command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
+            command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
         self.my_popup_menu.add_separator()
 
         # Back and Exit
         self.my_popup_menu.add_command(label="Back",
-                                       command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+            command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
 
         # Binding the Right click Pop Up Menu
         self.root.bind("<Button-3>", self.my_popup)
@@ -1315,8 +1284,7 @@ class WinMaintenance:
             self.count += 1
 
         # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.pack(pady=(25, 0), ipadx=10)
 
     def close_window(self):
@@ -1384,7 +1352,7 @@ class WinMachineInsert:
                 query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
                 status = "Working"
                 c.execute(query, (self.machine_id.get(),
-                          self.machine_type.get(), self.mttf.get(), status))
+                        self.machine_type.get(), self.mttf.get(), status))
 
                 # Clearing the originally filled values
                 self.machine_id.delete(0, END)
@@ -1426,21 +1394,17 @@ class WinMachineSearch:
 
         # Drop Down Box for Search Type
         self.drop = ttk.Combobox(self.root,
-                                 value=['Search by...', 'OID', 'Machine_ID',
-                                        'Machine_Type', 'MTTF', 'Status'],
-                                 font=('Helvetica', 11))
+            value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status'], font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
         # Buttons (Back, Show, Show_All)
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
         self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11),
                                     command=lambda: self.show(1))
         self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
-        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11),
-                                      command=lambda: self.show(0))
+        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
         self.show_all_button.grid(
             row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
 
@@ -1485,8 +1449,7 @@ class WinMachineSearch:
         self.count = 0
 
         # Change Status Button
-        self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11),
-                                           command=self.change_status)
+        self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11), command=self.change_status)
         self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
     def change_status(self):
@@ -1610,12 +1573,10 @@ class WinMachineUpdate:
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
         # Back and Show Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(
             90, 0), pady=(10, 30), ipadx=6)
-        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11),
-                                  command=self.display)
+        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11), command=self.display)
         self.show_button.grid(row=1, column=1, padx=(
             0, 60), pady=(10, 30), ipadx=6)
 
@@ -1666,7 +1627,7 @@ class WinMachineUpdate:
             c = conn.cursor()
 
             c.execute("Select * from Machines where OID=?",
-                      self.select_Entry.get())
+                    self.select_Entry.get())
             record = c.fetchone()
 
             if not record:
@@ -1694,7 +1655,7 @@ class WinMachineUpdate:
 
                 query = "update Machines set Machine_ID = ?, Machine_Type = ?, mttf = ? where OID = ?"
                 e = (self.machine_id.get(), self.machine_type.get(),
-                     self.mttf.get(), self.select_Entry.get())
+                    self.mttf.get(), self.select_Entry.get())
                 c.execute(query, e)
 
                 self.machine_id.delete(0, END)
@@ -1735,11 +1696,9 @@ class WinMachineDelete:
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
         # Back and Delete Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(90, 0), pady=30, ipadx=10)
-        self.del_button = Button(self.root, text="Delete", bg="orange", font=('Helvetica', 11),
-                                 command=self.delete_record)
+        self.del_button = Button(self.root, text="Delete", bg="orange", font=('Helvetica', 11), command=self.delete_record)
         self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
 
     def delete_record(self):
@@ -1823,8 +1782,7 @@ class WinAdjusterInsert:
         self.button_frame.grid(row=5, column=0, pady=10, columnspan=2)
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11), command=self.close_window)
         self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
 
         # Submit Button
@@ -1890,21 +1848,17 @@ class WinAdjusterSearch:
 
         # Drop Down Box for Search Type
         self.drop = ttk.Combobox(self.root,
-                                 value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise',
-                                        'Email_id', 'Status'],
-                                 font=('Helvetica', 11))
+            value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise', 'Email_id', 'Status'], font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
         # Buttons (Back, Show, Show_All)
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
         self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11),
                                     command=lambda: self.show(1))
         self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
-        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11),
-                                      command=lambda: self.show(0))
+        self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
         self.show_all_button.grid(
             row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
 
@@ -1952,8 +1906,7 @@ class WinAdjusterSearch:
         self.count = 0
 
         # Change Status Button
-        self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11),
-                                           command=self.change_status)
+        self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11), command=self.change_status)
         self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
     def change_status(self):
@@ -1977,8 +1930,7 @@ class WinAdjusterSearch:
                         status = "Busy"
 
                         # Update the Treeview
-                        self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
-                                                                     values[4], values[5], status))
+                        self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
 
                         conn = sqlite3.connect('FS_DATABASE.db')
                         c = conn.cursor()
@@ -2002,8 +1954,7 @@ class WinAdjusterSearch:
                 status = "Idle"
 
                 # Update the Treeview
-                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
-                                                             values[4], values[5], status))
+                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
 
                 conn = sqlite3.connect('FS_DATABASE.db')
                 c = conn.cursor()
@@ -2104,12 +2055,10 @@ class WinAdjusterUpdate:
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
         # Back and Show Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(
             90, 0), pady=(10, 30), ipadx=6)
-        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11),
-                                  command=self.display)
+        self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11), command=self.display)
         self.show_button.grid(row=1, column=1, padx=(
             0, 60), pady=(10, 30), ipadx=6)
 
@@ -2175,7 +2124,7 @@ class WinAdjusterUpdate:
             c = conn.cursor()
 
             c.execute("Select * from Adjusters where OID=?",
-                      self.select_Entry.get())
+                    self.select_Entry.get())
             record = c.fetchone()
 
             if not record:
@@ -2313,4 +2262,3 @@ if __name__ == "__main__":
     WinLogin(root, "Login Window")
 
     mainloop()
-# '''
