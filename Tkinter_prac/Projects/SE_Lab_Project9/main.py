@@ -3,7 +3,7 @@
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
-# Last Updated: 26/04/2021
+# Last Updated: 08/05/2021
 
 ########################################################################################
 ########################################################################################
@@ -62,7 +62,7 @@ from tkinter import ttk
 # Fetching Data from Users
 # c.execute("Select * from Users")
 # record = c.fetchall()
-#
+
 # for rec in record:
 #     print(rec)
 
@@ -87,7 +87,7 @@ from tkinter import ttk
 # Secret Key: 12345
 
 # Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep', 'Anamika']
-# Password = ['1234', '5678', '4321', '5555', '9876', '6969', '6666']
+# Password = ['1234', '1999', '4321', '5555', '9876', '6969', '5555']
 
 ########################################################################################
 ########################################################################################
@@ -1467,25 +1467,33 @@ class WinMachineSearch:
 
             if values[4] == "U/M":
                 return
-            elif values[4] == "Working":
-                status = "Failure"
-                try:
-                    query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
-                    c.execute(query, (oid,))
-                    machine_failure_list.append(c.fetchone())
-                except Exception:
-                    messagebox.showwarning(
-                        "Warning", "Please Try Again!!!", parent=self.root)
             else:
-                status = "Working"
-                try:
-                    query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
-                    c.execute(query, (oid,))
-                    machine_failure_list.pop(
-                        machine_failure_list.index(c.fetchone()))
-                except Exception:
-                    messagebox.showwarning(
-                        "Warning", "Please Try Again!!!", parent=self.root)
+                # Asking for confirmation whether user wants to change status or not
+                user_ans = messagebox.askyesno(
+                                "Confirmation", "Do you want to Change Status?", parent=self.root)
+                # If User pressed 'No' nothing will happen
+                if not user_ans:
+                    return
+
+                if values[4] == "Working":
+                    status = "Failure"
+                    try:
+                        query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
+                        c.execute(query, (oid,))
+                        machine_failure_list.append(c.fetchone())
+                    except Exception:
+                        messagebox.showwarning(
+                            "Warning", "Please Try Again!!!", parent=self.root)
+                else:
+                    status = "Working"
+                    try:
+                        query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
+                        c.execute(query, (oid,))
+                        machine_failure_list.pop(
+                            machine_failure_list.index(c.fetchone()))
+                    except Exception:
+                        messagebox.showwarning(
+                            "Warning", "Please Try Again!!!", parent=self.root)
 
             # Update the Treeview
             self.my_tree.item(selected, text="", values=(
@@ -1933,13 +1941,6 @@ class WinAdjusterSearch:
 
     def change_status(self):
         if self.my_tree.selection():
-            # Asking for confirmation whether user wants to change status or not
-            user_ans = messagebox.askyesno(
-                                "Confirmation", "Do you want to Change Status?\nIt will take some time please be patient!", parent=self.root)
-            # If User pressed 'No' nothing will happen
-            if not user_ans:
-                return
-
             # Grab the Record number
             selected = self.my_tree.focus()
             # Grab the values of the record
@@ -1950,6 +1951,13 @@ class WinAdjusterSearch:
             adjuster_id = values[1]
 
             if values[6] == "Idle":
+                # Asking for confirmation whether user wants to change status or not
+                user_ans = messagebox.askyesno(
+                                "Confirmation", "Do you want to Change Status?\nIt will take some time please be patient!", parent=self.root)
+                # If User pressed 'No' nothing will happen
+                if not user_ans:
+                    return
+
                 for machine in machine_failure_list:
                     # Machine Type == Adjuster Expertise
                     if machine[2] == values[4]:
@@ -1990,6 +1998,13 @@ class WinAdjusterSearch:
                             messagebox.showwarning(
                                 "Warning", "Please Try Again!!!", parent=self.root)
             else:
+                # Asking for confirmation whether user wants to change status or not
+                user_ans = messagebox.askyesno(
+                                "Confirmation", "Do you want to Change Status?", parent=self.root)
+                # If User pressed 'No' nothing will happen
+                if not user_ans:
+                    return
+
                 status = "Idle"
 
                 # Update the Treeview
