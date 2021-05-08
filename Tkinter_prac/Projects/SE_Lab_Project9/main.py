@@ -1909,8 +1909,37 @@ class WinAdjusterSearch:
         self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11), command=self.change_status)
         self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
+        # Loading the Environment Variables from .env file
+        env_path = Path('../../../../openCV_venv/.env')
+        load_dotenv(dotenv_path=env_path)
+
+        self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
+        self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
+
+    def send_mail(self, email, machine_id):
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+
+            subject = 'Machine Fixing Duty: Factory Simulation Software'
+            body = f'Dear Adjuster\n\nPlease find the Machine_ID which you need to fix\n\nMachine ID: {machine_id}'
+
+            msg = f'Subject: {subject}\n\n{body}'
+
+            smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
+
+            # Message to inform that Email has been sent
+            messagebox.showinfo(
+                "Information", "Mail has been sent Successfully:)", parent=self.root)
+            self.close_window()
+
     def change_status(self):
         if self.my_tree.selection():
+            # Asking for confirmation whether user wants to change status or not
+            user_ans = messagebox.askyesno(
+                                "Confirmation", "Do you want to Change Status?\nIt will take some time please be patient!", parent=self.root)
+            if not user_ans:
+                return
+
             # Grab the Record number
             selected = self.my_tree.focus()
             # Grab the values of the record
@@ -1936,20 +1965,31 @@ class WinAdjusterSearch:
                         c = conn.cursor()
 
                         try:
+                            # Adjuster status becomes busy
                             query = "Update Adjusters set Status=? where OID=?"
                             c.execute(query, (status, oid))
 
+                            # Finding email of the Adjuster
+                            query = "Select Email_id from Adjusters where OID=?"
+                            c.execute(query, oid)
+                            email = c.fetchone()[0]
+
+                            # Machine status becomes U/M
                             query = "Update Machines set Status=? where Machine_ID=?"
                             c.execute(query, ("U/M", machine_id))
 
+                            # Entry made to Maintenance table
                             query = "Insert Into Maintenance(Machine_ID, Adjuster_ID) values(?, ?)"
                             c.execute(query, (machine_id, adjuster_id))
+
+                            self.send_mail(email, machine_id)
+
+                            conn.commit()
+                            conn.close()
                         except Exception:
                             messagebox.showwarning(
                                 "Warning", "Please Try Again!!!", parent=self.root)
 
-                        conn.commit()
-                        conn.close()
             else:
                 status = "Idle"
 
@@ -1976,12 +2016,12 @@ class WinAdjusterSearch:
                     # Updating the status of Machine
                     query = "Update Machines set Status=? where Machine_ID=?"
                     c.execute(query, ("Working", machine_id))
+
+                    conn.commit()
+                    conn.close()
                 except Exception:
                     messagebox.showwarning(
                         "Warning", "Please Try Again!!!", parent=self.root)
-
-                conn.commit()
-                conn.close()
 
     def show(self, a):
         if self.search_Entry.get() == "" and a == 1:
@@ -1998,37 +2038,41 @@ class WinAdjusterSearch:
         conn = sqlite3.connect('FS_DATABASE.db')
         c = conn.cursor()
 
-        if a == 0:
-            c.execute("Select OID, * from Adjusters")
-        else:
-            query = "select OID, * from Adjusters where " + selection + " LIKE ?"
-            value = '%' + self.search_Entry.get() + '%'
-            c.execute(query, (value,))
+        try:
+            if a == 0:
+                c.execute("Select OID, * from Adjusters")
+            else:
+                query = "select OID, * from Adjusters where " + selection + " LIKE ?"
+                value = '%' + self.search_Entry.get() + '%'
+                c.execute(query, (value,))
 
-        records = c.fetchall()
+            records = c.fetchall()
 
-        # Removing the Preexisting Records(if any)
-        for rec in self.my_tree.get_children():
-            self.my_tree.delete(rec)
+            # Removing the Preexisting Records(if any)
+            for rec in self.my_tree.get_children():
+                self.my_tree.delete(rec)
 
-        # Resetting the Count
-        self.count = 0
+            # Resetting the Count
+            self.count = 0
 
-        if records:
-            for record in records:
-                self.my_tree.insert(parent='', index='end',
-                                    iid=self.count, text="", values=record)
-                self.count += 1
-        else:
-            messagebox.showinfo(
-                "Information", "No Record Found!!!", parent=self.root)
+            if records:
+                for record in records:
+                    self.my_tree.insert(parent='', index='end',
+                                        iid=self.count, text="", values=record)
+                    self.count += 1
+            else:
+                messagebox.showinfo(
+                    "Information", "No Record Found!!!", parent=self.root)
 
-        # Clearing the Entry Box and Resetting the Drop Down Box
-        self.search_Entry.delete(0, END)
-        self.drop.current(0)
+            # Clearing the Entry Box and Resetting the Drop Down Box
+            self.search_Entry.delete(0, END)
+            self.drop.current(0)
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                        "Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -2123,22 +2167,26 @@ class WinAdjusterUpdate:
             conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
-            c.execute("Select * from Adjusters where OID=?",
-                    self.select_Entry.get())
-            record = c.fetchone()
+            try:
+                c.execute("Select * from Adjusters where OID=?",
+                        self.select_Entry.get())
+                record = c.fetchone()
 
-            if not record:
-                messagebox.showinfo(
-                    "Information", "No Record Found!", parent=self.root)
-            else:
-                self.adjuster_id.insert(0, record[0])
-                self.first_name.insert(0, record[1])
-                self.last_name.insert(0, record[2])
-                self.expertise.insert(0, record[3])
-                self.email_id.insert(0, record[4])
+                if not record:
+                    messagebox.showinfo(
+                        "Information", "No Record Found!", parent=self.root)
+                else:
+                    self.adjuster_id.insert(0, record[0])
+                    self.first_name.insert(0, record[1])
+                    self.last_name.insert(0, record[2])
+                    self.expertise.insert(0, record[3])
+                    self.email_id.insert(0, record[4])
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning(
+                    "Warning", "Please Try Again!", parent=self.root)
 
     def update(self):
         if self.select_Entry.get() == '':
@@ -2215,26 +2263,31 @@ class WinAdjusterDelete:
             conn = sqlite3.connect('FS_DATABASE.db')
             c = conn.cursor()
 
-            # Selecting Adjuster whose OID was given
-            query1 = "Select * from Adjusters where Adjuster_ID=?"
-            c.execute(query1, (self.select_Entry.get(),))
+            try:
+                # Selecting Adjuster whose OID was given
+                query1 = "Select * from Adjusters where Adjuster_ID=?"
+                c.execute(query1, (self.select_Entry.get(),))
 
-            # Checking whether AID given has any Adjuster corresponding to it
-            if c.fetchone() is None:
-                messagebox.showerror(
-                    "Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
-            else:
-                # Deleting the Adjuster with corresponding AID
-                query2 = "Delete from Adjusters where Adjuster_ID=?"
-                c.execute(query2, (self.select_Entry.get(),))
+                # Checking whether AID given has any Adjuster corresponding to it
+                if c.fetchone() is None:
+                    messagebox.showerror(
+                        "Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
+                else:
+                    # Deleting the Adjuster with corresponding AID
+                    query2 = "Delete from Adjusters where Adjuster_ID=?"
+                    c.execute(query2, (self.select_Entry.get(),))
 
-                self.select_Entry.delete(0, END)
+                    self.select_Entry.delete(0, END)
 
-                messagebox.showinfo(
-                    "Information", "Successfully Deleted", parent=self.root)
-
-            conn.commit()
-            conn.close()
+                    messagebox.showinfo(
+                        "Information", "Successfully Deleted", parent=self.root)
+                        
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning(
+                    "Warning", "Please Try Again!", parent=self.root)
+            
 
     def close_window(self):
         level = Tk()
