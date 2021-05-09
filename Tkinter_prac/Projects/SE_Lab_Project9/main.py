@@ -3,7 +3,7 @@
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
-# Last Updated: 08/05/2021
+# Last Updated: 09/05/2021
 
 ########################################################################################
 ########################################################################################
@@ -16,6 +16,7 @@ from tkinter import *
 import sqlite3
 from tkinter import messagebox
 from tkinter import ttk
+from cryptography.fernet import Fernet
 
 ########################################################################################
 ########################################################################################
@@ -46,7 +47,7 @@ from tkinter import ttk
 # Create Table Users
 # c.execute('''Create table Users ([Username] text PRIMARY KEY,
 # [Email_id] text,
-# [Password] text)''')
+# [Password] blob)''')
 
 # Create Table Maintenance
 # c.execute('''Create table Maintenance ([Machine_ID] text,
@@ -55,9 +56,27 @@ from tkinter import ttk
 # Create Table Secret_Key
 # c.execute('''Create table Secret_Key ([secret_key] text)''')
 
+# Encryption Code
+# path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+# load_dotenv(dotenv_path=path)
+# key = os.environ.get('ENCRYPTION_KEY')
+# fernet = Fernet(key)
+# message = "7777"
+# encMessage = fernet.encrypt(message.encode())
+
 # Insert Data values in Users
 # query = "Insert Into Users(Username, Email_id, Password) values(?, ?, ?)"
-# c.execute(query, ('Anamika', 'anamika@gmail.com', '6666'))
+# c.execute(query, ('Mrinal', 'mrinal@gmail.com', encMessage))
+
+# Decryption Code
+# path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+# load_dotenv(dotenv_path=path)
+# key = os.environ.get('ENCRYPTION_KEY')
+# fernet = Fernet(key)
+# query = "Select Password from Users where OID=1"
+# c.execute(query)
+# password = c.fetchone()[0]
+# decMessage1 = fernet.decrypt(password).decode()
 
 # Fetching Data from Users
 # c.execute("Select * from Users")
@@ -86,8 +105,8 @@ from tkinter import ttk
 # ADMIN: Arijeet
 # Secret Key: 12345
 
-# Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep', 'Anamika']
-# Password = ['1234', '1999', '4321', '5555', '9876', '6969', '5555']
+# Users = ['Arijeet', 'Aushish', 'Aravind', 'Anwesha', 'Ankit', 'Gunadeep', 'Mrinal']
+# Password = ['1234', '1999', '4321', '5555', '9876', '6969', '7777']
 
 ########################################################################################
 ########################################################################################
@@ -145,6 +164,14 @@ class WinLogin:
         self.username_entry.insert(0, "Username")
         self.password_entry.insert(0, "Password")
 
+        # Loading our .env file
+        env_path = Path(env_file_path)
+        load_dotenv(dotenv_path=env_path)
+
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
+
     def placeholder_vanish(self, val):
         if val == 0 and self.username_entry.get() == "Username":
             # Deleting the Placeholder and making foreground "black"
@@ -168,13 +195,15 @@ class WinLogin:
             query = 'Select Password, oid from Users where Username=?'
             c.execute(query, (username,))
 
-            record, oid = c.fetchone()
+            en_user_password, oid = c.fetchone()
+            # Decrypting user password
+            de_user_password = self.fernet.decrypt(en_user_password).decode()
 
             conn.commit()
             conn.close()
 
             # Checking whether password provided matched
-            if record == password:
+            if de_user_password == password:
                 self.new_window(WinHome, "Home Window", oid)
             else:
                 messagebox.showerror(
@@ -231,11 +260,15 @@ class WinForgotPass:
             pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
-        env_path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+        env_path = Path(env_file_path)
         load_dotenv(dotenv_path=env_path)
 
         self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
         self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
+
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
 
     def email_check(self):
         # Displaying Message Informing that it will take time
@@ -261,12 +294,15 @@ class WinForgotPass:
                     "Error", "Incorrect!!! Email-id", parent=self.root)
             else:
                 try:
+                    # Decrypting user password
+                    user_password = self.fernet.decrypt(user_password[0]).decode()
+
                     # Sending Email Code
                     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                         smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
                         subject = 'Forgot Password: Factory Simulation Software'
-                        body = f'Dear User\n\nPlease find your Password of your Factory Simulation Account\n\nPassword: {user_password[0]}'
+                        body = f'Dear User\n\nPlease find your Password of your Factory Simulation Account\n\nPassword: {user_password}'
 
                         msg = f'Subject: {subject}\n\n{body}'
 
@@ -1003,7 +1039,7 @@ class WinForgotSecretKey:
             pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
-        env_path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+        env_path = Path(env_file_path)
         load_dotenv(dotenv_path=env_path)
 
         self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
@@ -1918,7 +1954,7 @@ class WinAdjusterSearch:
         self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
         # Loading the Environment Variables from .env file
-        env_path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+        env_path = Path(env_file_path)
         load_dotenv(dotenv_path=env_path)
 
         self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
