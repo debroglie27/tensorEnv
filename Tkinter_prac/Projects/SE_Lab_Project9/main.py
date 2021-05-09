@@ -54,7 +54,7 @@ from cryptography.fernet import Fernet
 # [Adjuster_ID] text)''')
 
 # Create Table Secret_Key
-# c.execute('''Create table Secret_Key ([secret_key] text)''')
+# c.execute('''Create table Secret_Key ([secret_key] blob)''')
 
 # Encryption Code
 # path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
@@ -85,9 +85,15 @@ from cryptography.fernet import Fernet
 # for rec in record:
 #     print(rec)
 
-# Insert secret_key in Secret_Key
-# query = "Insert Into Secret_Key(secret_key) values('12345')"
-# c.execute(query)
+# Insert secret_key in Secret_Key after Encryption
+# path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+# load_dotenv(dotenv_path=path)
+# key = os.environ.get('ENCRYPTION_KEY')
+# fernet = Fernet(key)
+# message = "12345"
+# encMessage = fernet.encrypt(message.encode())
+# query = "Insert Into Secret_Key(secret_key) values(?)"
+# c.execute(query, (encMessage,))
 
 # Fetching Data from Secret_Key
 # c.execute("Select * from Secret_Key")
@@ -387,6 +393,14 @@ class WinSignup:
         self.submit_button.grid(
             row=4, column=2, columnspan=2, pady=20, padx=(0, 60), ipadx=4)
 
+        # Loading the Environment Variables from .env file
+        env_path = Path(env_file_path)
+        load_dotenv(dotenv_path=env_path)
+
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
+
     def signup_check(self):
         # Storing the values of Entry Boxes
         username = self.username_entry.get()
@@ -406,15 +420,20 @@ class WinSignup:
         # Finding Secret Key
         c.execute("Select secret_key from Secret_Key")
 
-        record = c.fetchone()[0]
+        encrypted_secret_key = c.fetchone()[0]
+        # Decrypting user password
+        decrypted_secret_key = self.fernet.decrypt(encrypted_secret_key).decode()
 
-        if not secret_key == record:
+        if not secret_key == decrypted_secret_key:
             messagebox.showerror(
                 "Error", "Secret Key Incorrect!!!", parent=self.root)
         else:
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
+
+                # Encrypting user password
+                password = self.fernet.encrypt(password.encode())
 
                 # Inserting Details of New User
                 query = "Insert Into users(Username, Email_id, Password) values(?, ?, ?)"
@@ -487,10 +506,8 @@ class WinHome:
         self.settings_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="Settings", menu=self.settings_menu)
         # Add Settings Menu Items
-        self.settings_menu.add_command(label="User Details", command=lambda: self.new_window(
-            WinUserDetails, "User Details", self.user_oid))
-        self.settings_menu.add_command(label="Change Password", command=lambda: self.new_window(
-            WinChangePassword, "Change Password", self.user_oid))
+        self.settings_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
+        self.settings_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePassword, "Change Password", self.user_oid))
 
         # Only for Admin
         if self.user_oid == 1:
@@ -509,16 +526,12 @@ class WinHome:
         # Insert, Search, Update and Delete
         self.my_popup_menu.add_command(label="Machine", command=lambda: self.new_window(
             WinMachine, "Machine Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Adjuster", command=lambda: self.new_window(
-            WinAdjuster, "Adjuster Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Maintenance", command=lambda: self.new_window(
-            WinMaintenance, "Maintenance Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Adjuster", command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Maintenance", command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.my_popup_menu.add_separator()
         # User Details and Change Password
-        self.my_popup_menu.add_command(label="User Details", command=lambda: self.new_window(
-            WinUserDetails, "User Details", self.user_oid))
-        self.my_popup_menu.add_command(label="Change Password", command=lambda: self.new_window(
-            WinChangePassword, "Change Password", self.user_oid))
+        self.my_popup_menu.add_command(label="User Details", command=lambda: self.new_window(WinUserDetails, "User Details", self.user_oid))
+        self.my_popup_menu.add_command(label="Change Password", command=lambda: self.new_window(WinChangePassword, "Change Password", self.user_oid))
         self.my_popup_menu.add_separator()
 
         # Only for Admin
@@ -610,14 +623,18 @@ class WinUserDetails:
         conn = sqlite3.connect(database_file_path)
         c = conn.cursor()
 
-        # Finding Details of User
-        query = 'Select Username, Email_id from Users where OID=?'
-        c.execute(query, (self.user_oid,))
+        try:
+            # Finding Details of User
+            query = 'Select Username, Email_id from Users where OID=?'
+            c.execute(query, (self.user_oid,))
 
-        username, email = c.fetchone()
+            username, email = c.fetchone()
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
         # Displaying Values in Username Entry and Email Entry
         self.username_entry.insert(0, username)
@@ -654,18 +671,22 @@ class WinUserDetails:
         conn = sqlite3.connect(database_file_path)
         c = conn.cursor()
 
-        # Updating the database with new values
-        query = "update Users set Username = ?, Email_id = ? where OID = ?"
-        e = (self.username_entry.get(), self.email_entry.get(), self.user_oid)
-        c.execute(query, e)
+        try:
+            # Updating the database with new values
+            query = "update Users set Username = ?, Email_id = ? where OID = ?"
+            e = (self.username_entry.get(), self.email_entry.get(), self.user_oid)
+            c.execute(query, e)
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
 
-        # Message Informing Successful Saving
-        messagebox.showinfo(
-            "Information", "Successfully Saved", parent=self.root)
-        self.close_window()
+            # Message Informing Successful Saving
+            messagebox.showinfo(
+                "Information", "Successfully Saved", parent=self.root)
+            self.close_window()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
 
 # Window for Changing Password
@@ -723,6 +744,14 @@ class WinChangePassword:
         self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_password)
         self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
+        # Loading the Environment Variables from .env file
+        env_path = Path(env_file_path)
+        load_dotenv(dotenv_path=env_path)
+
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
+
     def close_window(self):
         level = Tk()
         WinHome(level, "Home Window", self.user_oid)
@@ -742,32 +771,40 @@ class WinChangePassword:
         conn = sqlite3.connect(database_file_path)
         c = conn.cursor()
 
-        # Finding password the given user
-        query = "Select Password from Users where oid=?"
-        c.execute(query, (self.user_oid,))
+        try:
+            # Finding password for the given user
+            query = "Select Password from Users where oid=?"
+            c.execute(query, (self.user_oid,))
 
-        record = c.fetchone()[0]
+            encrypted_password = c.fetchone()[0]
+            # Decrypting password
+            decrypted_password = self.fernet.decrypt(encrypted_password).decode()
 
-        if record != current_password:
-            messagebox.showerror(
-                "Error", "Wrong Current Password!!!", parent=self.root)
-        else:
-            if new_password != confirm_password:
+            if decrypted_password != current_password:
                 messagebox.showerror(
-                    "Error", "Confirm Password is not same\nas New Password!!!", parent=self.root)
+                    "Error", "Wrong Current Password!!!", parent=self.root)
             else:
-                query = "update Users set Password = ? where OID = ?"
-                c.execute(query, (confirm_password, self.user_oid))
+                if new_password != confirm_password:
+                    messagebox.showerror(
+                        "Error", "Confirm Password is not same\nas New Password!!!", parent=self.root)
+                else:
+                    # Encrypting user password
+                    confirm_password = self.fernet.encrypt(confirm_password.encode())
 
-                conn.commit()
+                    query = "update Users set Password = ? where OID = ?"
+                    c.execute(query, (confirm_password, self.user_oid))
 
-                messagebox.showinfo(
-                    "Information", "Password Changed Successfully!!!", parent=self.root)
+                    conn.commit()
 
-        conn.commit()
-        conn.close()
-
-        self.close_window()
+                    messagebox.showinfo(
+                        "Information", "Password Changed Successfully!!!", parent=self.root)
+    
+            conn.commit()
+            conn.close()
+            self.close_window()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
 
 # Window for Displaying All User Details
@@ -880,12 +917,14 @@ class WinAllUserDetails:
 
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
+                try:
+                    c.execute("Delete from Users where oid=?", (OID,))
 
-                c.execute("Delete from Users where oid=?", (OID,))
-
-                conn.commit()
-                conn.close()
-
+                    conn.commit()
+                    conn.close()
+                except Exception:
+                    messagebox.showwarning(
+                        "Warning", "Please Try Again!!!", parent=self.root)
                 # removing the record from the treeview
                 self.my_tree.delete(record)
 
@@ -1084,15 +1123,13 @@ class WinForgotSecretKey:
 
                         messagebox.showinfo(
                             "Information", "Mail has been sent Successfully:)", parent=self.root)
-
+                        self.close_window()
                 except Exception:
                     messagebox.showerror(
                         "Error", "Please Try Again!!!", parent=self.root)
 
         conn.commit()
         conn.close()
-
-        self.close_window()
 
     def close_window(self):
         level = Tk()
@@ -1149,16 +1186,21 @@ class WinMachine:
         # Binding the Right click Pop Up Menu
         self.root.bind("<Button-3>", self.my_popup)
 
-        # Finding Username for our Status Bar
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-        query = 'Select Username from Users where OID=?'
-        c.execute(query, (self.user_oid,))
+        try:
+            # Finding Username for our Status Bar
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        username = c.fetchone()[0]
+            query = 'Select Username from Users where OID=?'
+            c.execute(query, (self.user_oid,))
 
-        conn.commit()
-        conn.close()
+            username = c.fetchone()[0]
+
+            conn.commit()
+            conn.close()
+        except Exception:
+                messagebox.showwarning(
+                    "Warning", "Please Try Again!!!", parent=self.root)
 
         # Finding whether our user is an ADMIN or not
         if self.user_oid == 1:
@@ -1190,8 +1232,7 @@ class WinAdjuster:
         self.root['bg'] = "#90EE90"
         self.root.resizable(width=False, height=False)
 
-        self.head_label = Label(self.root, text="Adjuster Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE,
-                                font=('Monotype Corsiva', 32, "bold"))
+        self.head_label = Label(self.root, text="Adjuster Database", fg="purple", bg='#add8e6', bd=4, relief=GROOVE, font=('Monotype Corsiva', 32, "bold"))
         self.head_label.pack(pady=(0, 10), ipadx=32, ipady=5)
 
         # Insert Search Update Delete Buttons
@@ -1302,14 +1343,18 @@ class WinMaintenance:
         # Count Variable for number of records
         self.count = 0
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
+        try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        c.execute("Select OID, Machine_ID, Adjuster_ID from Maintenance")
-        records = c.fetchall()
+            c.execute("Select OID, Machine_ID, Adjuster_ID from Maintenance")
+            records = c.fetchall()
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
         # Resetting the Count
         self.count = 0
@@ -1403,7 +1448,7 @@ class WinMachineInsert:
                 conn.close()
             except Exception:
                 messagebox.showwarning(
-                    "Warning", "Please Try Again!", parent=self.root)
+                    "Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1437,12 +1482,10 @@ class WinMachineSearch:
         # Buttons (Back, Show, Show_All)
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
-        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11),
-                                    command=lambda: self.show(1))
+        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11), command=lambda: self.show(1))
         self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
         self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
-        self.show_all_button.grid(
-            row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
+        self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -1476,8 +1519,7 @@ class WinMachineSearch:
         self.my_tree.heading("#0", text="", anchor=CENTER)
         self.my_tree.heading("OID", text="OID", anchor=CENTER)
         self.my_tree.heading("Machine_ID", text="Machine_ID", anchor=CENTER)
-        self.my_tree.heading(
-            "Machine_Type", text="Machine_Type", anchor=CENTER)
+        self.my_tree.heading("Machine_Type", text="Machine_Type", anchor=CENTER)
         self.my_tree.heading("MTTF", text="MTTF", anchor=CENTER)
         self.my_tree.heading("Status", text="Status", anchor=CENTER)
 
@@ -1498,52 +1540,44 @@ class WinMachineSearch:
             # Finding the OID value for that record
             oid = values[0]
 
-            conn = sqlite3.connect(database_file_path)
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect(database_file_path)
+                c = conn.cursor()
 
-            if values[4] == "U/M":
-                return
-            else:
-                # Asking for confirmation whether user wants to change status or not
-                user_ans = messagebox.askyesno(
-                                "Confirmation", "Do you want to Change Status?", parent=self.root)
-                # If User pressed 'No' nothing will happen
-                if not user_ans:
+                if values[4] == "U/M":
                     return
+                else:
+                    # Asking for confirmation whether user wants to change status or not
+                    user_ans = messagebox.askyesno(
+                                    "Confirmation", "Do you want to Change Status?", parent=self.root)
+                    # If User pressed 'No' nothing will happen
+                    if not user_ans:
+                        return
 
-                if values[4] == "Working":
-                    status = "Failure"
-                    try:
+                    if values[4] == "Working":
+                        status = "Failure"
+
                         query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
                         c.execute(query, (oid,))
                         machine_failure_list.append(c.fetchone())
-                    except Exception:
-                        messagebox.showwarning(
-                            "Warning", "Please Try Again!!!", parent=self.root)
-                else:
-                    status = "Working"
-                    try:
+                    else:
+                        status = "Working"
+
                         query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
                         c.execute(query, (oid,))
-                        machine_failure_list.pop(
-                            machine_failure_list.index(c.fetchone()))
-                    except Exception:
-                        messagebox.showwarning(
-                            "Warning", "Please Try Again!!!", parent=self.root)
+                        machine_failure_list.pop(machine_failure_list.index(c.fetchone()))
 
-            # Update the Treeview
-            self.my_tree.item(selected, text="", values=(
-                values[0], values[1], values[2], values[3], status))
-
-            try:
                 query = "Update Machines set Status=? where OID=?"
                 c.execute(query, (status, oid))
+
+                # Update the Treeview
+                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status))
+
+                conn.commit()
+                conn.close()
             except Exception:
                 messagebox.showwarning(
                     "Warning", "Please Try Again!!!", parent=self.root)
-
-            conn.commit()
-            conn.close()
 
     def show(self, a):
         if self.search_Entry.get() == "" and a == 1:
@@ -1667,23 +1701,27 @@ class WinMachineUpdate:
                 "Warning", "Please Select an ID!", parent=self.root)
 
         else:
-            conn = sqlite3.connect(database_file_path)
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect(database_file_path)
+                c = conn.cursor()
 
-            c.execute("Select * from Machines where OID=?",
-                    self.select_Entry.get())
-            record = c.fetchone()
+                c.execute("Select * from Machines where OID=?",
+                        self.select_Entry.get())
+                record = c.fetchone()
 
-            if not record:
-                messagebox.showinfo(
-                    "Information", "No Record Found!", parent=self.root)
-            else:
-                self.machine_id.insert(0, record[0])
-                self.machine_type.insert(0, record[1])
-                self.mttf.insert(0, record[2])
+                if not record:
+                    messagebox.showinfo(
+                        "Information", "No Record Found!", parent=self.root)
+                else:
+                    self.machine_id.insert(0, record[0])
+                    self.machine_type.insert(0, record[1])
+                    self.mttf.insert(0, record[2])
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning(
+                    "Warning", "Please Try Again!!!", parent=self.root)
 
     def update(self):
         if self.select_Entry.get() == '':
@@ -1714,7 +1752,7 @@ class WinMachineUpdate:
                 conn.close()
             except Exception:
                 messagebox.showwarning(
-                    "Warning", "Please Try Again!", parent=self.root)
+                    "Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1750,26 +1788,30 @@ class WinMachineDelete:
             messagebox.showwarning(
                 "Warning", "Please Select a Machine_ID!", parent=self.root)
         else:
-            conn = sqlite3.connect(database_file_path)
-            c = conn.cursor()
+            try:
+                conn = sqlite3.connect(database_file_path)
+                c = conn.cursor()
 
-            query1 = "Select * from Machines where Machine_ID=?"
-            c.execute(query1, (self.select_Entry.get(),))
+                query1 = "Select * from Machines where Machine_ID=?"
+                c.execute(query1, (self.select_Entry.get(),))
 
-            if c.fetchone() is None:
-                messagebox.showerror(
-                    "Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
-            else:
-                query2 = "Delete from Machines where Machine_ID=?"
-                c.execute(query2, (self.select_Entry.get(),))
+                if c.fetchone() is None:
+                    messagebox.showerror(
+                        "Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
+                else:
+                    query2 = "Delete from Machines where Machine_ID=?"
+                    c.execute(query2, (self.select_Entry.get(),))
 
-                self.select_Entry.delete(0, END)
+                    self.select_Entry.delete(0, END)
 
-                messagebox.showinfo(
-                    "Information", "Successfully Deleted", parent=self.root)
+                    messagebox.showinfo(
+                        "Information", "Successfully Deleted", parent=self.root)
 
-            conn.commit()
-            conn.close()
+                conn.commit()
+                conn.close()
+            except Exception:
+                messagebox.showwarning(
+                    "Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1899,12 +1941,10 @@ class WinAdjusterSearch:
         # Buttons (Back, Show, Show_All)
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(55, 0), pady=15, ipadx=5)
-        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11),
-                                    command=lambda: self.show(1))
+        self.search_button = Button(self.root, text="Search", bg="#90EE90", font=('Helvetica', 11), command=lambda: self.show(1))
         self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
         self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
-        self.show_all_button.grid(
-            row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
+        self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -2002,13 +2042,10 @@ class WinAdjusterSearch:
                             machine_failure_list.index(machine))[1]
                         status = "Busy"
 
-                        # Update the Treeview
-                        self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
-
-                        conn = sqlite3.connect(database_file_path)
-                        c = conn.cursor()
-
                         try:
+                            conn = sqlite3.connect(database_file_path)
+                            c = conn.cursor()
+
                             # Adjuster status becomes busy
                             query = "Update Adjusters set Status=? where OID=?"
                             c.execute(query, (status, oid))
@@ -2030,6 +2067,9 @@ class WinAdjusterSearch:
 
                             conn.commit()
                             conn.close()
+
+                            # Update the Treeview
+                            self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
                         except Exception:
                             messagebox.showwarning(
                                 "Warning", "Please Try Again!!!", parent=self.root)
@@ -2043,13 +2083,10 @@ class WinAdjusterSearch:
 
                 status = "Idle"
 
-                # Update the Treeview
-                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
-
-                conn = sqlite3.connect(database_file_path)
-                c = conn.cursor()
-
                 try:
+                    conn = sqlite3.connect(database_file_path)
+                    c = conn.cursor()
+
                     # Making Status of the Adjuster "Idle"
                     query = "Update Adjusters set Status=? where OID=?"
                     c.execute(query, (status, oid))
@@ -2069,6 +2106,9 @@ class WinAdjusterSearch:
 
                     conn.commit()
                     conn.close()
+
+                    # Update the Treeview
+                    self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
                 except Exception:
                     messagebox.showwarning(
                         "Warning", "Please Try Again!!!", parent=self.root)
@@ -2079,16 +2119,17 @@ class WinAdjusterSearch:
                 "Warning", "Please Provide the Value to be Searched", parent=self.root)
             return
 
+        # Whether User has choosen some Search by value
         selection = self.drop.get()
         if selection == 'Search by...' and a == 1:
             messagebox.showwarning(
                 "Warning", "Please Select an Option to be Searched!!!", parent=self.root)
             return
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-
         try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
+
             if a == 0:
                 c.execute("Select OID, * from Adjusters")
             else:
@@ -2203,21 +2244,22 @@ class WinAdjusterUpdate:
             row=3, column=0, pady=25, ipadx=10, columnspan=2)
 
     def display(self):
+        # Clearing all the Entry Boxes
         self.adjuster_id.delete(0, END)
         self.first_name.delete(0, END)
         self.last_name.delete(0, END)
         self.expertise.delete(0, END)
         self.email_id.delete(0, END)
 
+        # Whether or not User has provided value for oid
         if self.select_Entry.get() == '':
             messagebox.showwarning(
                 "Warning", "Please Select an ID!", parent=self.root)
-
         else:
-            conn = sqlite3.connect(database_file_path)
-            c = conn.cursor()
-
             try:
+                conn = sqlite3.connect(database_file_path)
+                c = conn.cursor()
+
                 c.execute("Select * from Adjusters where OID=?",
                         self.select_Entry.get())
                 record = c.fetchone()
@@ -2310,10 +2352,10 @@ class WinAdjusterDelete:
             messagebox.showwarning(
                 "Warning", "Please Select an AID!", parent=self.root)
         else:
-            conn = sqlite3.connect(database_file_path)
-            c = conn.cursor()
-
             try:
+                conn = sqlite3.connect(database_file_path)
+                c = conn.cursor()
+
                 # Selecting Adjuster whose OID was given
                 query1 = "Select * from Adjusters where Adjuster_ID=?"
                 c.execute(query1, (self.select_Entry.get(),))
@@ -2336,7 +2378,7 @@ class WinAdjusterDelete:
                 conn.close()
             except Exception:
                 messagebox.showwarning(
-                    "Warning", "Please Try Again!", parent=self.root)
+                    "Warning", "Please Try Again!!!", parent=self.root)
             
 
     def close_window(self):
@@ -2353,17 +2395,21 @@ if __name__ == "__main__":
     # Initialising the Interface
     root = Tk()
 
-    # This will put Failed machines inside a list
-    connection = sqlite3.connect(database_file_path)
-    cur = connection.cursor()
+    try:
+        # This will put Failed machines inside a list
+        connection = sqlite3.connect(database_file_path)
+        cur = connection.cursor()
 
-    # Query for selecting Machines that has failed
-    q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
-    cur.execute(q, ("Failure",))
-    machine_failure_list = cur.fetchall()
+        # Query for selecting Machines that has failed
+        q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
+        cur.execute(q, ("Failure",))
+        machine_failure_list = cur.fetchall()
 
-    connection.commit()
-    connection.close()
+        connection.commit()
+        connection.close()
+    except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
     # The First Window which appears
     WinLogin(root, "Login Window")
