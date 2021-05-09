@@ -321,11 +321,11 @@ class WinForgotPass:
 
                 except Exception:
                     messagebox.showerror(
-                        "Error", "Please Try Again!!!", parent=self.root)
+                        "Error", "Unable to send mail\nPlease Try Again!!!", parent=self.root)
 
         except Exception:
-            messagebox.showerror(
-                "Error", "Please Try Again!!!", parent=self.root)
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -421,7 +421,7 @@ class WinSignup:
         c.execute("Select secret_key from Secret_Key")
 
         encrypted_secret_key = c.fetchone()[0]
-        # Decrypting user password
+        # Decrypting Secret Key
         decrypted_secret_key = self.fernet.decrypt(encrypted_secret_key).decode()
 
         if not secret_key == decrypted_secret_key:
@@ -444,14 +444,13 @@ class WinSignup:
                 messagebox.showinfo(
                     "Information", "Account Successfully Added!!!", parent=self.root)
 
+                conn.commit()
+                conn.close()
+
+                self.close_window()
             except Exception:
                 messagebox.showinfo(
                     "Information", "Please Try Again!!!", parent=self.root)
-
-        conn.commit()
-        conn.close()
-
-        self.close_window()
 
     def close_window(self):
         level = Tk()
@@ -551,16 +550,20 @@ class WinHome:
         # Binding the Right click Pop Up Menu
         self.root.bind("<Button-3>", self.my_popup)
 
-        # Finding Username for our Status Bar
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-        query = 'Select Username from Users where OID=?'
-        c.execute(query, (self.user_oid,))
+        try:
+            # Finding Username for our Status Bar
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
+            query = 'Select Username from Users where OID=?'
+            c.execute(query, (self.user_oid,))
 
-        username = c.fetchone()[0]
+            username = c.fetchone()[0]
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
         # Finding whether our user is an ADMIN or not
         if self.user_oid == 1:
@@ -620,10 +623,10 @@ class WinUserDetails:
         self.change_button2 = Button(self.root, text="Change", font=('Helvetica', 10), bg="orange", command=lambda: self.change_entry(1))
         self.change_button2.grid(row=1, column=2, padx=5, pady=20)
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-
         try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
+
             # Finding Details of User
             query = 'Select Username, Email_id from Users where OID=?'
             c.execute(query, (self.user_oid,))
@@ -668,10 +671,10 @@ class WinUserDetails:
             self.email_entry.config(state=NORMAL)
 
     def save_details(self):
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-
         try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
+
             # Updating the database with new values
             query = "update Users set Username = ?, Email_id = ? where OID = ?"
             e = (self.username_entry.get(), self.email_entry.get(), self.user_oid)
@@ -768,10 +771,10 @@ class WinChangePassword:
         self.new_password_entry.delete(0, END)
         self.confirm_password_entry.delete(0, END)
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-
         try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
+
             # Finding password for the given user
             query = "Select Password from Users where oid=?"
             c.execute(query, (self.user_oid,))
@@ -801,6 +804,7 @@ class WinChangePassword:
     
             conn.commit()
             conn.close()
+            
             self.close_window()
         except Exception:
             messagebox.showwarning(
@@ -869,14 +873,18 @@ class WinAllUserDetails:
         self.my_tree.tag_configure('oddrow', background="white")
         self.my_tree.tag_configure('evenrow', background="lightblue")
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
+        try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        c.execute("Select OID, Username, Email_id from Users where oid <> 1")
-        records = c.fetchall()
+            c.execute("Select OID, Username, Email_id from Users where oid <> 1")
+            records = c.fetchall()
 
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
         # Resetting the Count
         self.count = 0
@@ -994,6 +1002,14 @@ class WinChangeSecretKey:
         self.save_button = Button(self.button_frame, text="Save", bg="#90EE90", font=('Helvetica', 11), command=self.change_secret_key)
         self.save_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
+        # Loading the Environment Variables from .env file
+        env_path = Path(env_file_path)
+        load_dotenv(dotenv_path=env_path)
+
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
+
     def new_window(self, _class, title, oid):
         level = Tk()
         _class(level, title, oid)
@@ -1015,33 +1031,42 @@ class WinChangeSecretKey:
         self.new_secret_key_entry.delete(0, END)
         self.confirm_secret_key_entry.delete(0, END)
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
+        try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        c.execute("Select secret_key from Secret_Key")
+            c.execute("Select secret_key from Secret_Key")
 
-        record = c.fetchone()[0]
+            encrypted_secret_key = c.fetchone()[0]
+            # Decrypting Secret Key
+            decrypted_secret_key = self.fernet.decrypt(encrypted_secret_key).decode()
 
-        if record != current_secret_key:
-            messagebox.showerror(
-                "Error", "Wrong Current Secret Key!!!", parent=self.root)
-            return
-        else:
-            if new_secret_key != confirm_secret_key:
+            if decrypted_secret_key != current_secret_key:
                 messagebox.showerror(
-                    "Error", "Confirm Secret Key is not same\nas New Secret Key!!!", parent=self.root)
+                    "Error", "Wrong Current Secret Key!!!", parent=self.root)
                 return
             else:
-                query = "update Secret_Key set secret_key = ? where OID = 1"
-                c.execute(query, (confirm_secret_key,))
+                if new_secret_key != confirm_secret_key:
+                    messagebox.showerror(
+                        "Error", "Confirm Secret Key is not same\nas New Secret Key!!!", parent=self.root)
+                    return
+                else:
+                    # Encrypting user password
+                    confirm_secret_key = self.fernet.encrypt(confirm_secret_key.encode())
 
-                messagebox.showinfo(
-                    "Information", "Secret Key Changed Successfully!!!", parent=self.root)
+                    query = "update Secret_Key set secret_key = ? where OID = 1"
+                    c.execute(query, (confirm_secret_key,))
 
-        conn.commit()
-        conn.close()
+                    messagebox.showinfo(
+                        "Information", "Secret Key Changed Successfully!!!", parent=self.root)
 
-        self.close_window()
+            conn.commit()
+            conn.close()
+
+            self.close_window()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
 
 # Window for Forgetting Secret Key
@@ -1084,52 +1109,63 @@ class WinForgotSecretKey:
         self.EMAIL_ADDRESS = os.environ.get('EMAIL_USER')
         self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
 
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
+
     def email_check(self):
         messagebox.showinfo(
             "Information", "It may take some time\nPlease Wait!!!", parent=self.root)
         email = self.email_entry.get()
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
+        try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        query = 'select oid from Users where email_id=?'
-        c.execute(query, (email,))
+            query = 'select oid from Users where email_id=?'
+            c.execute(query, (email,))
 
-        OID = c.fetchone()
+            OID = c.fetchone()
 
-        if OID is None or OID[0] != 1:
-            messagebox.showerror(
-                "Error", "Incorrect!!! Email-id", parent=self.root)
-        else:
-            query = 'Select secret_key from Secret_Key where oid=1'
-            c.execute(query)
-
-            secret_key = c.fetchone()
-
-            if secret_key is None:
+            if OID is None or OID[0] != 1:
                 messagebox.showerror(
                     "Error", "Incorrect!!! Email-id", parent=self.root)
             else:
-                try:
-                    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                        smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+                query = 'Select secret_key from Secret_Key where oid=1'
+                c.execute(query)
 
-                        subject = 'Forgot Secret Key: Factory Simulation Software'
-                        body = f'Dear User\n\nPlease find the Secret Key of the Address Database Account\n\nSecret Key: {secret_key[0]}'
+                secret_key = c.fetchone()
 
-                        msg = f'Subject: {subject}\n\n{body}'
-
-                        smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
-
-                        messagebox.showinfo(
-                            "Information", "Mail has been sent Successfully:)", parent=self.root)
-                        self.close_window()
-                except Exception:
+                if secret_key is None:
                     messagebox.showerror(
-                        "Error", "Please Try Again!!!", parent=self.root)
+                        "Error", "Incorrect!!! Email-id", parent=self.root)
+                else:
+                    try:
+                        # Decrypting Secret Key
+                        decrypted_secret_key = self.fernet.decrypt(secret_key[0]).decode()
 
-        conn.commit()
-        conn.close()
+                        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                            smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+
+                            subject = 'Forgot Secret Key: Factory Simulation Software'
+                            body = f'Dear User\n\nPlease find the Secret Key of the Address Database Account\n\nSecret Key: {decrypted_secret_key}'
+
+                            msg = f'Subject: {subject}\n\n{body}'
+
+                            smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
+
+                            messagebox.showinfo(
+                                "Information", "Mail has been sent Successfully:)", parent=self.root)
+                            self.close_window()
+                    except Exception:
+                        messagebox.showerror(
+                            "Error", "Unable to send mail\nPlease Try Again!!!", parent=self.root)
+
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1199,8 +1235,8 @@ class WinMachine:
             conn.commit()
             conn.close()
         except Exception:
-                messagebox.showwarning(
-                    "Warning", "Please Try Again!!!", parent=self.root)
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
         # Finding whether our user is an ADMIN or not
         if self.user_oid == 1:
