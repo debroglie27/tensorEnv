@@ -101,7 +101,7 @@ can see the details of all the Users having account.
 
 ![All User Details Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/All_User_Details.png)
 
-**Remove Button:** After selecting a particular User, allows the Admin to remove that particular User.
+**Remove Button:** After selecting a particular User, allows the Admin to remove that particular User.  
 **Back Button:** Takes the User back to *"Home Window"*.
 
 ---
@@ -198,6 +198,10 @@ record and pressing the *Change Status Button*.
 **Search Button:** Allows us to make searches based on our search value.  
 **Show All Button:** Displays every record in Machine Table.  
 **Change Status Button:** Changes the Status of the Machine which was selected.  
+* If status -> *Working*: then **Change Status Button** will make the status *Failure*.
+* If status -> *Failure*: then **Change Status Button** will make the status *Working*.
+* If status -> *U/M*: then **Change Status Button** will have no effect.
+
 **Back Button:** Takes the User back to *"Machine Window"*.
 
 ---
@@ -258,6 +262,11 @@ status will change to "Idle" if initially it was "Busy".
 **Search Button:** Allows us to make searches based on our search value.  
 **Show All Button:** Displays every record in Adjuster Table.  
 **Change Status Button:** Changes the Status of the Adjuster which was selected.  
+* If status -> *Idle*: then **Change Status Button** will make the status *Busy* if  
+there is a machine to be fixed.
+* If status -> *Busy*: then **Change Status Button** will make the status *Idle*  
+and also increment the *nFixes* column by 1.
+
 **Back Button:** Takes the User back to *"Adjuster Window"*.
 
 ---
