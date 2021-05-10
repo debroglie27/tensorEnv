@@ -1486,6 +1486,7 @@ class WinMachineInsert:
             messagebox.showwarning(
                 "Warning", "Please Fill ALL The Details!", parent=self.root)
         else:
+            # Check whether mttf was provided as a Real Number
             try:
                 mttf = float(self.mttf.get())
             except Exception:
@@ -1811,6 +1812,14 @@ class WinMachineUpdate:
             messagebox.showwarning(
                 "Warning", "Please Fill The Details!", parent=self.root)
         else:
+            # Check whether mttf was provided as a Real Number
+            try:
+                mttf = float(self.mttf.get())
+            except Exception:
+                messagebox.showwarning(
+                    "Warning", "MTTF should be a Real Number!", parent=self.root)
+                return
+
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
@@ -1964,10 +1973,12 @@ class WinAdjusterInsert:
             messagebox.showwarning(
                 "Warning", "Please Fill The Details!", parent=self.root)
         else:
+            # Check whether valid email was provided
             if '@' not in self.email_id.get() or '.' not in self.email_id.get():
                 messagebox.showwarning(
                 "Warning", "Please provide a valid email!", parent=self.root)
                 return
+
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
@@ -2385,6 +2396,12 @@ class WinAdjusterUpdate:
             messagebox.showwarning(
                 "Warning", "Please Fill The Details!", parent=self.root)
         else:
+            # Check whether valid email was provided
+            if '@' not in self.email_id.get() or '.' not in self.email_id.get():
+                messagebox.showwarning(
+                "Warning", "Please provide a valid email!", parent=self.root)
+                return
+
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
