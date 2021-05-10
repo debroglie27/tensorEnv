@@ -3,7 +3,7 @@
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
-# Last Updated: 09/05/2021
+# Last Updated: 10/05/2021
 
 ########################################################################################
 ########################################################################################
@@ -100,13 +100,37 @@ from cryptography.fernet import Fernet
 # record = c.fetchone()[0]
 # print(record)
 
+# Fetching Data from Machines/Adjusters
 # query = "Select * from Adjusters"
 # c.execute(query)
 # record = c.fetchall()
 # print(record)
 
+# Adding column to Machines Table
+# query = "Alter table Machines add column nfails INTEGER"
+# c.execute(query)
+# query = "Alter table Machines rename column nfails to nFails"
+# c.execute(query)
+
+# Making the newly added column in Machines filled with zeros
+# query = "Update Machines set nfails=0 where exists (select oid from Machines)"
+# c.execute(query)
+
+# Adding column to Adjusters Table
+# query = "Alter table Adjusters add column nfixes INTEGER"
+# c.execute(query)
+# query = "Alter table Adjusters rename column nfixes to nFixes"
+# c.execute(query)
+
+# Making the newly added column in Adjusters filled with zeros
+# query = "Update Adjusters set nfixes=0 where exists (select oid from Adjusters)"
+# c.execute(query)
+
 # conn.commit()
 # conn.close()
+
+#######################################################################################
+#######################################################################################
 
 # ADMIN: Arijeet
 # Secret Key: 12345
@@ -1463,13 +1487,24 @@ class WinMachineInsert:
                 "Warning", "Please Fill ALL The Details!", parent=self.root)
         else:
             try:
+                mttf = float(self.mttf.get())
+            except Exception:
+                messagebox.showwarning(
+                    "Warning", "MTTF should be a Real Number!", parent=self.root)
+                return
+
+            try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
-                query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status) values(?, ?, ?, ?)"
+                # Default values when inserting
                 status = "Working"
+                nfails = 0
+
+                query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status, nFails) values(?, ?, ?, ?, ?)"
+                
                 c.execute(query, (self.machine_id.get(),
-                        self.machine_type.get(), self.mttf.get(), status))
+                        self.machine_type.get(), self.mttf.get(), status, nfails))
 
                 # Clearing the originally filled values
                 self.machine_id.delete(0, END)
@@ -1511,7 +1546,7 @@ class WinMachineSearch:
 
         # Drop Down Box for Search Type
         self.drop = ttk.Combobox(self.root,
-            value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status'], font=('Helvetica', 11))
+            value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status', "nFails"], font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
@@ -1541,15 +1576,16 @@ class WinMachineSearch:
 
         # Define our columns
         self.my_tree['columns'] = (
-            "OID", "Machine_ID", "Machine_Type", "MTTF", "Status")
+            "OID", "Machine_ID", "Machine_Type", "MTTF", "Status", "nFails")
 
         # Format our columns
         self.my_tree.column("#0", width=0, stretch=NO)
         self.my_tree.column("OID", anchor=CENTER, width=30)
         self.my_tree.column("Machine_ID", anchor=CENTER, width=80)
         self.my_tree.column("Machine_Type", anchor=CENTER, width=120)
-        self.my_tree.column("MTTF", anchor=CENTER, width=80)
-        self.my_tree.column("Status", anchor=CENTER, width=100)
+        self.my_tree.column("MTTF", anchor=CENTER, width=70)
+        self.my_tree.column("Status", anchor=CENTER, width=80)
+        self.my_tree.column("nFails", anchor=CENTER, width=50)
 
         # Create Headings
         self.my_tree.heading("#0", text="", anchor=CENTER)
@@ -1558,6 +1594,7 @@ class WinMachineSearch:
         self.my_tree.heading("Machine_Type", text="Machine_Type", anchor=CENTER)
         self.my_tree.heading("MTTF", text="MTTF", anchor=CENTER)
         self.my_tree.heading("Status", text="Status", anchor=CENTER)
+        self.my_tree.heading("nFails", text="nFails", anchor=CENTER)
 
         # Count Variable for number of records
         self.count = 0
@@ -1573,8 +1610,9 @@ class WinMachineSearch:
             # Grab the values of the record
             values = self.my_tree.item(selected, "values")
 
-            # Finding the OID value for that record
+            # Finding the OID and nFails value for that record
             oid = values[0]
+            nfails = int(values[5])
 
             try:
                 conn = sqlite3.connect(database_file_path)
@@ -1592,22 +1630,24 @@ class WinMachineSearch:
 
                     if values[4] == "Working":
                         status = "Failure"
+                        nfails += 1
 
                         query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
                         c.execute(query, (oid,))
                         machine_failure_list.append(c.fetchone())
                     else:
                         status = "Working"
+                        nfails -= 1
 
                         query = "Select OID, Machine_ID, Machine_Type from Machines where OID = ?"
                         c.execute(query, (oid,))
                         machine_failure_list.pop(machine_failure_list.index(c.fetchone()))
 
-                query = "Update Machines set Status=? where OID=?"
-                c.execute(query, (status, oid))
+                query = "Update Machines set Status=?, nFails=? where OID=?"
+                c.execute(query, (status, nfails, oid))
 
                 # Update the Treeview
-                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status))
+                self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], status, nfails))
 
                 conn.commit()
                 conn.close()
@@ -1627,17 +1667,24 @@ class WinMachineSearch:
                 "Warning", "Please Select an Option to be Searched!!!", parent=self.root)
             return
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
+        try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        if a == 0:
-            c.execute("Select OID, * from Machines")
-        else:
-            query = "select OID, * from Machines where " + selection + " LIKE ?"
-            value = '%' + self.search_Entry.get() + '%'
-            c.execute(query, (value,))
+            if a == 0:
+                c.execute("Select OID, * from Machines")
+            else:
+                query = "select OID, * from Machines where " + selection + " LIKE ?"
+                value = '%' + self.search_Entry.get() + '%'
+                c.execute(query, (value,))
 
-        records = c.fetchall()
+            records = c.fetchall()
+
+            conn.commit()
+            conn.close()
+        except Exception:
+            messagebox.showwarning(
+                "Warning", "Please Try Again!!!", parent=self.root)
 
         # Removing the Preexisting Records(if any)
         for rec in self.my_tree.get_children():
@@ -1658,9 +1705,6 @@ class WinMachineSearch:
         # Clearing the Entry Box and Resetting the Drop Down Box
         self.search_Entry.delete(0, END)
         self.drop.current(0)
-
-        conn.commit()
-        conn.close()
 
     def close_window(self):
         level = Tk()
@@ -1920,14 +1964,22 @@ class WinAdjusterInsert:
             messagebox.showwarning(
                 "Warning", "Please Fill The Details!", parent=self.root)
         else:
+            if '@' not in self.email_id.get() or '.' not in self.email_id.get():
+                messagebox.showwarning(
+                "Warning", "Please provide a valid email!", parent=self.root)
+                return
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
-                query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status) values(?, ?, ?, ?, ?, ?)"
+                # Default values when inserting
                 status = "Idle"
+                nfixes = 0
+
+                query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status, nFixes) values(?, ?, ?, ?, ?, ?, ?)"
+
                 c.execute(query, (self.adjuster_id.get(), self.first_name.get(
-                ), self.last_name.get(), self.expertise.get(), self.email_id.get(), status))
+                ), self.last_name.get(), self.expertise.get(), self.email_id.get(), status, nfixes))
 
                 # Clearing the originally filled values
                 self.adjuster_id.delete(0, END)
@@ -1958,7 +2010,7 @@ class WinAdjusterSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("550x385+380+120")
+        self.root.geometry("584x385+365+120")
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
@@ -1970,7 +2022,7 @@ class WinAdjusterSearch:
 
         # Drop Down Box for Search Type
         self.drop = ttk.Combobox(self.root,
-            value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise', 'Email_id', 'Status'], font=('Helvetica', 11))
+            value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise', 'Email_id', 'Status', 'nFixes'], font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
@@ -1984,7 +2036,7 @@ class WinAdjusterSearch:
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
-        self.tree_frame.grid(row=2, column=0, columnspan=3, pady=20, padx=10)
+        self.tree_frame.grid(row=2, column=0, columnspan=3, pady=20, padx=15)
 
         # TreeView ScrollBar
         self.tree_scroll = Scrollbar(self.tree_frame)
@@ -2000,17 +2052,18 @@ class WinAdjusterSearch:
 
         # Define our columns
         self.my_tree['columns'] = (
-            "OID", "Adjuster_ID", "First_Name", "Last_Name", "Expertise", "Email_ID", "Status")
+            "OID", "Adjuster_ID", "First_Name", "Last_Name", "Expertise", "Email_ID", "Status", "nFixes")
 
         # Format our columns
         self.my_tree.column("#0", width=0, stretch=NO)
         self.my_tree.column("OID", anchor=CENTER, width=30)
         self.my_tree.column("Adjuster_ID", anchor=CENTER, width=70)
-        self.my_tree.column("First_Name", anchor=CENTER, width=80)
-        self.my_tree.column("Last_Name", anchor=CENTER, width=80)
-        self.my_tree.column("Expertise", anchor=CENTER, width=70)
+        self.my_tree.column("First_Name", anchor=CENTER, width=75)
+        self.my_tree.column("Last_Name", anchor=CENTER, width=75)
+        self.my_tree.column("Expertise", anchor=CENTER, width=65)
         self.my_tree.column("Email_ID", anchor=CENTER, width=120)
-        self.my_tree.column("Status", anchor=CENTER, width=60)
+        self.my_tree.column("Status", anchor=CENTER, width=50)
+        self.my_tree.column("nFixes", anchor=CENTER, width=50)
 
         # Create Headings
         self.my_tree.heading("#0", text="", anchor=CENTER)
@@ -2021,11 +2074,12 @@ class WinAdjusterSearch:
         self.my_tree.heading("Expertise", text="Expertise", anchor=CENTER)
         self.my_tree.heading("Email_ID", text="Email_ID", anchor=CENTER)
         self.my_tree.heading("Status", text="Status", anchor=CENTER)
+        self.my_tree.heading("nFixes", text="nFixes", anchor=CENTER)
 
         # Count Variable for number of records
         self.count = 0
 
-        # Change Status Button
+        # Change_Status Button
         self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11), command=self.change_status)
         self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
 
@@ -2040,6 +2094,7 @@ class WinAdjusterSearch:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
+            # Subject and Body
             subject = 'Machine Fixing Duty: Factory Simulation Software'
             body = f'Dear Adjuster\n\nPlease find the Machine_ID which you need to fix\n\nMachine ID: {machine_id}'
 
@@ -2058,10 +2113,12 @@ class WinAdjusterSearch:
             # Grab the values of the record
             values = self.my_tree.item(selected, "values")
 
-            # Finding the OID and Adjuster_ID value for that record
+            # Finding the OID, nFixes and Adjuster_ID value for that record
             oid = values[0]
             adjuster_id = values[1]
+            nFixes = int(values[7])
 
+            # Adjuster is Idle
             if values[6] == "Idle":
                 # Asking for confirmation whether user wants to change status or not
                 user_ans = messagebox.askyesno(
@@ -2105,10 +2162,11 @@ class WinAdjusterSearch:
                             conn.close()
 
                             # Update the Treeview
-                            self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
+                            self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status, values[7]))
                         except Exception:
                             messagebox.showwarning(
                                 "Warning", "Please Try Again!!!", parent=self.root)
+            # Adjuster is Busy
             else:
                 # Asking for confirmation whether user wants to change status or not
                 user_ans = messagebox.askyesno(
@@ -2123,9 +2181,10 @@ class WinAdjusterSearch:
                     conn = sqlite3.connect(database_file_path)
                     c = conn.cursor()
 
-                    # Making Status of the Adjuster "Idle"
-                    query = "Update Adjusters set Status=? where OID=?"
-                    c.execute(query, (status, oid))
+                    nFixes += 1
+                    # Making Status of the Adjuster "Idle" and also updating nFixes
+                    query = "Update Adjusters set Status=?, nFixes=? where OID=?"
+                    c.execute(query, (status, nFixes, oid))
 
                     # Finding corresponding Machine_ID for Adjuster_ID
                     query = "Select Machine_ID from Maintenance where Adjuster_ID=?"
@@ -2144,7 +2203,7 @@ class WinAdjusterSearch:
                     conn.close()
 
                     # Update the Treeview
-                    self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status))
+                    self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status, nFixes))
                 except Exception:
                     messagebox.showwarning(
                         "Warning", "Please Try Again!!!", parent=self.root)
@@ -2317,23 +2376,26 @@ class WinAdjusterUpdate:
                     "Warning", "Please Try Again!", parent=self.root)
 
     def update(self):
+        # Check whether the User has provided any OID
         if self.select_Entry.get() == '':
             messagebox.showwarning(
                 "Warning", "Please Select an OID!", parent=self.root)
-        elif self.adjuster_id.get() == self.first_name.get() == self.last_name.get()\
-                == self.expertise.get() == self.email_id.get() == '':
+        # Check whether all the Entry fields were filled or not
+        elif self.adjuster_id.get() == '' or self.first_name.get() == '' or self.last_name.get()== '' or self.expertise.get()== '' or self.email_id.get()== '':
             messagebox.showwarning(
                 "Warning", "Please Fill The Details!", parent=self.root)
         else:
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
-
+                
+                # Updating the Database with the newly provided values
                 query = "update Adjusters set Adjuster_ID = ?, First_Name = ?, Last_Name = ?, Expertise = ?, Email_id = ? where OID = ?"
                 e = (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(
                 ), self.expertise.get(), self.email_id.get(), self.select_Entry.get())
                 c.execute(query, e)
 
+                # Clearing our Entry Fields
                 self.adjuster_id.delete(0, END)
                 self.first_name.delete(0, END)
                 self.last_name.delete(0, END)
