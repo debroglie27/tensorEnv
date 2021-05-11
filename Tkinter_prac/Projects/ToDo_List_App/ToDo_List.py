@@ -79,8 +79,8 @@ def uncross_item():
 
 
 def open_list():
-    filename = filedialog.askopenfilename(initialdir="./ToDo_dat_files", title="Save File",
-                                          filetypes=(("Dat Files", "*.dat"), ("All Files", "*.*")))
+    filename = filedialog.askopenfilename(initialdir="C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/ToDo_List_App/ToDo_dat_files", title="Save File",
+                                        filetypes=(("Dat Files", "*.dat"), ("All Files", "*.*")))
 
     if filename:
         # Delete Currently opened list
@@ -98,7 +98,7 @@ def open_list():
 
 
 def save_list():
-    filename = filedialog.asksaveasfilename(initialdir="./ToDo_dat_files", title="Save File",
+    filename = filedialog.asksaveasfilename(initialdir="C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/ToDo_List_App/ToDo_dat_files", title="Save File",
                                             filetypes=(("Dat Files", "*.dat"), ("All Files", "*.*")))
 
     if filename:

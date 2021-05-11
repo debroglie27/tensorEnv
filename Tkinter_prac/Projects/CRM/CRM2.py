@@ -113,7 +113,7 @@ def list_customers():
 
     # write to CSV
     def write_to_csv(res):
-        with open('customers.csv', 'w', newline='') as f:
+        with open('C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/CRM/customers.csv', 'w', newline='') as f:
             w = csv.writer(f)
             for record in res:
                 w.writerow(record)
