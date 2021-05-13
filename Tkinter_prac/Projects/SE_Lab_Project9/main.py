@@ -3,19 +3,19 @@
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
-# Last Updated: 10/05/2021
+# Last Updated: 13/05/2021
 
 ########################################################################################
 ########################################################################################
 
 import os
 import smtplib
+import sqlite3
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox
 from pathlib import Path
 from dotenv import load_dotenv
-from tkinter import *
-import sqlite3
-from tkinter import messagebox
-from tkinter import ttk
 from cryptography.fernet import Fernet
 
 ########################################################################################
@@ -482,6 +482,9 @@ class WinSignup:
         self.root.destroy()
 
 
+########################################################################################
+########################################################################################
+
 # Window for Home
 class WinHome:
 
@@ -850,14 +853,14 @@ class WinAllUserDetails:
         # Pick a theme
         self.style.theme_use("clam")
         self.style.configure("Treeview",
-                             background="white",
-                             foreground="black",
-                             rowheight=25,
-                             fieldbackground="#E3E3E3")
+                            background="white",
+                            foreground="black",
+                            rowheight=25,
+                            fieldbackground="#E3E3E3")
 
         self.style.map('Treeview',
-                       background=[('selected', 'yellow')],
-                       foreground=[('selected', 'black')])
+                    background=[('selected', 'yellow')],
+                    foreground=[('selected', 'black')])
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -1197,6 +1200,9 @@ class WinForgotSecretKey:
         self.root.destroy()
 
 
+########################################################################################
+########################################################################################
+
 # Window for Machine Database
 class WinMachine:
 
@@ -1434,6 +1440,9 @@ class WinMaintenance:
         self.root.destroy()
 
 
+########################################################################################
+########################################################################################
+
 # Window for Inserting into Machine Table
 class WinMachineInsert:
 
@@ -1644,6 +1653,7 @@ class WinMachineSearch:
                         c.execute(query, (oid,))
                         machine_failure_list.pop(machine_failure_list.index(c.fetchone()))
 
+                # Updating Machine status and nFails
                 query = "Update Machines set Status=?, nFails=? where OID=?"
                 c.execute(query, (status, nfails, oid))
 
@@ -1657,11 +1667,14 @@ class WinMachineSearch:
                     "Warning", "Please Try Again!!!", parent=self.root)
 
     def show(self, a):
+        # Whether user has provided value to search_entry box and
+        # User clicked search button
         if self.search_Entry.get() == "" and a == 1:
             messagebox.showwarning(
                 "Warning", "Please Provide the Value to be Searched", parent=self.root)
             return
 
+        # Whether User has chosen some Search by value
         selection = self.drop.get()
         if selection == 'Search by...' and a == 1:
             messagebox.showwarning(
@@ -1672,6 +1685,8 @@ class WinMachineSearch:
             conn = sqlite3.connect(database_file_path)
             c = conn.cursor()
 
+            # a->0 then show_all button was clicked
+            # a->1 then search button was clicked
             if a == 0:
                 c.execute("Select OID, * from Machines")
             else:
@@ -1773,27 +1788,31 @@ class WinMachineUpdate:
             row=3, column=0, pady=25, ipadx=10, columnspan=2)
 
     def display(self):
+        # Clearing the Entry Boxes
         self.machine_id.delete(0, END)
         self.machine_type.delete(0, END)
         self.mttf.delete(0, END)
 
+        # Whether select_entry was filled
         if self.select_Entry.get() == '':
             messagebox.showwarning(
                 "Warning", "Please Select an ID!", parent=self.root)
-
         else:
             try:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
+                # Fetching Machine data for corressponding OID provided
                 c.execute("Select * from Machines where OID=?",
                         self.select_Entry.get())
                 record = c.fetchone()
 
+                # Whether no record was found
                 if not record:
                     messagebox.showinfo(
                         "Information", "No Record Found!", parent=self.root)
                 else:
+                    # Inserting the fetched data into entry boxes
                     self.machine_id.insert(0, record[0])
                     self.machine_type.insert(0, record[1])
                     self.mttf.insert(0, record[2])
@@ -1859,6 +1878,7 @@ class WinMachineDelete:
         self.root.geometry("400x160+450+150")
         self.root.resizable(width=False, height=False)
 
+        # Select Label and Select Entry
         self.select_label = Label(
             self.root, text="Select MID:", font=('Helvetica', 15), anchor=E)
         self.select_label.grid(row=0, column=0, padx=(
@@ -1873,6 +1893,7 @@ class WinMachineDelete:
         self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
 
     def delete_record(self):
+        # Whether value for select_entry was provided
         if self.select_Entry.get() == '':
             messagebox.showwarning(
                 "Warning", "Please Select a Machine_ID!", parent=self.root)
@@ -1881,18 +1902,23 @@ class WinMachineDelete:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
+                # Fetching Machine info for corressponding Machine_ID
                 query1 = "Select * from Machines where Machine_ID=?"
                 c.execute(query1, (self.select_Entry.get(),))
 
+                # Whether any record was fetched
                 if c.fetchone() is None:
                     messagebox.showerror(
                         "Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
                 else:
+                    # Deleting record for the corressponding Machine_ID
                     query2 = "Delete from Machines where Machine_ID=?"
                     c.execute(query2, (self.select_Entry.get(),))
 
+                    # Clearing the select_entry box
                     self.select_Entry.delete(0, END)
 
+                    # Displaying info for successful deletion
                     messagebox.showinfo(
                         "Information", "Successfully Deleted", parent=self.root)
 
@@ -1907,6 +1933,9 @@ class WinMachineDelete:
         WinMachine(level, "Machine Window", self.user_oid)
         self.root.destroy()
 
+
+########################################################################################
+########################################################################################
 
 # Window for Inserting into Adjuster Table
 class WinAdjusterInsert:
@@ -1999,6 +2028,7 @@ class WinAdjusterInsert:
                 self.expertise.delete(0, END)
                 self.email_id.delete(0, END)
 
+                # Displaying info for successfully insertion
                 messagebox.showinfo(
                     "Information", "Successfully Inserted", parent=self.root)
 
@@ -2220,12 +2250,14 @@ class WinAdjusterSearch:
                         "Warning", "Please Try Again!!!", parent=self.root)
 
     def show(self, a):
+        # Whether user has provided value to search_entry box and
+        # User clicked search button
         if self.search_Entry.get() == "" and a == 1:
             messagebox.showwarning(
                 "Warning", "Please Provide the Value to be Searched", parent=self.root)
             return
 
-        # Whether User has choosen some Search by value
+        # Whether User has chosen some Search by value
         selection = self.drop.get()
         if selection == 'Search by...' and a == 1:
             messagebox.showwarning(
@@ -2236,6 +2268,8 @@ class WinAdjusterSearch:
             conn = sqlite3.connect(database_file_path)
             c = conn.cursor()
 
+            # a->0 then show_all button was clicked
+            # a->1 then search button was clicked
             if a == 0:
                 c.execute("Select OID, * from Adjusters")
             else:
@@ -2366,14 +2400,17 @@ class WinAdjusterUpdate:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
+                # Fetching info for a Particular Adjuster
                 c.execute("Select * from Adjusters where OID=?",
                         self.select_Entry.get())
                 record = c.fetchone()
 
+                # Checking whether record was found
                 if not record:
                     messagebox.showinfo(
                         "Information", "No Record Found!", parent=self.root)
                 else:
+                    # Displaying information
                     self.adjuster_id.insert(0, record[0])
                     self.first_name.insert(0, record[1])
                     self.last_name.insert(0, record[2])
@@ -2420,6 +2457,7 @@ class WinAdjusterUpdate:
                 self.email_id.delete(0, END)
                 self.select_Entry.delete(0, END)
 
+                # Displaying info for successfully updation
                 messagebox.showinfo(
                     "Information", "Successfully Updated", parent=self.root)
 
@@ -2484,8 +2522,10 @@ class WinAdjusterDelete:
                     query2 = "Delete from Adjusters where Adjuster_ID=?"
                     c.execute(query2, (self.select_Entry.get(),))
 
+                    # Clearing the Entry Box
                     self.select_Entry.delete(0, END)
 
+                    # Displaying info for successfully deletion
                     messagebox.showinfo(
                         "Information", "Successfully Deleted", parent=self.root)
 
@@ -2502,6 +2542,34 @@ class WinAdjusterDelete:
         self.root.destroy()
 
 
+########################################################################################
+########################################################################################
+
+# Function for finding Machines which have already failed
+def find_machine_failures():
+    machine_failure_list = []
+
+    try:
+        # This will put Failed machines inside a list
+        connection = sqlite3.connect(database_file_path)
+        cur = connection.cursor()
+
+        # Query for selecting Machines that has failed
+        # Info like: 'OID', 'Machine_ID' and 'Machine_Type' are collected
+        q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
+        cur.execute(q, ("Failure",))
+        machine_failure_list = cur.fetchall()
+
+        connection.commit()
+        connection.close()
+    except Exception:
+        messagebox.showwarning(
+            "Warning", "Please Try Again!!!", parent=root)
+
+    return machine_failure_list
+
+
+# Executed when file is run directly
 if __name__ == "__main__":
     # Declaring File Paths
     env_file_path = 'C:/Users/M K DE/PycharmProjects/openCV_venv/.env'
@@ -2510,23 +2578,13 @@ if __name__ == "__main__":
     # Initialising the Interface
     root = Tk()
 
-    try:
-        # This will put Failed machines inside a list
-        connection = sqlite3.connect(database_file_path)
-        cur = connection.cursor()
-
-        # Query for selecting Machines that has failed
-        q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
-        cur.execute(q, ("Failure",))
-        machine_failure_list = cur.fetchall()
-
-        connection.commit()
-        connection.close()
-    except Exception:
-            messagebox.showwarning(
-                "Warning", "Please Try Again!!!", parent=self.root)
+    # Calling Main Function for 'machine_failure_list'
+    machine_failure_list = find_machine_failures()
 
     # The First Window which appears
     WinLogin(root, "Login Window")
 
     mainloop()
+
+########################################################################################
+########################################################################################
