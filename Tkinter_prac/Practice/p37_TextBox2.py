@@ -29,7 +29,7 @@ my_image = PhotoImage()
 def add_image():
     # Add Image
     global my_image
-    my_image = PhotoImage(file="../Projects/ImageViewer_Images/car.png")
+    my_image = PhotoImage(file="../Projects/ImageViewer_App/ImageViewer_Images/car.png")
 
     position = my_text.index(INSERT)
     my_text.image_create(position, image=my_image)

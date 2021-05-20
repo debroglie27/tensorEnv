@@ -6,8 +6,8 @@ root.title('Background Image')
 root.geometry("800x450")
 
 # Define Background Image
-bg = ImageTk.PhotoImage(Image.open('../Projects/ImageViewer_Images/background.jpg'))
-bg1 = Image.open("../Projects/ImageViewer_Images/background.jpg")
+bg = ImageTk.PhotoImage(Image.open('../Projects/ImageViewer_App/ImageViewer_Images/background.jpg'))
+bg1 = Image.open("../Projects/ImageViewer_App/ImageViewer_Images/background.jpg")
 resized_bg = ''
 new_bg = ''
 

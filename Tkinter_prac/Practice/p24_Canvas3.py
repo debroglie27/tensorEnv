@@ -13,7 +13,7 @@ my_canvas = Canvas(root, width=w, height=h, bg="white")
 my_canvas.pack(pady=20)
 
 # Add Image to canvas
-img = PhotoImage(file="../Projects/ImageViewer_Images/car.png")
+img = PhotoImage(file="../Projects/ImageViewer_App/ImageViewer_Images/car.png")
 my_image = my_canvas.create_image(240, 140, anchor=NW, image=img)
 
 

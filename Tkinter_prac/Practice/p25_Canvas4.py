@@ -11,10 +11,10 @@ my_canvas = Canvas(root, width=w, height=h, bg="white")
 my_canvas.pack(pady=20)
 
 # Add Image to canvas
-img1 = PhotoImage(file="../Projects/ImageViewer_Images/car.png")
+img1 = PhotoImage(file="../Projects/ImageViewer_App/ImageViewer_Images/car.png")
 my_image1 = my_canvas.create_image(100, 50, image=img1)
 
-img2 = PhotoImage(file="../Projects/ImageViewer_Images/bike.png")
+img2 = PhotoImage(file="../Projects/ImageViewer_App/ImageViewer_Images/bike.png")
 my_image2 = my_canvas.create_image(400, 200, image=img2)
 
 # Label to show Coordinates
