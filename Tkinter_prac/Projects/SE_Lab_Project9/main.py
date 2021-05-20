@@ -2440,8 +2440,8 @@ def find_machine_failures():
 # Executed when file is run directly
 if __name__ == "__main__":
     # Declaring File Paths
-    env_file_path = 'C:/Users/HP/PycharmProjects/openCV_venv/.env'
-    database_file_path = 'C:/Users/HP/PycharmProjects/tensorEnv/Tkinter_prac/Projects/SE_Lab_Project9/FS_DATABASE.db'
+    env_file_path = 'C:/Users/HP/Pycharm_Projects/openCV_venv/.env'
+    database_file_path = 'C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/SE_Lab_Project9/FS_DATABASE.db'
 
     # Initialising the Interface
     root = Tk()
