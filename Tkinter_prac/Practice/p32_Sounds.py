@@ -9,7 +9,7 @@ mixer.init()
 
 
 def play():
-    mixer.music.load("../Projects/Audios/tech-house-vibes-130.mp3")
+    mixer.music.load("../Projects/Music_Player_App/Audios/tech-house-vibes-130.mp3")
     mixer.music.play(loops=0)
 
 

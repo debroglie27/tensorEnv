@@ -29,7 +29,7 @@ def play_time():
     current_song = song_box.curselection()[0]
     # Grab song title
     song = song_box.get(current_song)
-    song = f'C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/{song}.mp3'
+    song = f'C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Audios/{song}.mp3'
 
     # Get song length with mutagen
     song_mut = MP3(song)
@@ -248,11 +248,11 @@ song_box = Listbox(master_frame, bg="black", fg="green", width=40, font=("Helvet
 song_box.grid(row=0, column=0)
 
 # Define Player Control Images
-back_btn_img = PhotoImage(file="./Music_Player_Images/back50.png")
-forward_btn_img = PhotoImage(file="./Music_Player_Images/forward50.png")
-play_btn_img = PhotoImage(file="./Music_Player_Images/play50.png")
-pause_btn_img = PhotoImage(file="./Music_Player_Images/pause50.png")
-stop_btn_img = PhotoImage(file="./Music_Player_Images/stop50.png")
+back_btn_img = PhotoImage(file="Music_Player_Images/back50.png")
+forward_btn_img = PhotoImage(file="Music_Player_Images/forward50.png")
+play_btn_img = PhotoImage(file="Music_Player_Images/play50.png")
+pause_btn_img = PhotoImage(file="Music_Player_Images/pause50.png")
+stop_btn_img = PhotoImage(file="Music_Player_Images/stop50.png")
 
 # Create Player Control Frame
 controls_frame = Frame(master_frame)
