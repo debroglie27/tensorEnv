@@ -29,7 +29,7 @@ def play_time():
     current_song = song_box.curselection()[0]
     # Grab song title
     song = song_box.get(current_song)
-    song = f'C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Audios/{song}.mp3'
+    song = f'./Audios/{song}.mp3'
 
     # Get song length with mutagen
     song_mut = MP3(song)
@@ -71,7 +71,7 @@ def add_song():
 
     if song:
         # Strip out the Directory info and .mp3 extension from SONG NAME
-        song = song.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/", "")
+        song = song.replace("C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Music_Player_App/Audios/", "")
         song = song.replace(".mp3", "")
 
         song_box.insert(END, song)
@@ -84,7 +84,7 @@ def add_songs():
 
     # Loop Through the songs and remove directory info and .mp3 extension
     for song in songs:
-        song = song.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Audios/", "")
+        song = song.replace("C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Music_Player_App/Audios/", "")
         song = song.replace(".mp3", "")
 
         song_box.insert(END, song)
