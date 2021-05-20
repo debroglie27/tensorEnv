@@ -7,7 +7,7 @@ import sqlite3
 from tkinter import messagebox
 from tkinter import ttk
 
-# conn = sqlite3.connect('C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Address_Database/address_book.db')
+# conn = sqlite3.connect('C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Address_Database/address_book.db')
 # c = conn.cursor()
 # conn.commit()
 # conn.close()
@@ -1263,8 +1263,8 @@ class WinDelete:
 
 if __name__ == "__main__":
     # Declaring file paths
-    env_file_path = "C:/Users/M K DE/PycharmProjects/openCV_venv/.env"
-    database_file_path = "C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/Address_Database/address_book.db"
+    env_file_path = "C:/Users/HP/Pycharm_Projects/openCV_venv/.env"
+    database_file_path = "C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Address_Database/address_book.db"
 
     # Initialising the Interface
     root = Tk()
