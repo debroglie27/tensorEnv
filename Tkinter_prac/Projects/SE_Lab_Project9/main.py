@@ -21,7 +21,7 @@ from cryptography.fernet import Fernet
 ########################################################################################
 ########################################################################################
 
-# conn = sqlite3.connect('C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/SE_Lab_Project9/FS_DATABASE.db')
+# conn = sqlite3.connect('C:/Users/HP/PycharmProjects/tensorEnv/Tkinter_prac/Projects/SE_Lab_Project9/FS_DATABASE.db')
 # c = conn.cursor()
 
 # Create Table Machines
@@ -141,6 +141,7 @@ from cryptography.fernet import Fernet
 ########################################################################################
 ########################################################################################
 
+
 # Window for Login
 class WinLogin:
 
@@ -154,41 +155,32 @@ class WinLogin:
         self.bullet_symbol = "\u2022"
 
         # Username Label and Entry
-        self.username_label = Label(
-            self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(row=0, column=0, padx=(
-            15, 10), pady=(30, 0), sticky=E)
-        self.username_entry = Entry(self.root, fg="#BFBFBF", font=(
-            'Helvetica', 15), validate="focusin", validatecommand=lambda: self.placeholder_vanish(0))
-        self.username_entry.grid(
-            row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
+        self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
+        self.username_label.grid(row=0, column=0, padx=(15, 10), pady=(30, 0), sticky=E)
+        self.username_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15),
+                                    validate="focusin", validatecommand=lambda: self.placeholder_vanish(0))
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
-        self.password_label = Label(
-            self.root, text="Password:", font=('Helvetica', 15))
-        self.password_label.grid(
-            row=1, column=0, padx=(15, 10), pady=10, sticky=E)
-        self.password_entry = Entry(self.root, fg="#BFBFBF", font=(
-            'Helvetica', 15), validate="focusin", validatecommand=lambda: self.placeholder_vanish(1))
-        self.password_entry.grid(
-            row=1, column=1, padx=10, pady=10, columnspan=3)
+        self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
+        self.password_label.grid(row=1, column=0, padx=(15, 10), pady=10, sticky=E)
+        self.password_entry = Entry(self.root, fg="#BFBFBF", font=('Helvetica', 15),
+                                    validate="focusin", validatecommand=lambda: self.placeholder_vanish(1))
+        self.password_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=3)
 
         # Login Button
-        self.login_button = Button(self.root, text="Login", bg="#90EE90", font=(
-            'Helvetica', 11), command=self.login_check)
-        self.login_button.grid(row=2, column=0, columnspan=2,
-            pady=20, padx=(25, 0), ipadx=6)
+        self.login_button = Button(self.root, text="Login", bg="#90EE90", font=('Helvetica', 11), command=self.login_check)
+        self.login_button.grid(row=2, column=0, columnspan=2, pady=20, padx=(25, 0), ipadx=6)
 
         # SignUp Button
-        self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=(
-            'Helvetica', 11), command=lambda: self.forgot_signup_window(WinSignup, "SignUp Window"))
-        self.signup_button.grid(
-            row=2, column=2, columnspan=2, pady=20, padx=(0, 50), ipadx=6)
+        self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=('Helvetica', 11),
+                                    command=lambda: self.forgot_signup_window(WinSignup, "SignUp Window"))
+        self.signup_button.grid(row=2, column=2, columnspan=2, pady=20, padx=(0, 50), ipadx=6)
 
         # Forgot Password Button
-        self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT, command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
-        self.forgot_pass_button.grid(
-            row=3, column=1, padx=(0, 30), columnspan=2)
+        self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT,
+                                         command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
+        self.forgot_pass_button.grid(row=3, column=1, padx=(0, 30), columnspan=2)
 
         # Placeholder for our Entry Boxes and also giving a message to distinguish
         self.username_entry.insert(0, "Username")
@@ -270,24 +262,20 @@ class WinForgotPass:
             row=0, column=0, padx=65, pady=(20, 0), columnspan=4)
 
         # Email Label and Entry
-        self.email_label = Label(
-            self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
         self.email_label.grid(row=1, column=0, padx=10, pady=20)
         self.email_entry = Entry(self.root, font=('Helvetica', 15))
-        self.email_entry.grid(row=1, column=1, padx=(
-            0, 30), pady=20, columnspan=3)
+        self.email_entry.grid(row=1, column=1, padx=(0, 30), pady=20, columnspan=3)
 
         # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=(
-            'Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=2, column=0, columnspan=2,
-            pady=10, padx=(40, 0), ipadx=10)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0), ipadx=10)
 
         # Send Button
-        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=(
-            'Helvetica', 11), command=self.email_check)
-        self.send_button.grid(row=2, column=2, columnspan=2,
-            pady=10, padx=(0, 60), ipadx=10)
+        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11),
+                                  command=self.email_check)
+        self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
@@ -370,52 +358,38 @@ class WinSignup:
         self.bullet_symbol = "\u2022"
 
         # Username Label and Entry
-        self.username_label = Label(
-            self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(
-            row=0, column=0, padx=10, pady=(30, 0), sticky=E)
+        self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
+        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0), sticky=E)
         self.username_entry = Entry(self.root, font=('Helvetica', 15))
-        self.username_entry.grid(
-            row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
 
         # Password Label and Entry
-        self.password_label = Label(
-            self.root, text="Password:", font=('Helvetica', 15))
-        self.password_label.grid(
-            row=1, column=0, padx=10, pady=(10, 0), sticky=E)
-        self.password_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.password_entry.grid(
-            row=1, column=1, padx=10, pady=(10, 0), columnspan=3)
+        self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
+        self.password_label.grid(row=1, column=0, padx=10, pady=(10, 0), sticky=E)
+        self.password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.password_entry.grid(row=1, column=1, padx=10, pady=(10, 0), columnspan=3)
 
         # Email Label and Entry
-        self.email_label = Label(
-            self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
         self.email_label.grid(row=2, column=0, padx=10, pady=10, sticky=E)
         self.email_entry = Entry(self.root, font=('Helvetica', 15))
         self.email_entry.grid(row=2, column=1, padx=10, pady=10, columnspan=3)
 
         # Admin Secret Key
-        self.secret_label = Label(
-            self.root, text="Secret Key:", font=('Helvetica', 15))
-        self.secret_label.grid(row=3, column=0, padx=10,
-            pady=(20, 10), sticky=E)
-        self.secret_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.secret_entry.grid(row=3, column=1, padx=10,
-            pady=(20, 10), columnspan=3)
+        self.secret_label = Label(self.root, text="Secret Key:", font=('Helvetica', 15))
+        self.secret_label.grid(row=3, column=0, padx=10, pady=(20, 10), sticky=E)
+        self.secret_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.secret_entry.grid(row=3, column=1, padx=10, pady=(20, 10), columnspan=3)
 
         # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=(
-            'Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=4, column=0, columnspan=2,
-            pady=20, padx=(30, 0), ipadx=4)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0), ipadx=4)
 
         # Submit Button
-        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=(
-            'Helvetica', 11), command=self.signup_check)
-        self.submit_button.grid(
-            row=4, column=2, columnspan=2, pady=20, padx=(0, 60), ipadx=4)
+        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11),
+                                    command=self.signup_check)
+        self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60), ipadx=4)
 
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
@@ -517,15 +491,11 @@ class WinHome:
         self.file_menu = Menu(self.my_menu, tearoff=False)
         self.my_menu.add_cascade(label="File", menu=self.file_menu)
         # Add File Menu Items
-        self.file_menu.add_command(label="Machine", command=lambda: self.new_window(
-            WinMachine, "Machine Window", self.user_oid))
-        self.file_menu.add_command(label="Adjuster", command=lambda: self.new_window(
-            WinAdjuster, "Adjuster Window", self.user_oid))
-        self.file_menu.add_command(label="Maintenance", command=lambda: self.new_window(
-            WinMaintenance, "Maintenance Window", self.user_oid))
+        self.file_menu.add_command(label="Machine", command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
+        self.file_menu.add_command(label="Adjuster", command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
+        self.file_menu.add_command(label="Maintenance", command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.file_menu.add_separator()
-        self.file_menu.add_command(
-            label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
         self.file_menu.add_command(label="Exit", command=self.root.quit)
 
         # Add Settings Menu
@@ -539,13 +509,10 @@ class WinHome:
         if self.user_oid == 1:
             # Add Admin Settings Menu
             self.admin_settings_menu = Menu(self.my_menu, tearoff=False)
-            self.my_menu.add_cascade(
-                label="Admin Settings", menu=self.admin_settings_menu)
+            self.my_menu.add_cascade(label="Admin Settings", menu=self.admin_settings_menu)
             # Add Settings Menu Items
-            self.admin_settings_menu.add_command(label="All User Details", command=lambda: self.new_window(
-                WinAllUserDetails, "All User Details", self.user_oid))
-            self.admin_settings_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(
-                WinChangeSecretKey, "Change Secret Key", self.user_oid))
+            self.admin_settings_menu.add_command(label="All User Details", command=lambda: self.new_window(WinAllUserDetails, "All User Details", self.user_oid))
+            self.admin_settings_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(WinChangeSecretKey, "Change Secret Key", self.user_oid))
 
         # Add Right Click Pop Up Menu
         self.my_popup_menu = Menu(self.root, tearoff=False)
@@ -563,15 +530,12 @@ class WinHome:
         # Only for Admin
         if self.user_oid == 1:
             # All User Details and Change Secret Key
-            self.my_popup_menu.add_command(label="All User Details", command=lambda: self.new_window(
-                WinAllUserDetails, "All User Details", self.user_oid))
-            self.my_popup_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(
-                WinChangeSecretKey, "Change Secret Key", self.user_oid))
+            self.my_popup_menu.add_command(label="All User Details", command=lambda: self.new_window(WinAllUserDetails, "All User Details", self.user_oid))
+            self.my_popup_menu.add_command(label="Change Secret Key", command=lambda: self.new_window(WinChangeSecretKey, "Change Secret Key", self.user_oid))
             self.my_popup_menu.add_separator()
 
         # Logout and Exit
-        self.my_popup_menu.add_command(
-            label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.my_popup_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
         self.my_popup_menu.add_command(label="Exit", command=root.quit)
 
         # Binding the Right click Pop Up Menu
@@ -589,6 +553,7 @@ class WinHome:
             conn.commit()
             conn.close()
         except Exception:
+            username = ''
             messagebox.showwarning(
                 "Warning", "Please Try Again!!!", parent=self.root)
 
@@ -627,21 +592,15 @@ class WinUserDetails:
         self.root.resizable(width=False, height=False)
 
         # Username Label and Entry
-        self.username_label = Label(
-            self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(
-            row=0, column=0, padx=10, pady=(30, 0), sticky=E)
-        self.username_entry = Entry(self.root, font=(
-            'Helvetica', 15), fg="green", width=19)
-        self.username_entry.grid(
-            row=0, column=1, padx=10, pady=(30, 0), sticky=W)
+        self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
+        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0), sticky=E)
+        self.username_entry = Entry(self.root, font=('Helvetica', 15), fg="green", width=19)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), sticky=W)
 
         # Email Label and Entry
-        self.email_label = Label(
-            self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
         self.email_label.grid(row=1, column=0, padx=10, pady=20, sticky=E)
-        self.email_entry = Entry(self.root, font=(
-            'Helvetica', 15), fg="green", width=19)
+        self.email_entry = Entry(self.root, font=('Helvetica', 15), fg="green", width=19)
         self.email_entry.grid(row=1, column=1, padx=10, pady=20, sticky=W)
 
         # Change Buttons
@@ -663,6 +622,8 @@ class WinUserDetails:
             conn.commit()
             conn.close()
         except Exception:
+            username = ''
+            email = ''
             messagebox.showwarning(
                 "Warning", "Please Try Again!!!", parent=self.root)
 
@@ -733,34 +694,22 @@ class WinChangePassword:
         self.bullet_symbol = "\u2022"
 
         # Current Password Label and Entry
-        self.current_password_label = Label(
-            self.root, text="Current Password:", font=('Helvetica', 15))
-        self.current_password_label.grid(
-            row=0, column=0, padx=10, pady=(30, 20), sticky=E)
-        self.current_password_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.current_password_entry.grid(
-            row=0, column=1, padx=10, pady=(30, 20), sticky=W)
+        self.current_password_label = Label(self.root, text="Current Password:", font=('Helvetica', 15))
+        self.current_password_label.grid(row=0, column=0, padx=10, pady=(30, 20), sticky=E)
+        self.current_password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.current_password_entry.grid(row=0, column=1, padx=10, pady=(30, 20), sticky=W)
 
         # New Password Label and Entry
-        self.new_password_label = Label(
-            self.root, text="New Password:", font=('Helvetica', 15))
-        self.new_password_label.grid(
-            row=1, column=0, padx=10, pady=(20, 10), sticky=E)
-        self.new_password_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.new_password_entry.grid(
-            row=1, column=1, padx=10, pady=(20, 10), sticky=W)
+        self.new_password_label = Label(self.root, text="New Password:", font=('Helvetica', 15))
+        self.new_password_label.grid(row=1, column=0, padx=10, pady=(20, 10), sticky=E)
+        self.new_password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.new_password_entry.grid(row=1, column=1, padx=10, pady=(20, 10), sticky=W)
 
         # Confirm Password Label and Entry
-        self.confirm_password_label = Label(
-            self.root, text="Confirm Password:", font=('Helvetica', 15))
-        self.confirm_password_label.grid(
-            row=2, column=0, padx=10, pady=(5, 0), sticky=E)
-        self.confirm_password_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.confirm_password_entry.grid(
-            row=2, column=1, padx=10, pady=(5, 0), sticky=W)
+        self.confirm_password_label = Label(self.root, text="Confirm Password:", font=('Helvetica', 15))
+        self.confirm_password_label.grid(row=2, column=0, padx=10, pady=(5, 0), sticky=E)
+        self.confirm_password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.confirm_password_entry.grid(row=2, column=1, padx=10, pady=(5, 0), sticky=W)
 
         # Back and Save Button Frame
         self.button_frame = Frame(self.root)
@@ -853,14 +802,14 @@ class WinAllUserDetails:
         # Pick a theme
         self.style.theme_use("clam")
         self.style.configure("Treeview",
-                            background="white",
-                            foreground="black",
-                            rowheight=25,
-                            fieldbackground="#E3E3E3")
+                             background="white",
+                             foreground="black",
+                             rowheight=25,
+                             fieldbackground="#E3E3E3")
 
         self.style.map('Treeview',
-                    background=[('selected', 'yellow')],
-                    foreground=[('selected', 'black')])
+                       background=[('selected', 'yellow')],
+                       foreground=[('selected', 'black')])
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -910,6 +859,7 @@ class WinAllUserDetails:
             conn.commit()
             conn.close()
         except Exception:
+            records = []
             messagebox.showwarning(
                 "Warning", "Please Try Again!!!", parent=self.root)
 
@@ -948,12 +898,12 @@ class WinAllUserDetails:
         if self.my_tree.focus():
             for record in self.my_tree.selection():
                 # Getting the OID from the record
-                OID = self.my_tree.item(record)['values'][0]
+                oid = self.my_tree.item(record)['values'][0]
 
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
                 try:
-                    c.execute("Delete from Users where oid=?", (OID,))
+                    c.execute("Delete from Users where oid=?", (oid,))
 
                     conn.commit()
                     conn.close()
@@ -993,29 +943,21 @@ class WinChangeSecretKey:
             row=0, column=1, padx=10, pady=(30, 10), sticky=W)
 
         # Forgot Secret Key Button
-        self.forgot_secret_key_button = Button(self.root, text="Forgot Secret Key?", fg="blue", relief=FLAT, command=lambda: self.new_window(WinForgotSecretKey,
-            "Forgot Secret Key Window", self.user_oid))
+        self.forgot_secret_key_button = Button(self.root, text="Forgot Secret Key?", fg="blue", relief=FLAT,
+                                               command=lambda: self.new_window(WinForgotSecretKey, "Forgot Secret Key Window", self.user_oid))
         self.forgot_secret_key_button.grid(row=1, column=0, columnspan=2)
 
         # New Password Label and Entry
-        self.new_secret_key_label = Label(
-            self.root, text="New Secret Key:", font=('Helvetica', 15))
-        self.new_secret_key_label.grid(
-            row=2, column=0, padx=10, pady=(15, 10), sticky=E)
-        self.new_secret_key_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.new_secret_key_entry.grid(
-            row=2, column=1, padx=10, pady=(15, 10), sticky=W)
+        self.new_secret_key_label = Label(self.root, text="New Secret Key:", font=('Helvetica', 15))
+        self.new_secret_key_label.grid(row=2, column=0, padx=10, pady=(15, 10), sticky=E)
+        self.new_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.new_secret_key_entry.grid(row=2, column=1, padx=10, pady=(15, 10), sticky=W)
 
         # Confirm Password Label and Entry
-        self.confirm_secret_key_label = Label(
-            self.root, text="Confirm Secret Key:", font=('Helvetica', 15))
-        self.confirm_secret_key_label.grid(
-            row=3, column=0, padx=10, pady=(5, 0), sticky=E)
-        self.confirm_secret_key_entry = Entry(
-            self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.confirm_secret_key_entry.grid(
-            row=3, column=1, padx=10, pady=(5, 0), sticky=W)
+        self.confirm_secret_key_label = Label(self.root, text="Confirm Secret Key:", font=('Helvetica', 15))
+        self.confirm_secret_key_label.grid(row=3, column=0, padx=10, pady=(5, 0), sticky=E)
+        self.confirm_secret_key_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.confirm_secret_key_entry.grid(row=3, column=1, padx=10, pady=(5, 0), sticky=W)
 
         # Back and Save Button Frame
         self.button_frame = Frame(self.root)
@@ -1108,26 +1050,21 @@ class WinForgotSecretKey:
 
         # Instruction Label
         self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere Secret Key will be shared.", font=('Helvetica', 13), fg="green")
-        self.instruction_label.grid(
-            row=0, column=0, padx=57, pady=(20, 0), columnspan=4)
+        self.instruction_label.grid(row=0, column=0, padx=57, pady=(20, 0), columnspan=4)
 
         # Email Label and Entry
-        self.email_label = Label(
-            self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
         self.email_label.grid(row=1, column=0, padx=10, pady=20)
         self.email_entry = Entry(self.root, font=('Helvetica', 15))
-        self.email_entry.grid(row=1, column=1, padx=(
-            0, 30), pady=20, columnspan=3)
+        self.email_entry.grid(row=1, column=1, padx=(0, 30), pady=20, columnspan=3)
 
         # Back Button
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=2, column=0, columnspan=2,
-            pady=10, padx=(40, 0), ipadx=10)
+        self.back_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0), ipadx=10)
 
         # Send Button
         self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11), command=self.email_check)
-        self.send_button.grid(row=2, column=2, columnspan=2,
-            pady=10, padx=(0, 60), ipadx=10)
+        self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
 
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
@@ -1152,9 +1089,9 @@ class WinForgotSecretKey:
             query = 'select oid from Users where email_id=?'
             c.execute(query, (email,))
 
-            OID = c.fetchone()
+            oid = c.fetchone()
 
-            if OID is None or OID[0] != 1:
+            if oid is None or oid[0] != 1:
                 messagebox.showerror(
                     "Error", "Incorrect!!! Email-id", parent=self.root)
             else:
@@ -1191,8 +1128,7 @@ class WinForgotSecretKey:
             conn.commit()
             conn.close()
         except Exception:
-            messagebox.showwarning(
-                "Warning", "Please Try Again!!!", parent=self.root)
+            messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -1219,30 +1155,31 @@ class WinMachine:
         self.head_label.pack(pady=(0, 10), ipadx=32, ipady=5)
 
         # Insert Search Update Delete Buttons
-        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
+        self.but_insert = Button(self.root, text="Insert", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
         self.but_insert.pack(pady=(15, 0), ipadx=35)
-        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
+        self.but_search = Button(self.root, text="Search", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
         self.but_search.pack(pady=(20, 0), ipadx=29)
-        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
+        self.but_update = Button(self.root, text="Update", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
         self.but_update.pack(pady=(20, 0), ipadx=29)
-        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0', command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
+        self.but_delete = Button(self.root, text="Delete", font=('Helvetica', 15), bg='#fdebd0',
+                                 command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
         self.but_delete.pack(pady=(20, 0), ipadx=32)
 
         # Back Button
-        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6", command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+        self.but_back = Button(self.root, text="Back", font=('Helvetica', 10), bg="#add8e6",
+                               command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
         self.but_back.pack(pady=(10, 0), padx=(5, 0), ipadx=5, anchor=W)
 
         # Add Right Click Pop Up Menu
         self.my_popup_menu = Menu(self.root, tearoff=False)
         # Insert, Search, Update and Delete
-        self.my_popup_menu.add_command(label="Insert",
-                                    command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Search",
-            command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Update",
-            command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Delete",
-            command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Insert", command=lambda: self.new_window(WinMachineInsert, "Machine Insert Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Search", command=lambda: self.new_window(WinMachineSearch, "Machine Search Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Update", command=lambda: self.new_window(WinMachineUpdate, "Machine Update Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Delete", command=lambda: self.new_window(WinMachineDelete, "Machine Delete Window", self.user_oid))
         self.my_popup_menu.add_separator()
 
         # Back
@@ -1265,6 +1202,7 @@ class WinMachine:
             conn.commit()
             conn.close()
         except Exception:
+            username = ''
             messagebox.showwarning(
                 "Warning", "Please Try Again!!!", parent=self.root)
 
@@ -1318,19 +1256,14 @@ class WinAdjuster:
         # Add Right Click Pop Up Menu
         self.my_popup_menu = Menu(self.root, tearoff=False)
         # Insert, Search, Update and Delete
-        self.my_popup_menu.add_command(label="Insert",
-            command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Search",
-            command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Update",
-            command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
-        self.my_popup_menu.add_command(label="Delete",
-            command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Insert", command=lambda: self.new_window(WinAdjusterInsert, "Adjuster Insert Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Search", command=lambda: self.new_window(WinAdjusterSearch, "Adjuster Search Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Update", command=lambda: self.new_window(WinAdjusterUpdate, "Adjuster Update Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Delete", command=lambda: self.new_window(WinAdjusterDelete, "Adjuster Delete Window", self.user_oid))
         self.my_popup_menu.add_separator()
 
         # Back and Exit
-        self.my_popup_menu.add_command(label="Back",
-            command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Back", command=lambda: self.new_window(WinHome, "Home Window", self.user_oid))
 
         # Binding the Right click Pop Up Menu
         self.root.bind("<Button-3>", self.my_popup)
@@ -1419,8 +1352,8 @@ class WinMaintenance:
             conn.commit()
             conn.close()
         except Exception:
-            messagebox.showwarning(
-                "Warning", "Please Try Again!!!", parent=self.root)
+            records = []
+            messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
 
         # Resetting the Count
         self.count = 0
@@ -1462,16 +1395,11 @@ class WinMachineInsert:
         self.mttf.grid(row=2, column=1, pady=8, padx=(20, 0))
 
         # All Labels
-        self.machine_id_label = Label(
-            self.root, text="Machine ID:", font=('Helvetica', 15))
-        self.machine_id_label.grid(
-            row=0, column=0, padx=(16, 0), pady=(20, 8), sticky=E)
-        self.machine_type_label = Label(
-            self.root, text="Machine Type:", font=('Helvetica', 15))
-        self.machine_type_label.grid(
-            row=1, column=0, padx=(16, 0), pady=8, sticky=E)
-        self.mttf_label = Label(self.root, text="MTTF:",
-                                font=('Helvetica', 15))
+        self.machine_id_label = Label(self.root, text="Machine ID:", font=('Helvetica', 15))
+        self.machine_id_label.grid(row=0, column=0, padx=(16, 0), pady=(20, 8), sticky=E)
+        self.machine_type_label = Label(self.root, text="Machine Type:", font=('Helvetica', 15))
+        self.machine_type_label.grid(row=1, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.mttf_label = Label(self.root, text="MTTF:", font=('Helvetica', 15))
         self.mttf_label.grid(row=2, column=0, padx=(16, 0), pady=8, sticky=E)
 
         # Back and Submit Button Frame
@@ -1479,15 +1407,14 @@ class WinMachineInsert:
         self.button_frame.grid(row=3, column=0, pady=10, columnspan=2)
 
         # Back Button
-        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=(
-            "Helvetica", 11), command=self.close_window)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=("Helvetica", 11),
+                                  command=self.close_window)
         self.back_button.grid(row=0, column=0, padx=(20, 40), ipadx=5)
 
         # Submit Button
-        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=(
-            'Helvetica', 11), command=self.submit)
-        self.submit_button.grid(
-            row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+        self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11),
+                                    command=self.submit)
+        self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def submit(self):
         # If any of the entry boxes not filled then warning message shown
@@ -1497,7 +1424,7 @@ class WinMachineInsert:
         else:
             # Check whether mttf was provided as a Real Number
             try:
-                mttf = float(self.mttf.get())
+                float(self.mttf.get())
             except Exception:
                 messagebox.showwarning(
                     "Warning", "MTTF should be a Real Number!", parent=self.root)
@@ -1513,8 +1440,7 @@ class WinMachineInsert:
 
                 query = "Insert Into Machines(Machine_ID, Machine_Type, MTTF, Status, nFails) values(?, ?, ?, ?, ?)"
                 
-                c.execute(query, (self.machine_id.get(),
-                        self.machine_type.get(), self.mttf.get(), status, nfails))
+                c.execute(query, (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), status, nfails))
 
                 # Clearing the originally filled values
                 self.machine_id.delete(0, END)
@@ -1555,8 +1481,8 @@ class WinMachineSearch:
         self.search_Entry.grid(row=0, column=1, padx=(0, 20), pady=20)
 
         # Drop Down Box for Search Type
-        self.drop = ttk.Combobox(self.root,
-            value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status', "nFails"], font=('Helvetica', 11))
+        self.drop = ttk.Combobox(self.root, value=['Search by...', 'OID', 'Machine_ID', 'Machine_Type', 'MTTF', 'Status', "nFails"],
+                                 font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
@@ -1577,16 +1503,14 @@ class WinMachineSearch:
         self.tree_scroll.pack(side=RIGHT, fill=Y)
 
         # Create TreeView
-        self.my_tree = ttk.Treeview(
-            self.tree_frame, height=7, yscrollcommand=self.tree_scroll.set)
+        self.my_tree = ttk.Treeview(self.tree_frame, height=7, yscrollcommand=self.tree_scroll.set)
         self.my_tree.pack()
 
         # Configure ScrollBar
         self.tree_scroll.config(command=self.my_tree.yview)
 
         # Define our columns
-        self.my_tree['columns'] = (
-            "OID", "Machine_ID", "Machine_Type", "MTTF", "Status", "nFails")
+        self.my_tree['columns'] = ("OID", "Machine_ID", "Machine_Type", "MTTF", "Status", "nFails")
 
         # Format our columns
         self.my_tree.column("#0", width=0, stretch=NO)
@@ -1699,6 +1623,7 @@ class WinMachineSearch:
             conn.commit()
             conn.close()
         except Exception:
+            records = []
             messagebox.showwarning(
                 "Warning", "Please Try Again!!!", parent=self.root)
 
@@ -1769,23 +1694,16 @@ class WinMachineUpdate:
         self.mttf.grid(row=2, column=1, pady=5)
 
         # All Labels
-        self.machine_id_label = Label(
-            self.my_frame, text="Machine ID:", font=('Helvetica', 15))
-        self.machine_id_label.grid(
-            row=0, column=0, padx=(7, 20), pady=5, sticky=E)
-        self.machine_type_label = Label(
-            self.my_frame, text="Machine Type:", font=('Helvetica', 15))
-        self.machine_type_label.grid(
-            row=1, column=0, padx=(7, 20), pady=5, sticky=E)
-        self.mttf_label = Label(
-            self.my_frame, text="MTTF:", font=('Helvetica', 15))
+        self.machine_id_label = Label(self.my_frame, text="Machine ID:", font=('Helvetica', 15))
+        self.machine_id_label.grid(row=0, column=0, padx=(7, 20), pady=5, sticky=E)
+        self.machine_type_label = Label(self.my_frame, text="Machine Type:", font=('Helvetica', 15))
+        self.machine_type_label.grid(row=1, column=0, padx=(7, 20), pady=5, sticky=E)
+        self.mttf_label = Label(self.my_frame, text="MTTF:", font=('Helvetica', 15))
         self.mttf_label.grid(row=2, column=0, padx=(7, 20), pady=5, sticky=E)
 
         # Update Button
-        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=(
-            'Helvetica', 11), command=self.update)
-        self.update_button.grid(
-            row=3, column=0, pady=25, ipadx=10, columnspan=2)
+        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
+        self.update_button.grid(row=3, column=0, pady=25, ipadx=10, columnspan=2)
 
     def display(self):
         # Clearing the Entry Boxes
@@ -1803,8 +1721,7 @@ class WinMachineUpdate:
                 c = conn.cursor()
 
                 # Fetching Machine data for corressponding OID provided
-                c.execute("Select * from Machines where OID=?",
-                        self.select_Entry.get())
+                c.execute("Select * from Machines where OID=?", self.select_Entry.get())
                 record = c.fetchone()
 
                 # Whether no record was found
@@ -1833,7 +1750,7 @@ class WinMachineUpdate:
         else:
             # Check whether mttf was provided as a Real Number
             try:
-                mttf = float(self.mttf.get())
+                float(self.mttf.get())
             except Exception:
                 messagebox.showwarning(
                     "Warning", "MTTF should be a Real Number!", parent=self.root)
@@ -1844,8 +1761,7 @@ class WinMachineUpdate:
                 c = conn.cursor()
 
                 query = "update Machines set Machine_ID = ?, Machine_Type = ?, mttf = ? where OID = ?"
-                e = (self.machine_id.get(), self.machine_type.get(),
-                    self.mttf.get(), self.select_Entry.get())
+                e = (self.machine_id.get(), self.machine_type.get(), self.mttf.get(), self.select_Entry.get())
                 c.execute(query, e)
 
                 self.machine_id.delete(0, END)
@@ -1879,10 +1795,8 @@ class WinMachineDelete:
         self.root.resizable(width=False, height=False)
 
         # Select Label and Select Entry
-        self.select_label = Label(
-            self.root, text="Select MID:", font=('Helvetica', 15), anchor=E)
-        self.select_label.grid(row=0, column=0, padx=(
-            10, 38), pady=(20, 10), ipadx=10)
+        self.select_label = Label(self.root, text="Select MID:", font=('Helvetica', 15), anchor=E)
+        self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
         self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
@@ -1902,7 +1816,7 @@ class WinMachineDelete:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
-                # Fetching Machine info for corressponding Machine_ID
+                # Fetching Machine info for corresponding Machine_ID
                 query1 = "Select * from Machines where Machine_ID=?"
                 c.execute(query1, (self.select_Entry.get(),))
 
@@ -1911,7 +1825,7 @@ class WinMachineDelete:
                     messagebox.showerror(
                         "Error", "No Record Found to Delete\nPlease Try Again!!!", parent=self.root)
                 else:
-                    # Deleting record for the corressponding Machine_ID
+                    # Deleting record for the corresponding Machine_ID
                     query2 = "Delete from Machines where Machine_ID=?"
                     c.execute(query2, (self.select_Entry.get(),))
 
@@ -1960,26 +1874,16 @@ class WinAdjusterInsert:
         self.email_id.grid(row=4, column=1, pady=8, padx=(20, 0))
 
         # All Labels
-        self.adjuster_id_label = Label(
-            self.root, text="Adjuster ID:", font=('Helvetica', 15))
-        self.adjuster_id_label.grid(
-            row=0, column=0, padx=(16, 0), pady=(20, 8), sticky=E)
-        self.first_name_label = Label(
-            self.root, text="First Name:", font=('Helvetica', 15))
-        self.first_name_label.grid(
-            row=1, column=0, padx=(16, 0), pady=8, sticky=E)
-        self.last_name_label = Label(
-            self.root, text="Last Name:", font=('Helvetica', 15))
-        self.last_name_label.grid(
-            row=2, column=0, padx=(16, 0), pady=8, sticky=E)
-        self.expertise_label = Label(
-            self.root, text="Expertise:", font=('Helvetica', 15))
-        self.expertise_label.grid(
-            row=3, column=0, padx=(16, 0), pady=8, sticky=E)
-        self.email_id_label = Label(
-            self.root, text="Email:", font=('Helvetica', 15))
-        self.email_id_label.grid(
-            row=4, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.adjuster_id_label = Label(self.root, text="Adjuster ID:", font=('Helvetica', 15))
+        self.adjuster_id_label.grid(row=0, column=0, padx=(16, 0), pady=(20, 8), sticky=E)
+        self.first_name_label = Label(self.root, text="First Name:", font=('Helvetica', 15))
+        self.first_name_label.grid(row=1, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.last_name_label = Label(self.root, text="Last Name:", font=('Helvetica', 15))
+        self.last_name_label.grid(row=2, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.expertise_label = Label(self.root, text="Expertise:", font=('Helvetica', 15))
+        self.expertise_label.grid(row=3, column=0, padx=(16, 0), pady=8, sticky=E)
+        self.email_id_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_id_label.grid(row=4, column=0, padx=(16, 0), pady=8, sticky=E)
 
         # Back and Submit Button Frame
         self.button_frame = Frame(self.root)
@@ -1992,8 +1896,7 @@ class WinAdjusterInsert:
         # Submit Button
         self.submit_button = Button(self.button_frame, text="Submit", bg="#90EE90", font=('Helvetica', 11),
                                     command=self.submit)
-        self.submit_button.grid(
-            row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
+        self.submit_button.grid(row=0, column=1, pady=20, padx=(30, 0), ipadx=5)
 
     def submit(self):
         # if any entry not filled then warning message displayed
@@ -2004,8 +1907,7 @@ class WinAdjusterInsert:
         else:
             # Check whether valid email was provided
             if '@' not in self.email_id.get() or '.' not in self.email_id.get():
-                messagebox.showwarning(
-                "Warning", "Please provide a valid email!", parent=self.root)
+                messagebox.showwarning("Warning", "Please provide a valid email!", parent=self.root)
                 return
 
             try:
@@ -2018,8 +1920,8 @@ class WinAdjusterInsert:
 
                 query = "Insert Into Adjusters(Adjuster_ID, First_Name, Last_Name, Expertise, Email_id, Status, nFixes) values(?, ?, ?, ?, ?, ?, ?)"
 
-                c.execute(query, (self.adjuster_id.get(), self.first_name.get(
-                ), self.last_name.get(), self.expertise.get(), self.email_id.get(), status, nfixes))
+                c.execute(query, (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(),
+                                  self.expertise.get(), self.email_id.get(), status, nfixes))
 
                 # Clearing the originally filled values
                 self.adjuster_id.delete(0, END)
@@ -2029,14 +1931,12 @@ class WinAdjusterInsert:
                 self.email_id.delete(0, END)
 
                 # Displaying info for successfully insertion
-                messagebox.showinfo(
-                    "Information", "Successfully Inserted", parent=self.root)
+                messagebox.showinfo("Information", "Successfully Inserted", parent=self.root)
 
                 conn.commit()
                 conn.close()
             except Exception:
-                messagebox.showwarning(
-                    "Warning", "Please Try Again!", parent=self.root)
+                messagebox.showwarning("Warning", "Please Try Again!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -2055,15 +1955,14 @@ class WinAdjusterSearch:
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
-        self.search_label = Label(
-            self.root, text="Search:", anchor=E, font=('Helvetica', 15))
+        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 15))
         self.search_label.grid(row=0, column=0, padx=(5, 0), pady=20)
         self.search_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
         self.search_Entry.grid(row=0, column=1, padx=(0, 20), pady=20)
 
         # Drop Down Box for Search Type
-        self.drop = ttk.Combobox(self.root,
-            value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise', 'Email_id', 'Status', 'nFixes'], font=('Helvetica', 11))
+        self.drop = ttk.Combobox(self.root, value=['Search by...', 'OID', 'Adjuster_ID', 'First_Name', 'Last_Name', 'Expertise', 'Email_id', 'Status', 'nFixes'],
+                                 font=('Helvetica', 11))
         self.drop.current(0)
         self.drop.grid(row=0, column=2, padx=(0, 27))
 
@@ -2092,8 +1991,7 @@ class WinAdjusterSearch:
         self.tree_scroll.config(command=self.my_tree.yview)
 
         # Define our columns
-        self.my_tree['columns'] = (
-            "OID", "Adjuster_ID", "First_Name", "Last_Name", "Expertise", "Email_ID", "Status", "nFixes")
+        self.my_tree['columns'] = ("OID", "Adjuster_ID", "First_Name", "Last_Name", "Expertise", "Email_ID", "Status", "nFixes")
 
         # Format our columns
         self.my_tree.column("#0", width=0, stretch=NO)
@@ -2144,8 +2042,7 @@ class WinAdjusterSearch:
             smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
 
             # Message to inform that Email has been sent
-            messagebox.showinfo(
-                "Information", "Mail has been sent Successfully:)", parent=self.root)
+            messagebox.showinfo("Information", "Mail has been sent Successfully:)", parent=self.root)
 
     def change_status(self):
         if self.my_tree.selection():
@@ -2322,31 +2219,25 @@ class WinAdjusterUpdate:
         self.root.resizable(width=False, height=False)
 
         # Select Label and Entry Box
-        self.select_label = Label(
-            self.root, text="Select OID:", anchor=E, font=('Helvetica', 15))
-        self.select_label.grid(row=0, column=0, padx=(
-            5, 25), pady=(20, 10), ipadx=18)
+        self.select_label = Label(self.root, text="Select OID:", anchor=E, font=('Helvetica', 15))
+        self.select_label.grid(row=0, column=0, padx=(5, 25), pady=(20, 10), ipadx=18)
         self.select_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
         # Back and Show Button
         self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=1, column=0, padx=(
-            90, 0), pady=(10, 30), ipadx=6)
+        self.back_button.grid(row=1, column=0, padx=(90, 0), pady=(10, 30), ipadx=6)
         self.show_button = Button(self.root, text="Show", bg="orange", font=('Helvetica', 11), command=self.display)
-        self.show_button.grid(row=1, column=1, padx=(
-            0, 60), pady=(10, 30), ipadx=6)
+        self.show_button.grid(row=1, column=1, padx=(0, 60), pady=(10, 30), ipadx=6)
 
         # Label and Entry Frame
         self.my_frame = Frame(self.root)
         self.my_frame.grid(row=2, column=0, columnspan=2)
 
         # All Entry Boxes
-        self.adjuster_id = Entry(
-            self.my_frame, width=20, font=('Helvetica', 15))
+        self.adjuster_id = Entry(self.my_frame, width=20, font=('Helvetica', 15))
         self.adjuster_id.grid(row=0, column=1, pady=5)
-        self.first_name = Entry(self.my_frame, width=20,
-                                font=('Helvetica', 15))
+        self.first_name = Entry(self.my_frame, width=20, font=('Helvetica', 15))
         self.first_name.grid(row=1, column=1, pady=5)
         self.last_name = Entry(self.my_frame, width=20, font=('Helvetica', 15))
         self.last_name.grid(row=2, column=1, pady=5)
@@ -2356,32 +2247,20 @@ class WinAdjusterUpdate:
         self.email_id.grid(row=4, column=1, pady=5)
 
         # All Labels
-        self.adjuster_id_label = Label(
-            self.my_frame, text="Adjuster ID:", font=('Helvetica', 15))
-        self.adjuster_id_label.grid(
-            row=0, column=0, padx=(0, 20), pady=5, sticky=E)
-        self.first_name_label = Label(
-            self.my_frame, text="First Name:", font=('Helvetica', 15))
-        self.first_name_label.grid(
-            row=1, column=0, padx=(0, 20), pady=5, sticky=E)
-        self.last_name_label = Label(
-            self.my_frame, text="Last Name:", font=('Helvetica', 15))
-        self.last_name_label.grid(
-            row=2, column=0, padx=(0, 20), pady=5, sticky=E)
-        self.expertise_label = Label(
-            self.my_frame, text="Expertise:", font=('Helvetica', 15))
-        self.expertise_label.grid(
-            row=3, column=0, padx=(0, 20), pady=5, sticky=E)
-        self.email_id_label = Label(
-            self.my_frame, text="Email_ID:", font=('Helvetica', 15))
-        self.email_id_label.grid(
-            row=4, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.adjuster_id_label = Label(self.my_frame, text="Adjuster ID:", font=('Helvetica', 15))
+        self.adjuster_id_label.grid(row=0, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.first_name_label = Label(self.my_frame, text="First Name:", font=('Helvetica', 15))
+        self.first_name_label.grid(row=1, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.last_name_label = Label(self.my_frame, text="Last Name:", font=('Helvetica', 15))
+        self.last_name_label.grid(row=2, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.expertise_label = Label(self.my_frame, text="Expertise:", font=('Helvetica', 15))
+        self.expertise_label.grid(row=3, column=0, padx=(0, 20), pady=5, sticky=E)
+        self.email_id_label = Label(self.my_frame, text="Email_ID:", font=('Helvetica', 15))
+        self.email_id_label.grid(row=4, column=0, padx=(0, 20), pady=5, sticky=E)
 
         # Update Button
-        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=(
-            'Helvetica', 11), command=self.update)
-        self.update_button.grid(
-            row=3, column=0, pady=25, ipadx=10, columnspan=2)
+        self.update_button = Button(self.root, text="Update", bg="#90EE90", font=('Helvetica', 11), command=self.update)
+        self.update_button.grid(row=3, column=0, pady=25, ipadx=10, columnspan=2)
 
     def display(self):
         # Clearing all the Entry Boxes
@@ -2401,8 +2280,7 @@ class WinAdjusterUpdate:
                 c = conn.cursor()
 
                 # Fetching info for a Particular Adjuster
-                c.execute("Select * from Adjusters where OID=?",
-                        self.select_Entry.get())
+                c.execute("Select * from Adjusters where OID=?", self.select_Entry.get())
                 record = c.fetchone()
 
                 # Checking whether record was found
@@ -2429,14 +2307,13 @@ class WinAdjusterUpdate:
             messagebox.showwarning(
                 "Warning", "Please Select an OID!", parent=self.root)
         # Check whether all the Entry fields were filled or not
-        elif self.adjuster_id.get() == '' or self.first_name.get() == '' or self.last_name.get()== '' or self.expertise.get()== '' or self.email_id.get()== '':
-            messagebox.showwarning(
-                "Warning", "Please Fill The Details!", parent=self.root)
+        elif self.adjuster_id.get() == '' or self.first_name.get() == '' or self.last_name.get() == '' or \
+                self.expertise.get() == '' or self.email_id.get() == '':
+            messagebox.showwarning("Warning", "Please Fill The Details!", parent=self.root)
         else:
             # Check whether valid email was provided
             if '@' not in self.email_id.get() or '.' not in self.email_id.get():
-                messagebox.showwarning(
-                "Warning", "Please provide a valid email!", parent=self.root)
+                messagebox.showwarning("Warning", "Please provide a valid email!", parent=self.root)
                 return
 
             try:
@@ -2445,8 +2322,8 @@ class WinAdjusterUpdate:
                 
                 # Updating the Database with the newly provided values
                 query = "update Adjusters set Adjuster_ID = ?, First_Name = ?, Last_Name = ?, Expertise = ?, Email_id = ? where OID = ?"
-                e = (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(
-                ), self.expertise.get(), self.email_id.get(), self.select_Entry.get())
+                e = (self.adjuster_id.get(), self.first_name.get(), self.last_name.get(),
+                     self.expertise.get(), self.email_id.get(), self.select_Entry.get())
                 c.execute(query, e)
 
                 # Clearing our Entry Fields
@@ -2458,14 +2335,12 @@ class WinAdjusterUpdate:
                 self.select_Entry.delete(0, END)
 
                 # Displaying info for successfully updation
-                messagebox.showinfo(
-                    "Information", "Successfully Updated", parent=self.root)
+                messagebox.showinfo("Information", "Successfully Updated", parent=self.root)
 
                 conn.commit()
                 conn.close()
             except Exception:
-                messagebox.showwarning(
-                    "Warning", "Please Try Again!", parent=self.root)
+                messagebox.showwarning("Warning", "Please Try Again!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -2484,19 +2359,15 @@ class WinAdjusterDelete:
         self.root.resizable(width=False, height=False)
 
         # Select Label and Entry
-        self.select_label = Label(
-            self.root, text="Select AID:", font=('Helvetica', 15), anchor=E)
-        self.select_label.grid(row=0, column=0, padx=(
-            10, 38), pady=(20, 10), ipadx=10)
+        self.select_label = Label(self.root, text="Select AID:", font=('Helvetica', 15), anchor=E)
+        self.select_label.grid(row=0, column=0, padx=(10, 38), pady=(20, 10), ipadx=10)
         self.select_Entry = Entry(self.root, width=17, font=('Helvetica', 15))
         self.select_Entry.grid(row=0, column=1, padx=(0, 40), pady=(20, 10))
 
         # Back and Delete Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=(
-            'Helvetica', 11), command=self.close_window)
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
         self.back_button.grid(row=1, column=0, padx=(90, 0), pady=30, ipadx=10)
-        self.del_button = Button(self.root, text="Delete", bg="orange", font=(
-            'Helvetica', 11), command=self.delete_record)
+        self.del_button = Button(self.root, text="Delete", bg="orange", font=('Helvetica', 11), command=self.delete_record)
         self.del_button.grid(row=1, column=1, padx=(0, 50), pady=30, ipadx=10)
 
     def delete_record(self):
@@ -2532,9 +2403,7 @@ class WinAdjusterDelete:
                 conn.commit()
                 conn.close()
             except Exception:
-                messagebox.showwarning(
-                    "Warning", "Please Try Again!!!", parent=self.root)
-            
+                messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -2547,7 +2416,7 @@ class WinAdjusterDelete:
 
 # Function for finding Machines which have already failed
 def find_machine_failures():
-    machine_failure_list = []
+    machineFailureList = []
 
     try:
         # This will put Failed machines inside a list
@@ -2558,7 +2427,7 @@ def find_machine_failures():
         # Info like: 'OID', 'Machine_ID' and 'Machine_Type' are collected
         q = "Select OID, Machine_ID, Machine_Type from Machines where Status=?"
         cur.execute(q, ("Failure",))
-        machine_failure_list = cur.fetchall()
+        machineFailureList = cur.fetchall()
 
         connection.commit()
         connection.close()
@@ -2566,7 +2435,7 @@ def find_machine_failures():
         messagebox.showwarning(
             "Warning", "Please Try Again!!!", parent=root)
 
-    return machine_failure_list
+    return machineFailureList
 
 
 # Executed when file is run directly
