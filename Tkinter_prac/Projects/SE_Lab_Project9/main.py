@@ -2432,8 +2432,7 @@ def find_machine_failures():
         connection.commit()
         connection.close()
     except Exception:
-        messagebox.showwarning(
-            "Warning", "Please Try Again!!!", parent=root)
+        messagebox.showwarning("Warning", "Please Try Again!!!", parent=root)
 
     return machineFailureList
 
