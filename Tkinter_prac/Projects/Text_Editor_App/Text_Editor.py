@@ -66,7 +66,7 @@ def open_file():
 
         # Update Status Bar
         status_bar.config(text=f'{text_file}      ')
-        name = text_file.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/TextFiles/", "")
+        name = text_file.replace("C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Text_Editor_App/TextFiles/", "")
         root.title(name)
 
         # Open the Actual File
@@ -113,7 +113,7 @@ def save_as_file():
         name = text_file
         # Update Status Bar
         status_bar.config(text=f'{text_file}      ')
-        name = name.replace("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/TextFiles/", "")
+        name = name.replace("C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/Text_Editor_App/TextFiles/", "")
         root.title(name)
 
         # Save the File

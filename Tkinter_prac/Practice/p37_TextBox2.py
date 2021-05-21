@@ -17,7 +17,7 @@ def open_text():
 
 
 def save_text():
-    text_file = open("../Projects/TextFiles/sample.txt", 'w')
+    text_file = open("../Projects/Text_Editor_App/TextFiles/sample.txt", 'w')
     text_file.write(my_text.get(1.0, END))
     text_file.close()
     my_text.delete(1.0, END)
