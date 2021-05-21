@@ -12,8 +12,8 @@ image_list = ['rock', 'paper', 'scissor']
 selection = ''
 
 # Default Image will be shown known as all.jpg
-image1 = ImageTk.PhotoImage(Image.open('./RockPaperScissors_Images/all.jpg'))
-image2 = ImageTk.PhotoImage(Image.open('./RockPaperScissors_Images/all.jpg'))
+image1 = ImageTk.PhotoImage(Image.open('RockPaperScissors_Images/all.jpg'))
+image2 = ImageTk.PhotoImage(Image.open('RockPaperScissors_Images/all.jpg'))
 
 
 def select(event):
