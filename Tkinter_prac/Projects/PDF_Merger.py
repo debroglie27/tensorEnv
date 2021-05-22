@@ -3,11 +3,12 @@ from PyPDF2.pdf import PdfFileReader
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
 
 
 root = Tk()
-root.title('PDF Merger')
-root.geometry('420x485+420+70')
+root.title('PDF Merger App')
+root.geometry('430x485+420+70')
 root.config(bg="#94d1ff")
 
 # Add some style
@@ -45,7 +46,7 @@ my_tree['columns'] = ("SL_No", "PDF_Name", "First_Page", "Last_Page")
 # Format our columns
 my_tree.column("#0", width=0, stretch=NO)
 my_tree.column("SL_No", anchor=CENTER, width=45)
-my_tree.column("PDF_Name", anchor=CENTER, width=150, minwidth=25)
+my_tree.column("PDF_Name", anchor=CENTER, width=170, minwidth=25)
 my_tree.column("First_Page", anchor=CENTER, width=70)
 my_tree.column("Last_Page", anchor=CENTER, width=70)
 
@@ -163,13 +164,18 @@ def up_down(event):
     if not my_tree.selection():
         return
 
+    try:
+        key = event.char
+    except Exception:
+        key = ''
+
     # If Move Up Button is clicked or 'w' key is pressed
-    if event == "up" or event.char == 'w':
+    if event == "up" or key == 'w':
         rows = my_tree.selection()
         for row in rows:
             my_tree.move(row, my_tree.parent(row), my_tree.index(row) - 1)
     # If Move Down Button is clicked or 's' key is pressed
-    elif event == "down" or event.char == 's':
+    elif event == "down" or key == 's':
         rows = my_tree.selection()
         for row in reversed(rows):
             my_tree.move(row, my_tree.parent(row), my_tree.index(row) + 1)
@@ -292,6 +298,8 @@ def merge():
         merger.close()
     else:
         return
+
+    messagebox.showinfo("Information", "PDF Files Merged Successfully:)", parent=root)
 
 
 # Create Menu
