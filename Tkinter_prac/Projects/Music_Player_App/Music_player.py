@@ -276,13 +276,13 @@ my_menu = Menu(root)
 root.config(menu=my_menu)
 
 # Add ADD Song Menu
-add_song_menu = Menu(my_menu)
+add_song_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Add Songs", menu=add_song_menu)
 add_song_menu.add_command(label="Add one song to Playlist", command=add_song)
 add_song_menu.add_command(label="Add many songs to Playlist", command=add_songs)
 
 # Add DELETE Song Menu
-remove_song_menu = Menu(my_menu)
+remove_song_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label="Remove Songs", menu=remove_song_menu)
 remove_song_menu.add_command(label="Remove one song from Playlist", command=remove_song)
 remove_song_menu.add_command(label="Remove all songs from Playlist", command=remove_all_songs)
