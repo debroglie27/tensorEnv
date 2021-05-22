@@ -60,45 +60,22 @@ my_tree.heading("Last_Page", text="Last Page", anchor=CENTER)
 my_tree.tag_configure('odd_row', background="white")
 my_tree.tag_configure('even_row', background="lightblue")
 
-file_count = 0
-file_paths = {}
+# Global Variables
+file_count = 0        # Keeps count of number of pdf files inside the treeview
+file_paths = {}       # Stores file_location for corresponding filename
 
 
 def add_file():
     global file_count
+    # File path for the pdf file to be added
     file_path = filedialog.askopenfilename(initialdir="C:/Users/HP/Desktop",
                                            title="Select a file",
                                            filetypes=(("PDF Files", "*.pdf"),))
 
+    # Whether User selected any file
     if file_path:
-        num_of_pages = PdfFileReader(open(file_path, "rb"), strict=False).getNumPages()
-
-        filename = []
-        for i in list(file_path)[::-1]:
-            if i == '/':
-                break
-            filename.append(i)
-
-        filename = ''.join(filename[::-1]).replace(".pdf", "")
-        file_paths[filename] = file_path
-
-        file_count += 1
-        if file_count % 2 == 1:
-            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", num_of_pages),
-                           tags=("even_row",))
-        else:
-            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", num_of_pages),
-                           tags=("odd_row",))
-
-
-def add_files():
-    global file_count, file_paths
-    file_paths_tuple = filedialog.askopenfilenames(initialdir="C:/Users/HP/Desktop",
-                                                   title="Select a file",
-                                                   filetypes=(("PDF Files", "*.pdf"),))
-
-    for file_path in file_paths_tuple:
-        num_of_pages = PdfFileReader(open(file_path, "rb"), strict=False).getNumPages()
+        # Get total number of pages in the pdf file
+        total_pages = PdfFileReader(open(file_path, "rb"), strict=False).getNumPages()
 
         filename = []
         # Looping through file_path in opposite direction until '/' is found
@@ -111,12 +88,47 @@ def add_files():
         filename = ''.join(filename[::-1]).replace(".pdf", "")
         file_paths[filename] = file_path
 
+        # incrementing file_count
         file_count += 1
+        # This is done to have strip like pattern inside the TreeView
         if file_count % 2 == 1:
-            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", num_of_pages),
+            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", total_pages),
                            tags=("even_row",))
         else:
-            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", num_of_pages),
+            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", total_pages),
+                           tags=("odd_row",))
+
+
+def add_files():
+    global file_count, file_paths
+    # File paths for pdf files to be added
+    file_paths_tuple = filedialog.askopenfilenames(initialdir="C:/Users/HP/Desktop",
+                                                   title="Select a file",
+                                                   filetypes=(("PDF Files", "*.pdf"),))
+
+    for file_path in file_paths_tuple:
+        # Get total number of pages in the pdf file
+        total_pages = PdfFileReader(open(file_path, "rb"), strict=False).getNumPages()
+
+        filename = []
+        # Looping through file_path in opposite direction until '/' is found
+        for i in list(file_path)[::-1]:
+            if i == '/':
+                break
+            filename.append(i)
+
+        # Joining our List and removing .pdf to get File Name
+        filename = ''.join(filename[::-1]).replace(".pdf", "")
+        file_paths[filename] = file_path
+
+        # Increment file_count and insert
+        file_count += 1
+        # This is done to have strip like pattern inside the TreeView
+        if file_count % 2 == 1:
+            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", total_pages),
+                           tags=("even_row",))
+        else:
+            my_tree.insert(parent='', index='end', iid=file_count, text="", values=(file_count, filename, "1", total_pages),
                            tags=("odd_row",))
 
 
@@ -138,18 +150,25 @@ def remove_file():
 def remove_all_files():
     global file_count
 
-    for file in my_tree.get_children():
-        my_tree.delete(file)
+    # get_children() -> gives all the Iids for records
+    for selection in my_tree.get_children():
+        my_tree.delete(selection)
 
     file_count = 0
 
 
 # Moving selected records up and down
 def up_down(event):
+    # If nothing is selected in the treeview
+    if not my_tree.selection():
+        return
+
+    # If Move Up Button is clicked or 'w' key is pressed
     if event == "up" or event.char == 'w':
         rows = my_tree.selection()
         for row in rows:
             my_tree.move(row, my_tree.parent(row), my_tree.index(row) - 1)
+    # If Move Down Button is clicked or 's' key is pressed
     elif event == "down" or event.char == 's':
         rows = my_tree.selection()
         for row in reversed(rows):
@@ -168,6 +187,7 @@ def inr_first_page():
         first_page = int(values[2])
         last_page = int(values[3])
 
+        # first_page should be lesser than last_page
         if first_page < last_page:
             first_page += 1
 
@@ -182,8 +202,10 @@ def dcr_first_page():
         # Grab the values of the record
         values = my_tree.item(selection, "values")
 
+        # Get first_page from values
         first_page = int(values[2])
 
+        # first_page should be greater than 1
         if first_page > 1:
             first_page -= 1
 
@@ -198,12 +220,16 @@ def inr_last_page():
         # Grab the values of the record
         values = my_tree.item(selection, "values")
 
+        # Get last_page from values
         last_page = int(values[3])
 
+        # Get filepath from values
         file_path = file_paths[values[1]]
-        num_of_pages = PdfFileReader(open(file_path, "rb"), strict=False).getNumPages()
+        # Finding total_pages
+        total_pages = PdfFileReader(open(file_path, "rb"), strict=False).getNumPages()
 
-        if last_page < num_of_pages:
+        # last_page should always be lesser than max_pages
+        if last_page < total_pages:
             last_page += 1
 
             # Saving the updated record
@@ -217,9 +243,11 @@ def dcr_last_page():
         # Grab the values of the record
         values = my_tree.item(selection, "values")
 
+        # Get first_page and last_page from values
         first_page = int(values[2])
         last_page = int(values[3])
 
+        # last_page should always be greater than first_page
         if last_page > first_page:
             last_page -= 1
 
@@ -228,7 +256,42 @@ def dcr_last_page():
 
 
 def merge():
-    pass
+    # If there is no records in treeview then no merging
+    if not my_tree.get_children():
+        return
+
+    # Declare our merger object
+    merger = PdfFileMerger()
+
+    for selection in my_tree.get_children():
+        # Grab the values of the record
+        values = my_tree.item(selection, "values")
+
+        # Get the filename from values
+        filename = values[1]
+
+        # Get the first and last page
+        first_page = int(values[2])
+        last_page = int(values[3])
+
+        # Get the file_path of the corresponding filename
+        file_path = file_paths[filename]
+
+        # Appending the pdf files in our merger object
+        merger.append(file_path, pages=(first_page-1, last_page))
+
+    # Saving our Merged file in desired location
+    merged_file_path = filedialog.asksaveasfile(initialdir="C:/Users/HP/Desktop", title="Save File",
+                                                defaultextension=(("PDF File", "*.pdf"),),
+                                                filetypes=(("PDF File", "*.pdf"),))
+
+    # Whether User specified merged file location
+    if merged_file_path:
+        # Writing our Merged PDF File
+        merger.write(merged_file_path.name)
+        merger.close()
+    else:
+        return
 
 
 # Create Menu
@@ -247,7 +310,7 @@ my_menu.add_cascade(label="Remove Files", menu=remove_song_menu)
 remove_song_menu.add_command(label="Remove one file", command=remove_file)
 remove_song_menu.add_command(label="Remove all files", command=remove_all_files)
 
-# Binding Up_Down func with Keys w and s
+# Binding Up_Down func with Keys 'w' and 's'
 root.bind("<Key>", up_down)
 
 # Button Frame for Move Up and Move Down
@@ -285,17 +348,5 @@ dcr_last_button.grid(row=1, column=2, pady=(10, 0), padx=(10, 0), ipadx=5)
 # Merge Button
 merge_button = Button(root, text="Merge", font=('Helvetica', 12), bg="#d9acfc", command=merge)
 merge_button.pack(pady=(30, 0), ipadx=20)
-
-# source = r"C:\Users\M K DE\Desktop\Semester V\MPMC\Practical\Assignment_pdfs"
-#
-# merger = PdfFileMerger()
-#
-# for item in os.listdir(source):
-#     if item.endswith(".pdf"):
-#         result = source + r'/' + str(item)
-#         merger.append(result)
-#
-# merger.write("118CS0163.pdf")
-# merger.close()
 
 mainloop()
