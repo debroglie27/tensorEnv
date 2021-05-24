@@ -16,6 +16,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from pathlib import Path
 from dotenv import load_dotenv
+from tkhtmlview import HTMLLabel
 from cryptography.fernet import Fernet
 
 ########################################################################################
@@ -252,30 +253,44 @@ class WinForgotPass:
     def __init__(self, master, title):
         self.root = master
         self.root.title(title)
-        self.root.geometry("360x200+450+150")
+        self.root.geometry("360x245+450+150")
         self.root.resizable(width=False, height=False)
 
         # Instruction Label
-        self.instruction_label = Label(
-            self.root, text="Provide Your Email-id\nwhere password will be shared.", font=('Helvetica', 13), fg="green")
-        self.instruction_label.grid(
-            row=0, column=0, padx=65, pady=(20, 0), columnspan=4)
+        self.instruction_label = Label(self.root,
+                                       text="Provide Your Email-id where the\npassword will be shared.",
+                                       font=('Helvetica', 13), fg="green")
+        self.instruction_label.pack(padx=25, pady=(20, 0))
+
+        # Frame for email label and Entry
+        self.email_frame = Frame(self.root)
+        self.email_frame.pack(padx=(17, 0), pady=20)
 
         # Email Label and Entry
-        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
-        self.email_label.grid(row=1, column=0, padx=10, pady=20)
-        self.email_entry = Entry(self.root, font=('Helvetica', 15))
-        self.email_entry.grid(row=1, column=1, padx=(0, 30), pady=20, columnspan=3)
+        self.email_label = Label(self.email_frame, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=0, column=0, padx=10)
+        self.email_entry = Entry(self.email_frame, font=('Helvetica', 15))
+        self.email_entry.grid(row=0, column=1, padx=(0, 30))
+
+        # Frame for Buttons
+        self.button_frame = Frame(self.root)
+        self.button_frame.pack(pady=10)
 
         # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=('Helvetica', 11),
                                   command=self.close_window)
-        self.back_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0), ipadx=10)
+        self.back_button.grid(row=0, column=0, padx=(20, 20), ipadx=10)
 
         # Send Button
-        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11),
+        self.send_button = Button(self.button_frame, text="Send", bg="#90EE90", font=('Helvetica', 11),
                                   command=self.email_check)
-        self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
+        self.send_button.grid(row=0, column=1, padx=(20, 20), ipadx=10)
+
+        # Our Gmail and Yahoo Links
+        self.link_label = HTMLLabel(self.root, html="<a href='https://www.gmail.com'>Gmail</a>"
+                                                    "----"
+                                                    "<a href='https://www.yahoo.com'>Yahoo</a>")
+        self.link_label.pack(padx=(101, 0), pady=(15, 0), fill=BOTH, expand=True)
 
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
@@ -288,10 +303,23 @@ class WinForgotPass:
         key = os.environ.get('ENCRYPTION_KEY')
         self.fernet = Fernet(key)
 
+    def send_mail(self, email, user_password):
+        # Sending Email Code
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+
+            subject = 'Forgot Password: Factory Simulation Software'
+            body = f'Dear User\n\nPlease find your Password of your Factory Simulation Account\n\nPassword: {user_password}'
+
+            msg = f'Subject: {subject}\n\n{body}'
+
+            smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
+
     def email_check(self):
-        # Displaying Message Informing that it will take time
-        messagebox.showinfo(
-            "Information", "It may take some time\nPlease Wait!!!", parent=self.root)
+        # Displaying Message Informing that it will take some time
+        messagebox.showinfo("Information", "It may take some time\nPlease Wait!!!", parent=self.root)
+
+        # Grabbing the Email provided
         email = self.email_entry.get()
 
         try:
@@ -307,37 +335,28 @@ class WinForgotPass:
             conn.commit()
             conn.close()
 
+            # Whether password corresponding to given email exists
             if user_password is None:
-                messagebox.showerror(
-                    "Error", "Incorrect!!! Email-id", parent=self.root)
+                messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
             else:
                 try:
                     # Decrypting user password
                     user_password = self.fernet.decrypt(user_password[0]).decode()
 
-                    # Sending Email Code
-                    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                        smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+                    # Sending mail
+                    self.send_mail(email, user_password)
 
-                        subject = 'Forgot Password: Factory Simulation Software'
-                        body = f'Dear User\n\nPlease find your Password of your Factory Simulation Account\n\nPassword: {user_password}'
-
-                        msg = f'Subject: {subject}\n\n{body}'
-
-                        smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
-
-                        # Message to inform that Email has been sent
-                        messagebox.showinfo(
-                            "Information", "Mail has been sent Successfully:)", parent=self.root)
-                        self.close_window()
+                    # Message to inform that Email has been sent
+                    messagebox.showinfo(
+                        "Information", "Mail has been sent Successfully:)", parent=self.root)
+                    self.close_window()
 
                 except Exception:
                     messagebox.showerror(
                         "Error", "Unable to send mail\nPlease Try Again!!!", parent=self.root)
 
         except Exception:
-            messagebox.showwarning(
-                "Warning", "Please Try Again!!!", parent=self.root)
+            messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
@@ -624,8 +643,7 @@ class WinUserDetails:
         except Exception:
             username = ''
             email = ''
-            messagebox.showwarning(
-                "Warning", "Please Try Again!!!", parent=self.root)
+            messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
 
         # Displaying Values in Username Entry and Email Entry
         self.username_entry.insert(0, username)
@@ -1045,26 +1063,44 @@ class WinForgotSecretKey:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("360x200+450+150")
+        self.root.geometry("360x245+450+150")
         self.root.resizable(width=False, height=False)
 
         # Instruction Label
-        self.instruction_label = Label(self.root, text="Provide Your Email-id\nwhere Secret Key will be shared.", font=('Helvetica', 13), fg="green")
-        self.instruction_label.grid(row=0, column=0, padx=57, pady=(20, 0), columnspan=4)
+        self.instruction_label = Label(self.root,
+                                       text="Provide Your Email-id where the\nSecret Key will be shared.",
+                                       font=('Helvetica', 13), fg="green")
+        self.instruction_label.pack(padx=25, pady=(20, 0))
+
+        # Frame for email label and Entry
+        self.email_frame = Frame(self.root)
+        self.email_frame.pack(padx=(17, 0), pady=20)
 
         # Email Label and Entry
-        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
-        self.email_label.grid(row=1, column=0, padx=10, pady=20)
-        self.email_entry = Entry(self.root, font=('Helvetica', 15))
-        self.email_entry.grid(row=1, column=1, padx=(0, 30), pady=20, columnspan=3)
+        self.email_label = Label(self.email_frame, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=0, column=0, padx=10)
+        self.email_entry = Entry(self.email_frame, font=('Helvetica', 15))
+        self.email_entry.grid(row=0, column=1, padx=(0, 30))
+
+        # Frame for Buttons
+        self.button_frame = Frame(self.root)
+        self.button_frame.pack(pady=10)
 
         # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11), command=self.close_window)
-        self.back_button.grid(row=2, column=0, columnspan=2, pady=10, padx=(40, 0), ipadx=10)
+        self.back_button = Button(self.button_frame, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=0, column=0, padx=(20, 20), ipadx=10)
 
         # Send Button
-        self.send_button = Button(self.root, text="Send", bg="#90EE90", font=('Helvetica', 11), command=self.email_check)
-        self.send_button.grid(row=2, column=2, columnspan=2, pady=10, padx=(0, 60), ipadx=10)
+        self.send_button = Button(self.button_frame, text="Send", bg="#90EE90", font=('Helvetica', 11),
+                                  command=self.email_check)
+        self.send_button.grid(row=0, column=1, padx=(20, 20), ipadx=10)
+
+        # Our Gmail and Yahoo Links
+        self.link_label = HTMLLabel(self.root, html="<a href='https://www.gmail.com'>Gmail</a>"
+                                                    "----"
+                                                    "<a href='https://www.yahoo.com'>Yahoo</a>")
+        self.link_label.pack(padx=(101, 0), pady=(15, 0), fill=BOTH, expand=True)
 
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
@@ -1077,24 +1113,40 @@ class WinForgotSecretKey:
         key = os.environ.get('ENCRYPTION_KEY')
         self.fernet = Fernet(key)
 
+    def send_mail(self, email, decrypted_secret_key):
+        # Code for sending email
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+
+            subject = 'Forgot Secret Key: Factory Simulation Software'
+            body = f'Dear User\n\nPlease find the Secret Key of the Factory Simulation Account\n\nSecret Key: {decrypted_secret_key}'
+
+            msg = f'Subject: {subject}\n\n{body}'
+
+            smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
+
     def email_check(self):
         messagebox.showinfo(
             "Information", "It may take some time\nPlease Wait!!!", parent=self.root)
+
+        # Grabbing the email provided
         email = self.email_entry.get()
 
         try:
             conn = sqlite3.connect(database_file_path)
             c = conn.cursor()
 
+            # Fetching Oid for the given email_id
             query = 'select oid from Users where email_id=?'
             c.execute(query, (email,))
 
             oid = c.fetchone()
 
+            # Whether the email provided is of Admin
             if oid is None or oid[0] != 1:
-                messagebox.showerror(
-                    "Error", "Incorrect!!! Email-id", parent=self.root)
+                messagebox.showerror("Error", "Incorrect!!! Email-id", parent=self.root)
             else:
+                # Fetching the encrypted secret key
                 query = 'Select secret_key from Secret_Key where oid=1'
                 c.execute(query)
 
@@ -1108,19 +1160,12 @@ class WinForgotSecretKey:
                         # Decrypting Secret Key
                         decrypted_secret_key = self.fernet.decrypt(secret_key[0]).decode()
 
-                        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                            smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
+                        # Sending mail
+                        self.send_mail(email, decrypted_secret_key)
 
-                            subject = 'Forgot Secret Key: Factory Simulation Software'
-                            body = f'Dear User\n\nPlease find the Secret Key of the Address Database Account\n\nSecret Key: {decrypted_secret_key}'
-
-                            msg = f'Subject: {subject}\n\n{body}'
-
-                            smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
-
-                            messagebox.showinfo(
-                                "Information", "Mail has been sent Successfully:)", parent=self.root)
-                            self.close_window()
+                        messagebox.showinfo(
+                            "Information", "Mail has been sent Successfully:)", parent=self.root)
+                        self.close_window()
                     except Exception:
                         messagebox.showerror(
                             "Error", "Unable to send mail\nPlease Try Again!!!", parent=self.root)
@@ -2030,6 +2075,7 @@ class WinAdjusterSearch:
         self.EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
 
     def send_mail(self, email, machine_id):
+        # code for sending mail
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(self.EMAIL_ADDRESS, self.EMAIL_PASSWORD)
 
@@ -2040,9 +2086,6 @@ class WinAdjusterSearch:
             msg = f'Subject: {subject}\n\n{body}'
 
             smtp.sendmail(self.EMAIL_ADDRESS, email, msg)
-
-            # Message to inform that Email has been sent
-            messagebox.showinfo("Information", "Mail has been sent Successfully:)", parent=self.root)
 
     def change_status(self):
         if self.my_tree.selection():
@@ -2094,13 +2137,19 @@ class WinAdjusterSearch:
                             query = "Insert Into Maintenance(Machine_ID, Adjuster_ID) values(?, ?)"
                             c.execute(query, (machine_id, adjuster_id))
 
+                            # Sending Mail
                             self.send_mail(email, machine_id)
+
+                            # Message to inform that Email has been sent
+                            messagebox.showinfo(
+                                "Information", "Mail has been sent Successfully:)", parent=self.root)
 
                             conn.commit()
                             conn.close()
 
                             # Update the Treeview
-                            self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3], values[4], values[5], status, values[7]))
+                            self.my_tree.item(selected, text="", values=(values[0], values[1], values[2], values[3],
+                                                                         values[4], values[5], status, values[7]))
                         except Exception:
                             messagebox.showwarning(
                                 "Warning", "Please Try Again!!!", parent=self.root)
