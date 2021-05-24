@@ -34,6 +34,8 @@ our account, and our Password will be sent to that Email_ID.
 
 If Incorrect Email_ID is provided then an Error Message is displayed.
 
+`Note: Gmail and Yahoo are links for quick access of email accounts`
+
 ![Forgot Password Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Password.png)
 
 **Send Button:** After providing the Email_ID, clicking will send our password to our Email_ID.  
@@ -127,6 +129,8 @@ In this Window Admin needs to provide his/her Email_ID, using which he/she
 created his/her account, and the Secret Key will be sent to that Email_ID.
 
 If Incorrect Email_ID is provided then an Error Message is displayed.
+
+`Note: Gmail and Yahoo are links for quick access of email accounts`
 
 ![Forgot Secret Key Window](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/SE_Lab_Project9/FrontEnd_Images/Forgot_Secret_Key.png)
 
