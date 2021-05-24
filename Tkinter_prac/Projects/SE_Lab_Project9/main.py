@@ -247,6 +247,117 @@ class WinLogin:
         self.root.destroy()
 
 
+# Window for SignUp
+class WinSignup:
+
+    def __init__(self, master, title):
+        self.root = master
+        self.root.title(title)
+        self.root.geometry('380x280+450+150')
+        self.root.resizable(width=False, height=False)
+
+        # Bullet Symbol
+        self.bullet_symbol = "\u2022"
+
+        # Username Label and Entry
+        self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
+        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0), sticky=E)
+        self.username_entry = Entry(self.root, font=('Helvetica', 15))
+        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
+
+        # Password Label and Entry
+        self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
+        self.password_label.grid(row=1, column=0, padx=10, pady=(10, 0), sticky=E)
+        self.password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.password_entry.grid(row=1, column=1, padx=10, pady=(10, 0), columnspan=3)
+
+        # Email Label and Entry
+        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
+        self.email_label.grid(row=2, column=0, padx=10, pady=10, sticky=E)
+        self.email_entry = Entry(self.root, font=('Helvetica', 15))
+        self.email_entry.grid(row=2, column=1, padx=10, pady=10, columnspan=3)
+
+        # Admin Secret Key
+        self.secret_label = Label(self.root, text="Secret Key:", font=('Helvetica', 15))
+        self.secret_label.grid(row=3, column=0, padx=10, pady=(20, 10), sticky=E)
+        self.secret_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
+        self.secret_entry.grid(row=3, column=1, padx=10, pady=(20, 10), columnspan=3)
+
+        # Back Button
+        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
+                                  command=self.close_window)
+        self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0), ipadx=4)
+
+        # Submit Button
+        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11),
+                                    command=self.signup_check)
+        self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60), ipadx=4)
+
+        # Loading the Environment Variables from .env file
+        env_path = Path(env_file_path)
+        load_dotenv(dotenv_path=env_path)
+
+        # Getting the ENCRYPTION_KEY
+        key = os.environ.get('ENCRYPTION_KEY')
+        self.fernet = Fernet(key)
+
+    def signup_check(self):
+        # Storing the values of Entry Boxes
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        email_id = self.email_entry.get()
+        secret_key = self.secret_entry.get()
+
+        # Clearing the Entry Boxes
+        self.username_entry.delete(0, END)
+        self.password_entry.delete(0, END)
+        self.email_entry.delete(0, END)
+        self.secret_entry.delete(0, END)
+
+        conn = sqlite3.connect(database_file_path)
+        c = conn.cursor()
+
+        # Finding Secret Key
+        c.execute("Select secret_key from Secret_Key")
+
+        encrypted_secret_key = c.fetchone()[0]
+        # Decrypting Secret Key
+        decrypted_secret_key = self.fernet.decrypt(encrypted_secret_key).decode()
+
+        if not secret_key == decrypted_secret_key:
+            messagebox.showerror(
+                "Error", "Secret Key Incorrect!!!", parent=self.root)
+        else:
+            try:
+                conn = sqlite3.connect(database_file_path)
+                c = conn.cursor()
+
+                # Encrypting user password
+                password = self.fernet.encrypt(password.encode())
+
+                # Inserting Details of New User
+                query = "Insert Into users(Username, Email_id, Password) values(?, ?, ?)"
+                c.execute(query, (username, email_id, password))
+                conn.commit()
+
+                # Displaying message informing that account was added successfully
+                messagebox.showinfo(
+                    "Information", "Account Successfully Added!!!", parent=self.root)
+
+                conn.commit()
+                conn.close()
+
+                self.close_window()
+            except Exception:
+                messagebox.showinfo(
+                    "Information", "Please Try Again!!!", parent=self.root)
+
+    def close_window(self):
+        level = Tk()
+        WinLogin(level, "Login Window")
+        self.root.destroy()
+
+
 # Window for Forgot Password
 class WinForgotPass:
 
@@ -357,117 +468,6 @@ class WinForgotPass:
 
         except Exception:
             messagebox.showwarning("Warning", "Please Try Again!!!", parent=self.root)
-
-    def close_window(self):
-        level = Tk()
-        WinLogin(level, "Login Window")
-        self.root.destroy()
-
-
-# Window for SignUp
-class WinSignup:
-
-    def __init__(self, master, title):
-        self.root = master
-        self.root.title(title)
-        self.root.geometry('380x280+450+150')
-        self.root.resizable(width=False, height=False)
-
-        # Bullet Symbol
-        self.bullet_symbol = "\u2022"
-
-        # Username Label and Entry
-        self.username_label = Label(self.root, text="Username:", font=('Helvetica', 15))
-        self.username_label.grid(row=0, column=0, padx=10, pady=(30, 0), sticky=E)
-        self.username_entry = Entry(self.root, font=('Helvetica', 15))
-        self.username_entry.grid(row=0, column=1, padx=10, pady=(30, 0), columnspan=3)
-
-        # Password Label and Entry
-        self.password_label = Label(self.root, text="Password:", font=('Helvetica', 15))
-        self.password_label.grid(row=1, column=0, padx=10, pady=(10, 0), sticky=E)
-        self.password_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.password_entry.grid(row=1, column=1, padx=10, pady=(10, 0), columnspan=3)
-
-        # Email Label and Entry
-        self.email_label = Label(self.root, text="Email:", font=('Helvetica', 15))
-        self.email_label.grid(row=2, column=0, padx=10, pady=10, sticky=E)
-        self.email_entry = Entry(self.root, font=('Helvetica', 15))
-        self.email_entry.grid(row=2, column=1, padx=10, pady=10, columnspan=3)
-
-        # Admin Secret Key
-        self.secret_label = Label(self.root, text="Secret Key:", font=('Helvetica', 15))
-        self.secret_label.grid(row=3, column=0, padx=10, pady=(20, 10), sticky=E)
-        self.secret_entry = Entry(self.root, show=self.bullet_symbol, font=('Helvetica', 15))
-        self.secret_entry.grid(row=3, column=1, padx=10, pady=(20, 10), columnspan=3)
-
-        # Back Button
-        self.back_button = Button(self.root, text="Back", bg="#add8e6", font=('Helvetica', 11),
-                                  command=self.close_window)
-        self.back_button.grid(row=4, column=0, columnspan=2, pady=20, padx=(30, 0), ipadx=4)
-
-        # Submit Button
-        self.submit_button = Button(self.root, text="Submit", bg="#90EE90", font=('Helvetica', 11),
-                                    command=self.signup_check)
-        self.submit_button.grid(row=4, column=2, columnspan=2, pady=20, padx=(0, 60), ipadx=4)
-
-        # Loading the Environment Variables from .env file
-        env_path = Path(env_file_path)
-        load_dotenv(dotenv_path=env_path)
-
-        # Getting the ENCRYPTION_KEY
-        key = os.environ.get('ENCRYPTION_KEY')
-        self.fernet = Fernet(key)
-
-    def signup_check(self):
-        # Storing the values of Entry Boxes
-        username = self.username_entry.get()
-        password = self.password_entry.get()
-        email_id = self.email_entry.get()
-        secret_key = self.secret_entry.get()
-
-        # Clearing the Entry Boxes
-        self.username_entry.delete(0, END)
-        self.password_entry.delete(0, END)
-        self.email_entry.delete(0, END)
-        self.secret_entry.delete(0, END)
-
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
-
-        # Finding Secret Key
-        c.execute("Select secret_key from Secret_Key")
-
-        encrypted_secret_key = c.fetchone()[0]
-        # Decrypting Secret Key
-        decrypted_secret_key = self.fernet.decrypt(encrypted_secret_key).decode()
-
-        if not secret_key == decrypted_secret_key:
-            messagebox.showerror(
-                "Error", "Secret Key Incorrect!!!", parent=self.root)
-        else:
-            try:
-                conn = sqlite3.connect(database_file_path)
-                c = conn.cursor()
-
-                # Encrypting user password
-                password = self.fernet.encrypt(password.encode())
-
-                # Inserting Details of New User
-                query = "Insert Into users(Username, Email_id, Password) values(?, ?, ?)"
-                c.execute(query, (username, email_id, password))
-                conn.commit()
-
-                # Displaying message informing that account was added successfully
-                messagebox.showinfo(
-                    "Information", "Account Successfully Added!!!", parent=self.root)
-
-                conn.commit()
-                conn.close()
-
-                self.close_window()
-            except Exception:
-                messagebox.showinfo(
-                    "Information", "Please Try Again!!!", parent=self.root)
 
     def close_window(self):
         level = Tk()
