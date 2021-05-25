@@ -6,14 +6,6 @@ from tkinter import messagebox, ttk
 from pathlib import Path
 from dotenv import load_dotenv
 
-env_file_path = "C:/Users/HP/Pycharm_Projects/openCV_venv/.env"
-
-# Loading the Environment Variables from .env file
-env_path = Path(env_file_path)
-load_dotenv(dotenv_path=env_path)
-
-API_KEY = os.environ.get('CURRENCY_CONVERTER_API_KEY')
-
 
 # Getting Conversion Rate for two Particular Countries
 # api_request = requests.get("https://free.currconv.com/api/v7/convert?q=USD_PHP&compact=ultra&apiKey=" + API_KEY)
@@ -25,189 +17,236 @@ API_KEY = os.environ.get('CURRENCY_CONVERTER_API_KEY')
 # api = json.loads(api_request.content)
 # print(api['results'])
 
-api_countries_request = requests.get("https://free.currconv.com/api/v7/countries?apiKey=" + API_KEY)
-api = json.loads(api_countries_request.content)
 
-country_currency_dict = {}
-country_list = []
-for country_id in api['results']:
-    country_currency_dict[api['results'][country_id]['name']] = api['results'][country_id]['currencyId']
-    country_list.append(api['results'][country_id]['name'])
+class CurrencyConverterApp:
+    def __init__(self, master, title, geo):
+        self.root = master
+        self.root.title(title)
+        self.root.geometry(geo)
+        self.root.config(bg="#daff8c")
 
-root = Tk()
-root.title("Currency Converter App")
-root.geometry("635x460+340+80")
-root.config(bg="#daff8c")
+        # Loading the Environment Variables from .env file
+        env_path = Path(env_file_path)
+        load_dotenv(dotenv_path=env_path)
 
-# Create Tabs
-my_notebook = ttk.Notebook(root)
-my_notebook.pack(pady=(0, 5), padx=5)
+        self.API_KEY = os.environ.get('CURRENCY_CONVERTER_API_KEY')
 
-# Create Two Frames
-conversion_rate_frame = Frame(my_notebook, width=620, height=460, bg="#daff8c")
-convert_frame = Frame(my_notebook, width=620, height=430)
+        api_countries_request = requests.get("https://free.currconv.com/api/v7/countries?apiKey=" + self.API_KEY)
+        api = json.loads(api_countries_request.content)
 
-conversion_rate_frame.pack(fill=BOTH, expand=1)
-convert_frame.pack(fill=BOTH, expand=1)
+        self.country_currency_dict = {}
+        self.country_list = []
+        for country_id in api['results']:
+            self.country_currency_dict[api['results'][country_id]['name']] = api['results'][country_id]['currencyId']
+            self.country_list.append(api['results'][country_id]['name'])
 
-# Add our Tabs
-my_notebook.add(conversion_rate_frame, text="Conversion Rate")
-my_notebook.add(convert_frame, text="Convert", state=DISABLED)
+        # Create Tabs
+        self.my_notebook = ttk.Notebook(self.root)
+        self.my_notebook.pack(pady=(0, 5), padx=5)
 
+        # Create Two Frames
+        self.conversion_rate_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
+        self.convert_frame = Frame(self.my_notebook, width=620, height=430)
 
-def conv_rate():
-    country1_name = country1_entry.get()
-    country2_name = country2_entry.get()
+        self.conversion_rate_frame.pack(fill=BOTH, expand=1)
+        self.convert_frame.pack(fill=BOTH, expand=1)
 
-    if country1_name == '' or country2_name == '':
-        messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
-    elif country1_name == country2_name:
-        messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
-    elif country1_name not in country_list or country2_name not in country_list:
-        messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
-    else:
-        search_option = country_currency_dict[country1_name] + '_' + country_currency_dict[country2_name]
-        api_request = requests.get(
-            "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + API_KEY)
-        conversion_rate = json.loads(api_request.content)
+        # Add our Tabs
+        self.my_notebook.add(self.conversion_rate_frame, text="Conversion Rate")
+        self.my_notebook.add(self.convert_frame, text="Convert", state=DISABLED)
 
-        conversion_rate = conversion_rate[search_option]
-        conversion_rate_entry.config(state=NORMAL)
-        conversion_rate_entry.insert(END, conversion_rate)
-        conversion_rate_entry.config(state="readonly")
+        WinConversionRate(self.conversion_rate_frame, self.my_notebook,
+                          self.country_currency_dict, self.country_list,
+                          self.API_KEY)
 
-        # Locking the Country Entry Boxes
-        country1_entry.config(state="readonly")
-        country2_entry.config(state="readonly")
+    def find_conv_rate(self, country1, country2):
+        country1_name = country1.lower().title()
+        country2_name = country2.lower().title()
 
-        # Unlocking our convert Tab
-        my_notebook.tab(1, state=NORMAL)
+        if country1_name == '' or country2_name == '':
+            messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
+        elif country1_name == country2_name:
+            messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
+        elif country1_name not in self.country_list or country2_name not in self.country_list:
+            messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
+        else:
+            search_option = self.country_currency_dict[country1_name] + '_' + self.country_currency_dict[country2_name]
+            api_request = requests.get(
+                "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + self.API_KEY)
+            conversion_rate = json.loads(api_request.content)
 
+            conversion_rate = float(conversion_rate[search_option])
 
-# Update the ListBox
-def update_listbox(data):
-    # Clear the ListBox
-    my_list.delete(0, END)
+            return conversion_rate
 
-    # Add data to ListBox
-    for item in data:
-        my_list.insert(END, item)
+        return -1
 
 
-# Update Entry Box with ListBox clicked
-def fill_out(e):
-    if root.focus_get() == country1_entry:
-        # Delete whatever is in Entry Box
-        country1_entry.delete(0, END)
+class WinConversionRate:
+    def __init__(self, master, my_notebook, country_currency_dict, country_list, api_key):
+        self.root = master
+        self.label_frame_color = "#c7ff66"
+        self.my_notebook = my_notebook
+        self.country_list = country_list
+        self.country_currency_dict = country_currency_dict
+        self.API_KEY = api_key
 
-        # Add clicked list item to entry box
-        country1_entry.insert(END, my_list.get(ANCHOR))
-    elif root.focus_get() == country2_entry:
-        # Delete whatever is in Entry Box
-        country2_entry.delete(0, END)
+        # Country1 LabelFrame
+        self.country1_labelframe = LabelFrame(self.root, text="Base Country", font=("Helvetica", 11),
+                                              bg=self.label_frame_color)
+        self.country1_labelframe.grid(row=0, column=0, pady=(30, 0), padx=(25, 0))
+        # Label
+        self.country1_label = Label(self.country1_labelframe, text="Country of Currency which you want to Convert...",
+                                    bg=self.label_frame_color)
+        self.country1_label.pack(padx=20, pady=(10, 0))
+        # Country1 Entry Box
+        self.country1_entry = Entry(self.country1_labelframe, font=('helvetica', 15), width=25)
+        self.country1_entry.pack(padx=20, pady=(10, 15))
 
-        # Add clicked list item to entry box
-        country2_entry.insert(END, my_list.get(ANCHOR))
+        # Country2 LabelFrame
+        self.country2_labelframe = LabelFrame(self.root, text="Conversion Country", font=("Helvetica", 11),
+                                              bg=self.label_frame_color)
+        self.country2_labelframe.grid(row=1, column=0, pady=(20, 0), padx=(25, 0))
+        # Label
+        self.country2_label = Label(self.country2_labelframe, text="Country of Currency which you want to Convert to...",
+                                    bg=self.label_frame_color)
+        self.country2_label.pack(padx=20, pady=(10, 0))
+        # Country2 Entry Box
+        self.country2_entry = Entry(self.country2_labelframe, font=('helvetica', 15), width=25)
+        self.country2_entry.pack(padx=20, pady=(10, 0))
+        # Label
+        self.conversion_rate_label = Label(self.country2_labelframe, text="Current Conversion Rate...", bg=self.label_frame_color)
+        self.conversion_rate_label.pack(padx=20, pady=(15, 0))
+        # Readonly Entry box for Conversion rate
+        self.conversion_rate_entry = Entry(self.country2_labelframe, state="readonly", font=('helvetica', 15), width=25)
+        self.conversion_rate_entry.pack(padx=20, pady=(10, 15))
+
+        # Button Frame
+        self.button_frame = Frame(self.root, bg="#daff8c")
+        self.button_frame.grid(row=2, column=0, columnspan=2, pady=(40, 0))
+
+        # Unlock Button
+        self.unlock_button = Button(self.button_frame, text="Unlock", font=('helvetica', 12), bg="#fd99ff", command=self.unlock)
+        self.unlock_button.grid(row=0, column=0, ipadx=5, padx=(10, 30))
+        # Conversion Rate Button
+        self.conv_rate_button = Button(self.button_frame, text="Conversion Rate", font=('helvetica', 12), bg="#fd99ff",
+                                       command=self.conv_rate)
+        self.conv_rate_button.grid(row=0, column=1, ipadx=8, padx=(30, 0))
+
+        # Create Frame
+        self.my_frame = LabelFrame(self.root, text="List Of Countries", font=("Helvetica", 11),
+                                   bg=self.label_frame_color)
+        self.my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 10))
+
+        # Create Listbox
+        self.my_list = Listbox(self.my_frame, font=("Helvetica", 10), width=24, height=15, bg="#f9ff85",
+                               fg="black", selectbackground="green", activestyle="none")
+        self.my_list.pack(side=LEFT, fill=BOTH, pady=(10, 11), padx=(10, 0))
+
+        # Create Scrollbar
+        self.my_scrollbar = Scrollbar(self.my_frame)
+        self.my_scrollbar.pack(side=RIGHT, fill=BOTH, pady=(10, 11), padx=(0, 10))
+
+        # Add Scrollbar
+        self.my_list.config(yscrollcommand=self.my_scrollbar.set)
+        self.my_scrollbar.config(command=self.my_list.yview)
+
+        self.update_listbox(country_list)
+
+        # Create a Binding on the ListBox onclick
+        self.my_list.bind("<<ListboxSelect>>", self.fill_out)
+
+        # Create a binding on the Entry Box
+        self.country1_entry.bind("<KeyRelease>", lambda event, obj=self.country1_entry: self.check(event, obj))
+        self.country1_entry.bind("<Button-1>", lambda event, obj=self.country1_entry: self.check(event, obj))
+        self.country2_entry.bind("<KeyRelease>", lambda event, obj=self.country2_entry: self.check(event, obj))
+        self.country2_entry.bind("<Button-1>", lambda event, obj=self.country2_entry: self.check(event, obj))
+
+    def conv_rate(self):
+        country1_name = self.country1_entry.get().lower().title()
+        country2_name = self.country2_entry.get().lower().title()
+
+        if country1_name == '' or country2_name == '':
+            messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
+        elif country1_name == country2_name:
+            messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
+        elif country1_name not in self.country_list or country2_name not in self.country_list:
+            messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
+        else:
+            search_option = self.country_currency_dict[country1_name] + '_' + self.country_currency_dict[country2_name]
+            api_request = requests.get(
+                "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + self.API_KEY)
+            conversion_rate = json.loads(api_request.content)
+
+            conversion_rate = conversion_rate[search_option]
+            self.conversion_rate_entry.config(state=NORMAL)
+            self.conversion_rate_entry.insert(END, conversion_rate)
+            self.conversion_rate_entry.config(state="readonly")
+
+            # Locking the Country Entry Boxes
+            self.country1_entry.config(state="readonly")
+            self.country2_entry.config(state="readonly")
+
+            # Unlocking our convert Tab
+            self.my_notebook.tab(1, state=NORMAL)
+
+    # Update the ListBox
+    def update_listbox(self, data):
+        # Clear the ListBox
+        self.my_list.delete(0, END)
+
+        # Add data to ListBox
+        for item in data:
+            self.my_list.insert(END, item)
+
+    # Update Entry Box with ListBox clicked
+    def fill_out(self, e):
+        if root.focus_get() == self.country1_entry:
+            # Delete whatever is in Entry Box
+            self.country1_entry.delete(0, END)
+
+            # Add clicked list item to entry box
+            self.country1_entry.insert(END, self.my_list.get(ANCHOR))
+        elif root.focus_get() == self.country2_entry:
+            # Delete whatever is in Entry Box
+            self.country2_entry.delete(0, END)
+
+            # Add clicked list item to entry box
+            self.country2_entry.insert(END, self.my_list.get(ANCHOR))
+
+    # Create func to check entry with listbox
+    def check(self, event, obj):
+        if obj == self.country1_entry:
+            # Grab what was typed
+            typed = self.country1_entry.get()
+        else:
+            # Grab what was typed
+            typed = self.country2_entry.get()
+
+        if typed == '':
+            data = self.country_list
+        else:
+            data = []
+            for item in self.country_list:
+                if typed.lower() in item.lower():
+                    data.append(item)
+
+        # Update our ListBox with selected items
+        self.update_listbox(data)
+
+    def unlock(self):
+        self.conversion_rate_entry.config(state=NORMAL)
+        self.conversion_rate_entry.delete(0, END)
+        self.conversion_rate_entry.config(state="readonly")
+        self.my_notebook.tab(1, state=DISABLED)
+
+        self.country1_entry.config(state=NORMAL)
+        self.country2_entry.config(state=NORMAL)
 
 
-# Create func to check entry with listbox
-def check(event, obj):
-    if obj == country1_entry:
-        # Grab what was typed
-        typed = country1_entry.get()
-    else:
-        # Grab what was typed
-        typed = country2_entry.get()
+if __name__ == "__main__":
+    root = Tk()
+    env_file_path = "C:/Users/HP/Pycharm_Projects/openCV_venv/.env"
+    CurrencyConverterApp(root, "Currency Converter App", "635x460+340+80")
 
-    if typed == '':
-        data = country_list
-    else:
-        data = []
-        for item in country_list:
-            if typed.lower() in item.lower():
-                data.append(item)
-
-    # Update our ListBox with selected items
-    update_listbox(data)
-
-
-def unlock():
-    conversion_rate_entry.config(state=NORMAL)
-    conversion_rate_entry.delete(0, END)
-    conversion_rate_entry.config(state="readonly")
-    conversion_rate_entry.delete(0, END)
-    my_notebook.tab(1, state=DISABLED)
-
-    country1_entry.config(state=NORMAL)
-    country2_entry.config(state=NORMAL)
-
-
-label_frame_color = "#c7ff66"
-
-# Country1 LabelFrame
-country1_labelframe = LabelFrame(conversion_rate_frame, text="Base Country", font=("Helvetica", 11), bg=label_frame_color)
-country1_labelframe.grid(row=0, column=0, pady=(30, 0), padx=(25, 0))
-# Label
-country1_label = Label(country1_labelframe, text="Country of Currency which you want to Convert...", bg=label_frame_color)
-country1_label.pack(padx=20, pady=(10, 0))
-# Country1 Entry Box
-country1_entry = Entry(country1_labelframe, font=('helvetica', 15), width=25)
-country1_entry.pack(padx=20, pady=(10, 15))
-
-# Country2 LabelFrame
-country2_labelframe = LabelFrame(conversion_rate_frame, text="Conversion Country", font=("Helvetica", 11), bg=label_frame_color)
-country2_labelframe.grid(row=1, column=0, pady=(20, 0), padx=(25, 0))
-# Label
-country2_label = Label(country2_labelframe, text="Country of Currency which you want to Convert to...", bg=label_frame_color)
-country2_label.pack(padx=20, pady=(10, 0))
-# Country2 Entry Box
-country2_entry = Entry(country2_labelframe, font=('helvetica', 15), width=25)
-country2_entry.pack(padx=20, pady=(10, 0))
-# Label
-conversion_rate_label = Label(country2_labelframe, text="Current Conversion Rate...", bg=label_frame_color)
-conversion_rate_label.pack(padx=20, pady=(15, 0))
-# Readonly Entry box for Conversion rate
-conversion_rate_entry = Entry(country2_labelframe, state="readonly", font=('helvetica', 15), width=25)
-conversion_rate_entry.pack(padx=20, pady=(10, 15))
-
-# Button Frame
-button_frame = Frame(conversion_rate_frame, bg="#daff8c")
-button_frame.grid(row=2, column=0, columnspan=2, pady=(40, 0))
-
-# Unlock Button
-unlock_button = Button(button_frame, text="Unlock", font=('helvetica', 12), bg="#fd99ff", command=unlock)
-unlock_button.grid(row=0, column=0, ipadx=5, padx=(10, 30))
-# Conversion Rate Button
-conv_rate_button = Button(button_frame, text="Conversion Rate", font=('helvetica', 12), bg="#fd99ff", command=conv_rate)
-conv_rate_button.grid(row=0, column=1, ipadx=8, padx=(30, 0))
-
-# Create Frame
-my_frame = LabelFrame(conversion_rate_frame, text="List Of Countries", font=("Helvetica", 11), bg=label_frame_color)
-my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 10))
-
-# Create Listbox
-my_list = Listbox(my_frame, font=("Helvetica", 10), width=24, height=15, bg="#f9ff85",
-                  fg="black", selectbackground="green", activestyle="none")
-my_list.pack(side=LEFT, fill=BOTH, pady=(10, 11), padx=(10, 0))
-
-# Create Scrollbar
-my_scrollbar = Scrollbar(my_frame)
-my_scrollbar.pack(side=RIGHT, fill=BOTH, pady=(10, 11), padx=(0, 10))
-
-# Add Scrollbar
-my_list.config(yscrollcommand=my_scrollbar.set)
-my_scrollbar.config(command=my_list.yview)
-
-update_listbox(country_list)
-
-# Create a Binding on the ListBox onclick
-my_list.bind("<<ListboxSelect>>", fill_out)
-
-# Create a binding on the Entry Box
-country1_entry.bind("<KeyRelease>", lambda event, obj=country1_entry: check(event, obj))
-country1_entry.bind("<Button-1>", lambda event, obj=country1_entry: check(event, obj))
-country2_entry.bind("<KeyRelease>", lambda event, obj=country2_entry: check(event, obj))
-country2_entry.bind("<Button-1>", lambda event, obj=country2_entry: check(event, obj))
-
-
-root.mainloop()
+    mainloop()
