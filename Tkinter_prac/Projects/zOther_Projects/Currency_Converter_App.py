@@ -36,7 +36,8 @@ for country_id in api['results']:
 
 root = Tk()
 root.title("Currency Converter App")
-root.geometry("610x300")
+root.geometry("620x430+340+100")
+root.config(bg="#daff8c")
 
 
 def conv_rate():
@@ -53,8 +54,8 @@ def conv_rate():
             "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + API_KEY)
         conversion_rate = json.loads(api_request.content)
 
-        conversion_rate = str(round(float(conversion_rate[search_option]), 2))
-        conv_rate_label.config(text=conversion_rate)
+        conversion_rate = conversion_rate[search_option]
+        conversion_rate_entry.insert(END, conversion_rate)
 
 
 # Update the ListBox
@@ -104,38 +105,50 @@ def check(event, obj):
     update_listbox(data)
 
 
-# Country Labels
-country1_label = Label(root, text="Base Country:", font=('helvetica', 12))
-country1_label.grid(row=0, column=0, padx=(20, 0), pady=(36, 0), sticky=E)
-country2_label = Label(root, text="Conversion Country:", font=('helvetica', 12))
-country2_label.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky=E)
+label_frame_color = "#c7ff66"
 
-# Entry Boxes
-country1_entry = Entry(root, font=('helvetica', 12))
-country1_entry.grid(row=0, column=1, pady=(36, 0), padx=(10, 0))
-country2_entry = Entry(root, font=('helvetica', 12))
-country2_entry.grid(row=1, column=1, pady=(20, 0), padx=(10, 0))
+# Country1 LabelFrame
+country1_labelframe = LabelFrame(root, text="Base Country", font=("Helvetica", 11), bg=label_frame_color)
+country1_labelframe.grid(row=0, column=0, pady=(30, 0), padx=(25, 0))
+# Label
+country1_label = Label(country1_labelframe, text="Country of Currency which you want to Convert...", bg=label_frame_color)
+country1_label.pack(padx=20, pady=(10, 0))
+# Country1 Entry Box
+country1_entry = Entry(country1_labelframe, font=('helvetica', 15), width=25)
+country1_entry.pack(padx=20, pady=(10, 15))
+
+# Country2 LabelFrame
+country2_labelframe = LabelFrame(root, text="Conversion Country", font=("Helvetica", 11), bg=label_frame_color)
+country2_labelframe.grid(row=1, column=0, pady=(20, 0), padx=(25, 0))
+# Label
+country2_label = Label(country2_labelframe, text="Country of Currency which you want to Convert to...", bg=label_frame_color)
+country2_label.pack(padx=20, pady=(10, 0))
+# Country2 Entry Box
+country2_entry = Entry(country2_labelframe, font=('helvetica', 15), width=25)
+country2_entry.pack(padx=20, pady=(10, 0))
+# Label
+conversion_rate_label = Label(country2_labelframe, text="Current Conversion Rate...", bg=label_frame_color)
+conversion_rate_label.pack(padx=20, pady=(15, 0))
+# Readonly Entry box for Conversion rate
+conversion_rate_entry = Entry(country2_labelframe, state="readonly", font=('helvetica', 15), width=25)
+conversion_rate_entry.pack(padx=20, pady=(10, 15))
 
 # Conversion Rate Button
-conv_rate_button = Button(root, text="Conversion Rate", font=('helvetica', 12), command=conv_rate)
-conv_rate_button.grid(row=2, column=0, columnspan=2, pady=(25, 0), ipadx=10)
-
-# Conversion Rate Label
-conv_rate_label = Button(root, text="", font=('helvetica', 12), bd=0)
-conv_rate_label.grid(row=3, column=0, columnspan=2, pady=10)
+conv_rate_button = Button(root, text="Conversion Rate", font=('helvetica', 12), bg="#fd99ff", command=conv_rate)
+conv_rate_button.grid(row=2, column=0, columnspan=2, pady=(35, 0), ipadx=8)
 
 # Create Frame
-my_frame = LabelFrame(root, text="List Of Countries", font=("Helvetica", 11), bd=0)
-my_frame.grid(row=0, column=2, rowspan=4, padx=(30, 0), pady=(15, 0))
+my_frame = LabelFrame(root, text="List Of Countries", font=("Helvetica", 11), bg=label_frame_color)
+my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 0))
 
 # Create Listbox
-my_list = Listbox(my_frame, font=("Helvetica", 10), width=24, height=12, bg="#ffe173",
+my_list = Listbox(my_frame, font=("Helvetica", 10), width=24, height=15, bg="#f9ff85",
                   fg="black", selectbackground="green", activestyle="none")
-my_list.pack(side=LEFT, fill=BOTH, pady=(8, 0))
+my_list.pack(side=LEFT, fill=BOTH, pady=(10, 11), padx=(10, 0))
 
 # Create Scrollbar
 my_scrollbar = Scrollbar(my_frame)
-my_scrollbar.pack(side=RIGHT, fill=BOTH, pady=(8, 0))
+my_scrollbar.pack(side=RIGHT, fill=BOTH, pady=(10, 11), padx=(0, 10))
 
 # Add Scrollbar
 my_list.config(yscrollcommand=my_scrollbar.set)
