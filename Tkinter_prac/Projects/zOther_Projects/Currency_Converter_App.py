@@ -33,12 +33,7 @@ from dotenv import load_dotenv
 
 
 class CurrencyConverterApp:
-    def __init__(self, master, title, geo):
-        self.root = master
-        self.root.title(title)
-        self.root.geometry(geo)
-        self.root.config(bg="#daff8c")
-
+    def __init__(self, master=None, gui=False):
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
         load_dotenv(dotenv_path=env_path)
@@ -60,39 +55,45 @@ class CurrencyConverterApp:
                                                                                      api['results'][country_id]['currencySymbol']
             self.country_list.append(api['results'][country_id]['name'])
 
-        # Create Tabs
-        self.my_notebook = ttk.Notebook(self.root)
-        self.my_notebook.pack(pady=(0, 5), padx=5)
+        if gui:
+            self.root = master
+            self.root.title("Currency Converter App")
+            self.root.geometry("635x460+340+80")
+            self.root.config(bg="#daff8c")
 
-        # Create Two Frames
-        self.conversion_rate_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
-        self.convert_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
+            # Create Tabs
+            self.my_notebook = ttk.Notebook(self.root)
+            self.my_notebook.pack(pady=(0, 5), padx=5)
 
-        self.conversion_rate_frame.pack(fill=BOTH, expand=1)
-        self.convert_frame.pack(fill=BOTH, expand=1)
+            # Create Two Frames
+            self.conversion_rate_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
+            self.convert_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
 
-        # Add our Tabs
-        self.my_notebook.add(self.conversion_rate_frame, text="Conversion Rate")
-        self.my_notebook.add(self.convert_frame, text="Convert", state=DISABLED)
+            self.conversion_rate_frame.pack(fill=BOTH, expand=1)
+            self.convert_frame.pack(fill=BOTH, expand=1)
 
-        # Binding My Notebook
-        self.my_notebook.bind("<<NotebookTabChanged>>", self.handle_tab_changed)
+            # Add our Tabs
+            self.my_notebook.add(self.conversion_rate_frame, text="Conversion Rate")
+            self.my_notebook.add(self.convert_frame, text="Convert", state=DISABLED)
 
-        # Calling the ConversionRate class
-        self.obj_WinConversionRate = WinConversionRate(self.conversion_rate_frame, self.my_notebook,
-                                                       self.country_currency_dict, self.country_list,
-                                                       self.API_KEY)
+            # Binding My Notebook
+            self.my_notebook.bind("<<NotebookTabChanged>>", self.handle_tab_changed)
+
+            # Calling the ConversionRate class
+            self.obj_WinConversionRate = WinConversionRate(self.conversion_rate_frame, self.my_notebook,
+                                                           self.country_currency_dict, self.country_list,
+                                                           self.API_KEY)
 
     def handle_tab_changed(self, event):
         selection = event.widget.select()
         tab = event.widget.tab(selection, "text")
 
         if tab == "Conversion Rate":
-            root.geometry("635x460+340+80")
+            self.root.geometry("635x460+340+80")
             for child in self.convert_frame.winfo_children():
                 child.destroy()
         else:
-            root.geometry("440x350+400+100")
+            self.root.geometry("440x350+400+100")
 
             conversion_rate = float(self.obj_WinConversionRate.conversion_rate_entry.get())
             country1_name = self.obj_WinConversionRate.country1_entry.get().lower()
@@ -113,11 +114,12 @@ class CurrencyConverterApp:
         country2_name = country2.lower()
 
         if country1_name == '' or country2_name == '':
-            messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
+            return -1
         elif country1_name == country2_name:
-            messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
-        elif country1_name not in self.country_list or country2_name not in self.country_list:
-            messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
+            return -2
+        elif country1_name not in [x.lower() for x in self.country_list] or \
+                country2_name not in [x.lower() for x in self.country_list]:
+            return -3
         else:
             # Making our search option
             search_option = self.country_currency_dict[country1_name][0] + '_' + self.country_currency_dict[country2_name][0]
@@ -132,7 +134,17 @@ class CurrencyConverterApp:
 
             return conversion_rate
 
-        return -1
+    def convert(self, val, country1, country2):
+        conv_rate = self.find_conv_rate(country1, country2)
+
+        if conv_rate == -1:
+            raise ValueError("Please Provide Country Names")
+        elif conv_rate == -2:
+            raise ValueError("Please Provide Different Country Names")
+        elif conv_rate == -3:
+            raise ValueError("Please Provide Proper Country Names")
+        else:
+            return conv_rate * val
 
 
 class WinConversionRate:
@@ -223,7 +235,8 @@ class WinConversionRate:
             messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
         elif country1_name == country2_name:
             messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
-        elif country1_name not in [x.lower() for x in self.country_list] or country2_name not in [x.lower() for x in self.country_list]:
+        elif country1_name not in [x.lower() for x in self.country_list] or \
+                country2_name not in [x.lower() for x in self.country_list]:
             messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
         else:
             search_option = self.country_currency_dict[country1_name][0] + '_' + self.country_currency_dict[country2_name][0]
@@ -281,7 +294,7 @@ class WinConversionRate:
         else:
             data = []
             for item in self.country_list:
-                if typed.lower() in item.lower():
+                if typed.lower() in item.lower()[0:len(typed)]:
                     data.append(item)
 
         # Update our ListBox with selected items
@@ -333,6 +346,7 @@ class WinConvert:
         clear_button.pack(pady=(22, 0), ipadx=5)
 
     def clear(self):
+        # Clearing the Entry Boxes
         self.currency1_entry.delete(0, END)
         self.currency2_entry.config(state=NORMAL)
         self.currency2_entry.delete(0, END)
@@ -341,15 +355,35 @@ class WinConvert:
     def convert(self):
         result = self.conversion_rate * float(self.currency1_entry.get())
 
+        # round() our result based on its value
+        if result < 1:
+            if result > 0.001:
+                result = round(result, 4)
+            else:
+                result = round(result, 6)
+        else:
+            result = round(result, 2)
+
+        # State of entry box to NORMAL then deleting the content
         self.currency2_entry.config(state=NORMAL)
         self.currency2_entry.delete(0, END)
-        self.currency2_entry.insert(END, str(result))
+
+        # Result formatted to have commas
+        result = '{:,}'.format(result)
+        # Symbol Added
+        result = self.country2_currencySymbol + " " + result
+        # Inserting the final result
+        self.currency2_entry.insert(END, result)
+
+        # Making State of the entry box to "readonly"
         self.currency2_entry.config(state="readonly")
 
 
 if __name__ == "__main__":
     root = Tk()
     env_file_path = "C:/Users/HP/Pycharm_Projects/openCV_venv/.env"
-    CurrencyConverterApp(root, "Currency Converter App", "635x460+340+80")
+    CurrencyConverterApp(root, gui=True)
+    # obj = CurrencyConverterApp()
+    # print(obj.convert(203, "United States of America", "India"))
 
     mainloop()
