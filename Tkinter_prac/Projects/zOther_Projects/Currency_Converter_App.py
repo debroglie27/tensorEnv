@@ -55,7 +55,9 @@ class CurrencyConverterApp:
         self.country_currency_dict = {}
         self.country_list = []
         for country_id in api['results']:
-            self.country_currency_dict[api['results'][country_id]['name']] = api['results'][country_id]['currencyId']
+            self.country_currency_dict[api['results'][country_id]['name'].lower()] = api['results'][country_id]['currencyId'], \
+                                                                                     api['results'][country_id]['currencyName'], \
+                                                                                     api['results'][country_id]['currencySymbol']
             self.country_list.append(api['results'][country_id]['name'])
 
         # Create Tabs
@@ -64,7 +66,7 @@ class CurrencyConverterApp:
 
         # Create Two Frames
         self.conversion_rate_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
-        self.convert_frame = Frame(self.my_notebook, width=620, height=430)
+        self.convert_frame = Frame(self.my_notebook, width=620, height=460, bg="#daff8c")
 
         self.conversion_rate_frame.pack(fill=BOTH, expand=1)
         self.convert_frame.pack(fill=BOTH, expand=1)
@@ -73,14 +75,42 @@ class CurrencyConverterApp:
         self.my_notebook.add(self.conversion_rate_frame, text="Conversion Rate")
         self.my_notebook.add(self.convert_frame, text="Convert", state=DISABLED)
 
+        # Binding My Notebook
+        self.my_notebook.bind("<<NotebookTabChanged>>", self.handle_tab_changed)
+
         # Calling the ConversionRate class
-        WinConversionRate(self.conversion_rate_frame, self.my_notebook,
-                          self.country_currency_dict, self.country_list,
-                          self.API_KEY)
+        self.obj_WinConversionRate = WinConversionRate(self.conversion_rate_frame, self.my_notebook,
+                                                       self.country_currency_dict, self.country_list,
+                                                       self.API_KEY)
+
+    def handle_tab_changed(self, event):
+        selection = event.widget.select()
+        tab = event.widget.tab(selection, "text")
+
+        if tab == "Conversion Rate":
+            root.geometry("635x460+340+80")
+            for child in self.convert_frame.winfo_children():
+                child.destroy()
+        else:
+            root.geometry("440x350+400+100")
+
+            conversion_rate = float(self.obj_WinConversionRate.conversion_rate_entry.get())
+            country1_name = self.obj_WinConversionRate.country1_entry.get().lower()
+            country2_name = self.obj_WinConversionRate.country2_entry.get().lower()
+
+            country1_currencyName = self.country_currency_dict[country1_name][1]
+            country2_currencyName = self.country_currency_dict[country2_name][1]
+
+            country1_currencySymbol = self.country_currency_dict[country1_name][2]
+            country2_currencySymbol = self.country_currency_dict[country2_name][2]
+
+            self.conversion_rate_frame.pack_forget()
+            WinConvert(self.convert_frame, conversion_rate, country1_currencyName, country1_currencySymbol,
+                       country2_currencyName, country2_currencySymbol)
 
     def find_conv_rate(self, country1, country2):
-        country1_name = country1.lower().title()
-        country2_name = country2.lower().title()
+        country1_name = country1.lower()
+        country2_name = country2.lower()
 
         if country1_name == '' or country2_name == '':
             messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
@@ -90,7 +120,7 @@ class CurrencyConverterApp:
             messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
         else:
             # Making our search option
-            search_option = self.country_currency_dict[country1_name] + '_' + self.country_currency_dict[country2_name]
+            search_option = self.country_currency_dict[country1_name][0] + '_' + self.country_currency_dict[country2_name][0]
             # Requesting for conversion rate information
             api_request = requests.get(
                 "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + self.API_KEY)
@@ -146,7 +176,7 @@ class WinConversionRate:
 
         # Button Frame
         self.button_frame = Frame(self.root, bg="#daff8c")
-        self.button_frame.grid(row=2, column=0, columnspan=2, pady=(40, 0))
+        self.button_frame.grid(row=2, column=0, columnspan=2, pady=(40, 25))
 
         # Unlock Button
         self.unlock_button = Button(self.button_frame, text="Unlock", font=('helvetica', 12), bg="#fd99ff", command=self.unlock)
@@ -159,7 +189,7 @@ class WinConversionRate:
         # Create Frame
         self.my_frame = LabelFrame(self.root, text="List Of Countries", font=("Helvetica", 11),
                                    bg=self.label_frame_color)
-        self.my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 10))
+        self.my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 25))
 
         # Create Listbox
         self.my_list = Listbox(self.my_frame, font=("Helvetica", 10), width=24, height=15, bg="#f9ff85",
@@ -186,17 +216,17 @@ class WinConversionRate:
         self.country2_entry.bind("<Button-1>", lambda event, obj=self.country2_entry: self.check(event, obj))
 
     def conv_rate(self):
-        country1_name = self.country1_entry.get().lower().title()
-        country2_name = self.country2_entry.get().lower().title()
+        country1_name = self.country1_entry.get().lower()
+        country2_name = self.country2_entry.get().lower()
 
         if country1_name == '' or country2_name == '':
             messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
         elif country1_name == country2_name:
             messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
-        elif country1_name not in self.country_list or country2_name not in self.country_list:
+        elif country1_name not in [x.lower() for x in self.country_list] or country2_name not in [x.lower() for x in self.country_list]:
             messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
         else:
-            search_option = self.country_currency_dict[country1_name] + '_' + self.country_currency_dict[country2_name]
+            search_option = self.country_currency_dict[country1_name][0] + '_' + self.country_currency_dict[country2_name][0]
             api_request = requests.get(
                 "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + self.API_KEY)
             conversion_rate = json.loads(api_request.content)
@@ -265,6 +295,56 @@ class WinConversionRate:
 
         self.country1_entry.config(state=NORMAL)
         self.country2_entry.config(state=NORMAL)
+
+
+class WinConvert:
+    def __init__(self, master, conversion_rate, country1_currency_name, country1_currency_symbol,
+                 country2_currency_name, country2_currency_symbol):
+        self.root = master
+        self.conversion_rate = conversion_rate
+        self.country1_currencyName = country1_currency_name
+        self.country2_currencyName = country2_currency_name
+        self.country1_currencySymbol = country1_currency_symbol
+        self.country2_currencySymbol = country2_currency_symbol
+
+        self.label_frame_color = "#c7ff66"
+
+        # Currency1 LabelFrame
+        self.currency1_labelframe = LabelFrame(self.root, text="Amount in " + country1_currency_name, font=("Helvetica", 11),
+                                               bg=self.label_frame_color)
+        self.currency1_labelframe.pack(pady=(30, 0), padx=(25, 25))
+        # Currency1 Entry Box
+        self.currency1_entry = Entry(self.currency1_labelframe, font=('helvetica', 15), width=25)
+        self.currency1_entry.pack(padx=20, pady=(10, 10))
+        # Convert Button
+        self.convert_button = Button(self.currency1_labelframe, text="Convert", font=('helvetica', 11), bg="#fd99ff", command=self.convert)
+        self.convert_button.pack(padx=20, pady=(5, 15), ipadx=6)
+
+        # Currency2 LabelFrame
+        self.currency2_labelframe = LabelFrame(self.root, text="Equivalent Amount in " + country2_currency_name, font=("Helvetica", 11),
+                                               bg=self.label_frame_color)
+        self.currency2_labelframe.pack(pady=(24, 0), padx=(25, 25))
+        # Currency2 Entry Box
+        self.currency2_entry = Entry(self.currency2_labelframe, font=('helvetica', 15), width=25, state="readonly")
+        self.currency2_entry.pack(padx=20, pady=(10, 15))
+
+        # Clear Button
+        clear_button = Button(self.root, text="Clear", font=("Helvetica", 11), bg="#fd99ff", command=self.clear)
+        clear_button.pack(pady=(22, 0), ipadx=5)
+
+    def clear(self):
+        self.currency1_entry.delete(0, END)
+        self.currency2_entry.config(state=NORMAL)
+        self.currency2_entry.delete(0, END)
+        self.currency2_entry.config(state="readonly")
+
+    def convert(self):
+        result = self.conversion_rate * float(self.currency1_entry.get())
+
+        self.currency2_entry.config(state=NORMAL)
+        self.currency2_entry.delete(0, END)
+        self.currency2_entry.insert(END, str(result))
+        self.currency2_entry.config(state="readonly")
 
 
 if __name__ == "__main__":
