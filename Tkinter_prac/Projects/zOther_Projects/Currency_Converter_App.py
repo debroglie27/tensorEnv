@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -36,18 +36,35 @@ for country_id in api['results']:
 
 root = Tk()
 root.title("Currency Converter App")
-root.geometry("620x430+340+100")
+root.geometry("635x460+340+80")
 root.config(bg="#daff8c")
+
+# Create Tabs
+my_notebook = ttk.Notebook(root)
+my_notebook.pack(pady=(0, 5), padx=5)
+
+# Create Two Frames
+conversion_rate_frame = Frame(my_notebook, width=620, height=460, bg="#daff8c")
+convert_frame = Frame(my_notebook, width=620, height=430)
+
+conversion_rate_frame.pack(fill=BOTH, expand=1)
+convert_frame.pack(fill=BOTH, expand=1)
+
+# Add our Tabs
+my_notebook.add(conversion_rate_frame, text="Conversion Rate")
+my_notebook.add(convert_frame, text="Convert", state=DISABLED)
 
 
 def conv_rate():
     country1_name = country1_entry.get()
     country2_name = country2_entry.get()
 
-    if country1_name == "Select..." or country2_name == "Select...":
-        messagebox.showwarning("Warning", "Please Select Both the Countries", parent=root)
+    if country1_name == '' or country2_name == '':
+        messagebox.showwarning("Warning", "Please Select a Country Name", parent=root)
     elif country1_name == country2_name:
         messagebox.showwarning("Warning", "Please Select Different Country Names", parent=root)
+    elif country1_name not in country_list or country2_name not in country_list:
+        messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
     else:
         search_option = country_currency_dict[country1_name] + '_' + country_currency_dict[country2_name]
         api_request = requests.get(
@@ -55,7 +72,16 @@ def conv_rate():
         conversion_rate = json.loads(api_request.content)
 
         conversion_rate = conversion_rate[search_option]
+        conversion_rate_entry.config(state=NORMAL)
         conversion_rate_entry.insert(END, conversion_rate)
+        conversion_rate_entry.config(state="readonly")
+
+        # Locking the Country Entry Boxes
+        country1_entry.config(state="readonly")
+        country2_entry.config(state="readonly")
+
+        # Unlocking our convert Tab
+        my_notebook.tab(1, state=NORMAL)
 
 
 # Update the ListBox
@@ -105,10 +131,21 @@ def check(event, obj):
     update_listbox(data)
 
 
+def unlock():
+    conversion_rate_entry.config(state=NORMAL)
+    conversion_rate_entry.delete(0, END)
+    conversion_rate_entry.config(state="readonly")
+    conversion_rate_entry.delete(0, END)
+    my_notebook.tab(1, state=DISABLED)
+
+    country1_entry.config(state=NORMAL)
+    country2_entry.config(state=NORMAL)
+
+
 label_frame_color = "#c7ff66"
 
 # Country1 LabelFrame
-country1_labelframe = LabelFrame(root, text="Base Country", font=("Helvetica", 11), bg=label_frame_color)
+country1_labelframe = LabelFrame(conversion_rate_frame, text="Base Country", font=("Helvetica", 11), bg=label_frame_color)
 country1_labelframe.grid(row=0, column=0, pady=(30, 0), padx=(25, 0))
 # Label
 country1_label = Label(country1_labelframe, text="Country of Currency which you want to Convert...", bg=label_frame_color)
@@ -118,7 +155,7 @@ country1_entry = Entry(country1_labelframe, font=('helvetica', 15), width=25)
 country1_entry.pack(padx=20, pady=(10, 15))
 
 # Country2 LabelFrame
-country2_labelframe = LabelFrame(root, text="Conversion Country", font=("Helvetica", 11), bg=label_frame_color)
+country2_labelframe = LabelFrame(conversion_rate_frame, text="Conversion Country", font=("Helvetica", 11), bg=label_frame_color)
 country2_labelframe.grid(row=1, column=0, pady=(20, 0), padx=(25, 0))
 # Label
 country2_label = Label(country2_labelframe, text="Country of Currency which you want to Convert to...", bg=label_frame_color)
@@ -133,13 +170,20 @@ conversion_rate_label.pack(padx=20, pady=(15, 0))
 conversion_rate_entry = Entry(country2_labelframe, state="readonly", font=('helvetica', 15), width=25)
 conversion_rate_entry.pack(padx=20, pady=(10, 15))
 
+# Button Frame
+button_frame = Frame(conversion_rate_frame, bg="#daff8c")
+button_frame.grid(row=2, column=0, columnspan=2, pady=(40, 0))
+
+# Unlock Button
+unlock_button = Button(button_frame, text="Unlock", font=('helvetica', 12), bg="#fd99ff", command=unlock)
+unlock_button.grid(row=0, column=0, ipadx=5, padx=(10, 30))
 # Conversion Rate Button
-conv_rate_button = Button(root, text="Conversion Rate", font=('helvetica', 12), bg="#fd99ff", command=conv_rate)
-conv_rate_button.grid(row=2, column=0, columnspan=2, pady=(35, 0), ipadx=8)
+conv_rate_button = Button(button_frame, text="Conversion Rate", font=('helvetica', 12), bg="#fd99ff", command=conv_rate)
+conv_rate_button.grid(row=0, column=1, ipadx=8, padx=(30, 0))
 
 # Create Frame
-my_frame = LabelFrame(root, text="List Of Countries", font=("Helvetica", 11), bg=label_frame_color)
-my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 0))
+my_frame = LabelFrame(conversion_rate_frame, text="List Of Countries", font=("Helvetica", 11), bg=label_frame_color)
+my_frame.grid(row=0, column=1, rowspan=2, pady=(30, 0), padx=(30, 10))
 
 # Create Listbox
 my_list = Listbox(my_frame, font=("Helvetica", 10), width=24, height=15, bg="#f9ff85",
