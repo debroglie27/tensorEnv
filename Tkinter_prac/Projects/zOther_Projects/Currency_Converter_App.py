@@ -7,14 +7,28 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
-# Getting Conversion Rate for two Particular Countries
+# # Environment File Path
+# env_file_path = "C:/Users/HP/Pycharm_Projects/openCV_venv/.env"
+#
+# # Loading the Environment Variables from .env file
+# env_path = Path(env_file_path)
+# load_dotenv(dotenv_path=env_path)
+#
+# API_KEY = os.environ.get('CURRENCY_CONVERTER_API_KEY')
+
+# # Getting Conversion Rate for two Particular Countries
 # api_request = requests.get("https://free.currconv.com/api/v7/convert?q=USD_PHP&compact=ultra&apiKey=" + API_KEY)
 # api = json.loads(api_request.content)
 # print(api)
 
-# Getting All Currency Details
+# # Getting All Currency Details
 # api_request = requests.get("https://free.currconv.com/api/v7/currencies?apiKey=" + API_KEY)
 # api = json.loads(api_request.content)
+# print(api['results'])
+
+# # Getting All Country Details
+# api_countries_request = requests.get("https://free.currconv.com/api/v7/countries?apiKey=" + API_KEY)
+# api = json.loads(api_countries_request.content)
 # print(api['results'])
 
 
@@ -29,11 +43,15 @@ class CurrencyConverterApp:
         env_path = Path(env_file_path)
         load_dotenv(dotenv_path=env_path)
 
+        # Getting our API KEY
         self.API_KEY = os.environ.get('CURRENCY_CONVERTER_API_KEY')
 
+        # Requesting for Information
         api_countries_request = requests.get("https://free.currconv.com/api/v7/countries?apiKey=" + self.API_KEY)
+        # Getting the Information
         api = json.loads(api_countries_request.content)
 
+        # Storing only the Required Information
         self.country_currency_dict = {}
         self.country_list = []
         for country_id in api['results']:
@@ -55,6 +73,7 @@ class CurrencyConverterApp:
         self.my_notebook.add(self.conversion_rate_frame, text="Conversion Rate")
         self.my_notebook.add(self.convert_frame, text="Convert", state=DISABLED)
 
+        # Calling the ConversionRate class
         WinConversionRate(self.conversion_rate_frame, self.my_notebook,
                           self.country_currency_dict, self.country_list,
                           self.API_KEY)
@@ -70,11 +89,15 @@ class CurrencyConverterApp:
         elif country1_name not in self.country_list or country2_name not in self.country_list:
             messagebox.showwarning("Warning", "Please Select Proper Country Names", parent=root)
         else:
+            # Making our search option
             search_option = self.country_currency_dict[country1_name] + '_' + self.country_currency_dict[country2_name]
+            # Requesting for conversion rate information
             api_request = requests.get(
                 "https://free.currconv.com/api/v7/convert?q=" + search_option + "&compact=ultra&apiKey=" + self.API_KEY)
+            # Getting the Conversion Rate Information
             conversion_rate = json.loads(api_request.content)
 
+            # Getting the actual value
             conversion_rate = float(conversion_rate[search_option])
 
             return conversion_rate
