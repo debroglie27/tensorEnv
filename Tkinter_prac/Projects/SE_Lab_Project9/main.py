@@ -485,7 +485,7 @@ class WinHome:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x340+450+110")
+        self.root.geometry("377x350+450+110")
         self.root['bg'] = "#90EE90"
         self.root.resizable(width=False, height=False)
 
