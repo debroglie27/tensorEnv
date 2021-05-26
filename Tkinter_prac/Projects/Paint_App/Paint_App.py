@@ -69,7 +69,7 @@ def clear_canvas():
 # Converting Canvas drawing to PNG File and storing
 def save_image():
     root.geometry("700x550+280+50")
-    filename = filedialog.asksaveasfile(defaultextension=".*", initialdir="./PaintApp_Images/", title="Save File",
+    filename = filedialog.asksaveasfile(defaultextension=".*", initialdir="./Images/", title="Save File",
                                         filetypes=(("PNG File", "*.png"), ("JPG File", "*.jpg")))
 
     if filename:
