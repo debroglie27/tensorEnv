@@ -248,11 +248,11 @@ song_box = Listbox(master_frame, bg="black", fg="green", width=40, font=("Helvet
 song_box.grid(row=0, column=0)
 
 # Define Player Control Images
-back_btn_img = PhotoImage(file="Music_Player_Images/back50.png")
-forward_btn_img = PhotoImage(file="Music_Player_Images/forward50.png")
-play_btn_img = PhotoImage(file="Music_Player_Images/play50.png")
-pause_btn_img = PhotoImage(file="Music_Player_Images/pause50.png")
-stop_btn_img = PhotoImage(file="Music_Player_Images/stop50.png")
+back_btn_img = PhotoImage(file="./Images/back50.png")
+forward_btn_img = PhotoImage(file="./Images/forward50.png")
+play_btn_img = PhotoImage(file="./Images/play50.png")
+pause_btn_img = PhotoImage(file="./Images/pause50.png")
+stop_btn_img = PhotoImage(file="./Images/stop50.png")
 
 # Create Player Control Frame
 controls_frame = Frame(master_frame)
