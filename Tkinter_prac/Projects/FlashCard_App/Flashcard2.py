@@ -17,11 +17,11 @@ def hide_all_frames(args):
 
 class HomeScreen:
 
-    def __init__(self, master, title, geo):
+    def __init__(self, master):
 
         self.root = master
-        self.root.title(title)
-        self.root.geometry(geo)
+        self.root.title("Flashcard App")
+        self.root.geometry("600x530+330+50")
 
         # Create our Menu
         self.my_menu = Menu(root)
@@ -57,7 +57,7 @@ class HomeScreen:
         self.state_capitals_frame = Frame(self.root, width=500, height=500)
         self.mathematics_frame = Frame(self.root, width=500, height=500)
 
-        self.background_img = ImageTk.PhotoImage(Image.open("C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/FlashCard_App/FlashCard_Images/background.jpg"))
+        self.background_img = ImageTk.PhotoImage(Image.open("./Images/background.jpg"))
 
         # Creating a Canvas
         self.my_canvas = Canvas(self.root, width=600, height=520)
@@ -145,7 +145,7 @@ class StatesFrame:
 
         # Generate a random number
         self.random_number = randint(0, len(self.our_states) - 1)
-        state_image_path = 'C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/FlashCard_App/FlashCard_Images/' + self.our_states[self.random_number] + '.png'
+        state_image_path = './Images/' + self.our_states[self.random_number] + '.png'
 
         # Create our state images
         self.state_image = PhotoImage(file=state_image_path)
@@ -256,7 +256,7 @@ class StateCapitalsFrame:
             count += 1
 
         # Defining our Display Image path
-        state_image_path = 'C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/FlashCard_App/FlashCard_Images/' + self.answer + '.png'
+        state_image_path = './Images/' + self.answer + '.png'
 
         # Create our state images
         self.state_image = PhotoImage(file=state_image_path)
@@ -364,6 +364,6 @@ class MathematicsFrame:
         self.random_mathematics(0)
 
 
-HomeScreen(root, "Flashcards", "600x530")
+HomeScreen(root)
 
 mainloop()

@@ -4,8 +4,8 @@ import random
 from tkinter import messagebox
 
 root = Tk()
-root.title("Flashcards")
-root.geometry('600x530')
+root.title("Flashcard App")
+root.geometry('600x530+330+50')
 
 # Global Variables
 state_image = PhotoImage()
@@ -56,7 +56,7 @@ def random_state(param):
 
     # Generate a random number
     random_number = randint(0, len(our_states) - 1)
-    state_image_path = 'C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/FlashCard_App/FlashCard_Images/' + our_states[random_number] + '.png'
+    state_image_path = './Images/' + our_states[random_number] + '.png'
 
     # Create our state images
     global state_image
@@ -140,7 +140,7 @@ def random_state_capitals():
         count += 1
 
     # Defining our Display Image path
-    state_image_path = 'C:/Users/M K DE/PycharmProjects/tensorEnv/Tkinter_prac/Projects/FlashCard_App/FlashCard_Images/' + answer + '.png'
+    state_image_path = './Images/' + answer + '.png'
 
     # Create our state images
     global state_image
