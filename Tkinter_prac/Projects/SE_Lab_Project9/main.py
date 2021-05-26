@@ -3,7 +3,7 @@
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
-# Last Updated: 24/05/2021
+# Last Updated: 26/05/2021
 
 ########################################################################################
 ########################################################################################
@@ -22,7 +22,7 @@ from cryptography.fernet import Fernet
 ########################################################################################
 ########################################################################################
 
-# conn = sqlite3.connect('C:/Users/HP/PycharmProjects/tensorEnv/Tkinter_prac/Projects/SE_Lab_Project9/FS_DATABASE.db')
+# conn = sqlite3.connect('./FS_DATABASE.db')
 # c = conn.cursor()
 
 # Create Table Machines
@@ -70,7 +70,7 @@ from cryptography.fernet import Fernet
 # c.execute(query, ('Mrinal', 'mrinal@gmail.com', encMessage))
 
 # Decryption Code
-# path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+# path = Path('C:/Users/HP/Pycharm_Projects/openCV_venv/.env')
 # load_dotenv(dotenv_path=path)
 # key = os.environ.get('ENCRYPTION_KEY')
 # fernet = Fernet(key)
@@ -87,7 +87,7 @@ from cryptography.fernet import Fernet
 #     print(rec)
 
 # Insert secret_key in Secret_Key after Encryption
-# path = Path('C:/Users/M K DE/PycharmProjects/openCV_venv/.env')
+# path = Path('C:/Users/HP/Pycharm_Projects/openCV_venv/.env')
 # load_dotenv(dotenv_path=path)
 # key = os.environ.get('ENCRYPTION_KEY')
 # fernet = Fernet(key)
@@ -146,9 +146,9 @@ from cryptography.fernet import Fernet
 # Window for Login
 class WinLogin:
 
-    def __init__(self, master, title):
+    def __init__(self, master):
         self.root = master
-        self.root.title(title)
+        self.root.title("Login Window")
         self.root.geometry("380x230+450+150")
         self.root.resizable(width=False, height=False)
 
@@ -175,12 +175,12 @@ class WinLogin:
 
         # SignUp Button
         self.signup_button = Button(self.root, text="SignUp", bg="#add8e6", font=('Helvetica', 11),
-                                    command=lambda: self.forgot_signup_window(WinSignup, "SignUp Window"))
+                                    command=lambda: self.forgot_signup_window(WinSignup))
         self.signup_button.grid(row=2, column=2, columnspan=2, pady=20, padx=(0, 50), ipadx=6)
 
         # Forgot Password Button
         self.forgot_pass_button = Button(self.root, text="Forgot Password?", fg="blue", relief=FLAT,
-                                         command=lambda: self.forgot_signup_window(WinForgotPass, "Forgot Password Window"))
+                                         command=lambda: self.forgot_signup_window(WinForgotPass))
         self.forgot_pass_button.grid(row=3, column=1, padx=(0, 30), columnspan=2)
 
         # Placeholder for our Entry Boxes and also giving a message to distinguish
@@ -236,9 +236,9 @@ class WinLogin:
             messagebox.showerror(
                 "Error", "Incorrect!!! Username or Password", parent=self.root)
 
-    def forgot_signup_window(self, _class, title):
+    def forgot_signup_window(self, _class):
         level = Tk()
-        _class(level, title)
+        _class(level)
         self.root.destroy()
 
     def new_window(self, _class, title, oid):
@@ -250,9 +250,9 @@ class WinLogin:
 # Window for SignUp
 class WinSignup:
 
-    def __init__(self, master, title):
+    def __init__(self, master):
         self.root = master
-        self.root.title(title)
+        self.root.title("SignUp Window")
         self.root.geometry('380x280+450+150')
         self.root.resizable(width=False, height=False)
 
@@ -354,16 +354,16 @@ class WinSignup:
 
     def close_window(self):
         level = Tk()
-        WinLogin(level, "Login Window")
+        WinLogin(level)
         self.root.destroy()
 
 
 # Window for Forgot Password
 class WinForgotPass:
 
-    def __init__(self, master, title):
+    def __init__(self, master):
         self.root = master
-        self.root.title(title)
+        self.root.title("Forgot Password Window")
         self.root.geometry("360x245+450+150")
         self.root.resizable(width=False, height=False)
 
@@ -471,7 +471,7 @@ class WinForgotPass:
 
     def close_window(self):
         level = Tk()
-        WinLogin(level, "Login Window")
+        WinLogin(level)
         self.root.destroy()
 
 
@@ -514,7 +514,7 @@ class WinHome:
         self.file_menu.add_command(label="Adjuster", command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
         self.file_menu.add_command(label="Maintenance", command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.file_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin))
         self.file_menu.add_command(label="Exit", command=self.root.quit)
 
         # Add Settings Menu
@@ -536,8 +536,7 @@ class WinHome:
         # Add Right Click Pop Up Menu
         self.my_popup_menu = Menu(self.root, tearoff=False)
         # Insert, Search, Update and Delete
-        self.my_popup_menu.add_command(label="Machine", command=lambda: self.new_window(
-            WinMachine, "Machine Window", self.user_oid))
+        self.my_popup_menu.add_command(label="Machine", command=lambda: self.new_window(WinMachine, "Machine Window", self.user_oid))
         self.my_popup_menu.add_command(label="Adjuster", command=lambda: self.new_window(WinAdjuster, "Adjuster Window", self.user_oid))
         self.my_popup_menu.add_command(label="Maintenance", command=lambda: self.new_window(WinMaintenance, "Maintenance Window", self.user_oid))
         self.my_popup_menu.add_separator()
@@ -554,16 +553,17 @@ class WinHome:
             self.my_popup_menu.add_separator()
 
         # Logout and Exit
-        self.my_popup_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin, "Login Window"))
+        self.my_popup_menu.add_command(label="Logout", command=lambda: self.logout(WinLogin))
         self.my_popup_menu.add_command(label="Exit", command=root.quit)
 
         # Binding the Right click Pop Up Menu
         self.root.bind("<Button-3>", self.my_popup)
 
         try:
-            # Finding Username for our Status Bar
             conn = sqlite3.connect(database_file_path)
             c = conn.cursor()
+
+            # Finding Username for our Status Bar
             query = 'Select Username from Users where OID=?'
             c.execute(query, (self.user_oid,))
 
@@ -589,9 +589,9 @@ class WinHome:
     def my_popup(self, event):
         self.my_popup_menu.tk_popup(event.x_root, event.y_root)
 
-    def logout(self, _class, title):
+    def logout(self, _class):
         level = Tk()
-        _class(level, title)
+        _class(level)
         self.root.destroy()
 
     def new_window(self, _class, title, oid):
@@ -2555,7 +2555,7 @@ def find_machine_failures():
 if __name__ == "__main__":
     # Declaring File Paths
     env_file_path = 'C:/Users/HP/Pycharm_Projects/openCV_venv/.env'
-    database_file_path = 'C:/Users/HP/Pycharm_Projects/tensorEnv/Tkinter_prac/Projects/SE_Lab_Project9/FS_DATABASE.db'
+    database_file_path = './FS_DATABASE.db'
 
     # Initialising the Interface
     root = Tk()
@@ -2564,7 +2564,7 @@ if __name__ == "__main__":
     machine_failure_list = find_machine_failures()
 
     # The First Window which appears
-    WinLogin(root, "Login Window")
+    WinLogin(root)
 
     mainloop()
 
