@@ -485,7 +485,7 @@ class WinHome:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("377x340+450+130")
+        self.root.geometry("377x340+450+110")
         self.root['bg'] = "#90EE90"
         self.root.resizable(width=False, height=False)
 
@@ -816,18 +816,18 @@ class WinAllUserDetails:
         self.root.resizable(width=False, height=False)
 
         # Add some style
-        self.style = ttk.Style()
+        style = ttk.Style(self.root)
         # Pick a theme
-        self.style.theme_use("clam")
-        self.style.configure("Treeview",
-                             background="white",
-                             foreground="black",
-                             rowheight=25,
-                             fieldbackground="#E3E3E3")
+        style.theme_use("vista")
+        style.configure("Treeview",
+                        background="white",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#E3E3E3")
 
-        self.style.map('Treeview',
-                       background=[('selected', 'yellow')],
-                       foreground=[('selected', 'black')])
+        style.map('Treeview',
+                  background=[('selected', 'yellow')],
+                  foreground=[('selected', 'black')])
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -838,8 +838,8 @@ class WinAllUserDetails:
         self.tree_scroll.pack(side=RIGHT, fill=Y)
 
         # Create TreeView
-        self.my_tree = ttk.Treeview(
-            self.tree_frame, height=6, yscrollcommand=self.tree_scroll.set)
+        self.my_tree = ttk.Treeview(self.tree_frame, height=6,
+                                    yscrollcommand=self.tree_scroll.set)
         self.my_tree.pack()
 
         # Configure ScrollBar
@@ -1350,8 +1350,22 @@ class WinMaintenance:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("320x250+480+150")
+        self.root.geometry("340x275+480+150")
         self.root.resizable(width=False, height=False)
+
+        # Add some style
+        style = ttk.Style(self.root)
+        # Pick a theme
+        style.theme_use("vista")
+        style.configure("Treeview",
+                        background="white",
+                        foreground="black",
+                        rowheight=25,
+                        fieldbackground="#E3E3E3")
+
+        style.map('Treeview',
+                  background=[('selected', 'yellow')],
+                  foreground=[('selected', 'black')])
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -1387,6 +1401,10 @@ class WinMaintenance:
         # Count Variable for number of records
         self.count = 0
 
+        # Create Stripped row Tags
+        self.my_tree.tag_configure('oddrow', background="white")
+        self.my_tree.tag_configure('evenrow', background="lightblue")
+
         try:
             conn = sqlite3.connect(database_file_path)
             c = conn.cursor()
@@ -1404,8 +1422,12 @@ class WinMaintenance:
         self.count = 0
 
         for record in records:
-            self.my_tree.insert(parent='', index='end',
-                                iid=self.count, text="", values=record)
+            if self.count % 2 == 0:
+                self.my_tree.insert(
+                    parent='', index='end', iid=self.count, text="", values=record, tags=("evenrow",))
+            else:
+                self.my_tree.insert(
+                    parent='', index='end', iid=self.count, text="", values=record, tags=("oddrow",))
             self.count += 1
 
         # Back Button
@@ -1515,12 +1537,11 @@ class WinMachineSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("510x385+400+120")
+        self.root.geometry("510x430+400+100")
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
-        self.search_label = Label(
-            self.root, text="Search:", anchor=E, font=('Helvetica', 15))
+        self.search_label = Label(self.root, text="Search:", anchor=E, font=('Helvetica', 15))
         self.search_label.grid(row=0, column=0, padx=(5, 0), pady=20)
         self.search_Entry = Entry(self.root, width=15, font=('Helvetica', 15))
         self.search_Entry.grid(row=0, column=1, padx=(0, 20), pady=20)
@@ -1538,6 +1559,20 @@ class WinMachineSearch:
         self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
         self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
         self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
+
+        # Add some style
+        self.style = ttk.Style(self.root)
+        # Pick a theme
+        self.style.theme_use("vista")
+        self.style.configure("Treeview",
+                             background="white",
+                             foreground="black",
+                             rowheight=25,
+                             fieldbackground="#E3E3E3")
+
+        self.style.map('Treeview',
+                       background=[('selected', 'yellow')],
+                       foreground=[('selected', 'black')])
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -1578,9 +1613,13 @@ class WinMachineSearch:
         # Count Variable for number of records
         self.count = 0
 
+        # Create Stripped row Tags
+        self.my_tree.tag_configure('oddrow', background="white")
+        self.my_tree.tag_configure('evenrow', background="lightblue")
+
         # Change Status Button
         self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11), command=self.change_status)
-        self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
+        self.change_status_button.grid(row=3, column=0, columnspan=3, pady=(5, 0), ipadx=5)
 
     def change_status(self):
         if self.my_tree.selection():
@@ -1681,8 +1720,12 @@ class WinMachineSearch:
 
         if records:
             for record in records:
-                self.my_tree.insert(parent='', index='end',
-                                    iid=self.count, text="", values=record)
+                if self.count % 2 == 0:
+                    self.my_tree.insert(
+                        parent='', index='end', iid=self.count, text="", values=record, tags=("evenrow",))
+                else:
+                    self.my_tree.insert(
+                        parent='', index='end', iid=self.count, text="", values=record, tags=("oddrow",))
                 self.count += 1
         else:
             messagebox.showinfo(
@@ -1765,7 +1808,7 @@ class WinMachineUpdate:
                 conn = sqlite3.connect(database_file_path)
                 c = conn.cursor()
 
-                # Fetching Machine data for corressponding OID provided
+                # Fetching Machine data for corresponding OID provided
                 c.execute("Select * from Machines where OID=?", self.select_Entry.get())
                 record = c.fetchone()
 
@@ -1996,7 +2039,7 @@ class WinAdjusterSearch:
         self.root = master
         self.user_oid = user_oid
         self.root.title(title)
-        self.root.geometry("584x385+365+120")
+        self.root.geometry("584x430+365+100")
         self.root.resizable(width=False, height=False)
 
         # Our Search Label and Search Entry
@@ -2018,6 +2061,20 @@ class WinAdjusterSearch:
         self.search_button.grid(row=1, column=1, pady=15, ipadx=5)
         self.show_all_button = Button(self.root, text="Show All", bg="orange", font=('Helvetica', 11), command=lambda: self.show(0))
         self.show_all_button.grid(row=1, column=2, padx=(15, 20), pady=15, ipadx=5)
+
+        # Add some style
+        self.style = ttk.Style(self.root)
+        # Pick a theme
+        self.style.theme_use("vista")
+        self.style.configure("Treeview",
+                             background="white",
+                             foreground="black",
+                             rowheight=25,
+                             fieldbackground="#E3E3E3")
+
+        self.style.map('Treeview',
+                       background=[('selected', 'yellow')],
+                       foreground=[('selected', 'black')])
 
         # Create TreeView Frame
         self.tree_frame = Frame(self.root)
@@ -2063,9 +2120,13 @@ class WinAdjusterSearch:
         # Count Variable for number of records
         self.count = 0
 
+        # Create Stripped row Tags
+        self.my_tree.tag_configure('oddrow', background="white")
+        self.my_tree.tag_configure('evenrow', background="lightblue")
+
         # Change_Status Button
         self.change_status_button = Button(self.root, text="Change Status", bg="#f2f547", font=('Helvetica', 11), command=self.change_status)
-        self.change_status_button.grid(row=3, column=0, columnspan=3, ipadx=5)
+        self.change_status_button.grid(row=3, column=0, columnspan=3, pady=(5, 0), ipadx=5)
 
         # Loading the Environment Variables from .env file
         env_path = Path(env_file_path)
@@ -2234,8 +2295,12 @@ class WinAdjusterSearch:
 
             if records:
                 for record in records:
-                    self.my_tree.insert(parent='', index='end',
-                                        iid=self.count, text="", values=record)
+                    if self.count % 2 == 0:
+                        self.my_tree.insert(
+                            parent='', index='end', iid=self.count, text="", values=record, tags=("evenrow",))
+                    else:
+                        self.my_tree.insert(
+                            parent='', index='end', iid=self.count, text="", values=record, tags=("oddrow",))
                     self.count += 1
             else:
                 messagebox.showinfo(
