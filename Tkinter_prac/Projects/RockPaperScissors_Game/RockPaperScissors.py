@@ -12,14 +12,14 @@ image_list = ['rock', 'paper', 'scissor']
 selection = ''
 
 # Default Image will be shown known as all.jpg
-image1 = ImageTk.PhotoImage(Image.open('RockPaperScissors_Images/all.jpg'))
-image2 = ImageTk.PhotoImage(Image.open('RockPaperScissors_Images/all.jpg'))
+image1 = ImageTk.PhotoImage(Image.open('./Images/all.jpg'))
+image2 = ImageTk.PhotoImage(Image.open('./Images/all.jpg'))
 
 
 def select(event):
     global image2, selection
     selection = drop.get().lower()
-    image2 = ImageTk.PhotoImage(Image.open('./RockPaperScissors_Images/' + selection + '.jpg'))
+    image2 = ImageTk.PhotoImage(Image.open('./Images/' + selection + '.jpg'))
     img_label2.config(image=image2)
 
 
@@ -29,7 +29,7 @@ def play():
 
     global image1, selection
     choice = random.choice(image_list)
-    image1 = ImageTk.PhotoImage(Image.open('./RockPaperScissors_Images/' + choice + '.jpg'))
+    image1 = ImageTk.PhotoImage(Image.open('./Images/' + choice + '.jpg'))
     img_label1.config(image=image1)
 
     if selection == choice:
