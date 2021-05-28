@@ -58,7 +58,7 @@ class CurrencyConverterApp:
         if gui:
             self.root = master
             self.root.title("Currency Converter App")
-            self.root.geometry("635x460+340+80")
+            self.root.geometry("635x460+320+80")
             self.root.config(bg="#daff8c")
 
             # Create Tabs
@@ -93,7 +93,7 @@ class CurrencyConverterApp:
             for child in self.convert_frame.winfo_children():
                 child.destroy()
         else:
-            self.root.geometry("440x350+400+100")
+            self.root.geometry("440x350+410+120")
 
             conversion_rate = float(self.obj_WinConversionRate.conversion_rate_entry.get())
             country1_name = self.obj_WinConversionRate.country1_entry.get().lower()
@@ -144,7 +144,12 @@ class CurrencyConverterApp:
         elif conv_rate == -3:
             raise ValueError("Please Provide Proper Country Names")
         else:
-            return conv_rate * val
+            try:
+                result = conv_rate * float(val)
+            except Exception:
+                raise ValueError("Please Provide a Numeric Value")
+
+            return result
 
 
 class WinConversionRate:
@@ -353,7 +358,11 @@ class WinConvert:
         self.currency2_entry.config(state="readonly")
 
     def convert(self):
-        result = self.conversion_rate * float(self.currency1_entry.get())
+        try:
+            result = self.conversion_rate * float(self.currency1_entry.get())
+        except Exception:
+            messagebox.showwarning("Warning", "Please Provide a Numeric Value")
+            return
 
         # round() our result based on its value
         if result < 1:
@@ -380,9 +389,11 @@ class WinConvert:
 
 
 if __name__ == "__main__":
-    root = Tk()
     env_file_path = "C:/Users/HP/Pycharm_Projects/openCV_venv/.env"
+
+    root = Tk()
     CurrencyConverterApp(root, gui=True)
+
     # obj = CurrencyConverterApp()
     # print(obj.convert(203, "United States of America", "India"))
 
