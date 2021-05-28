@@ -3,7 +3,7 @@
 
 # ********** FACTORY SIMULATION PROJECT **********
 # Written By: Arijeet De
-# Last Updated: 26/05/2021
+# Last Updated: 28/05/2021
 
 ########################################################################################
 ########################################################################################
@@ -302,6 +302,13 @@ class WinSignup:
         self.fernet = Fernet(key)
 
     def signup_check(self):
+        # if any entry not filled then warning message displayed
+        if self.username_entry.get() == '' or self.password_entry.get() == '' or self.email_entry.get() == '' or \
+                self.secret_entry.get() == '':
+            messagebox.showwarning(
+                "Warning", "Please Fill The Details!", parent=self.root)
+            return
+
         # Storing the values of Entry Boxes
         username = self.username_entry.get()
         password = self.password_entry.get()
@@ -314,13 +321,24 @@ class WinSignup:
         self.email_entry.delete(0, END)
         self.secret_entry.delete(0, END)
 
-        conn = sqlite3.connect(database_file_path)
-        c = conn.cursor()
+        # Check whether valid email was provided
+        if '@' not in email_id or '.' not in email_id:
+            messagebox.showwarning("Warning", "Please provide a valid email!", parent=self.root)
+            return
 
-        # Finding Secret Key
-        c.execute("Select secret_key from Secret_Key")
+        try:
+            conn = sqlite3.connect(database_file_path)
+            c = conn.cursor()
 
-        encrypted_secret_key = c.fetchone()[0]
+            # Finding Secret Key
+            c.execute("Select secret_key from Secret_Key")
+
+            encrypted_secret_key = c.fetchone()[0]
+        except Exception:
+            messagebox.showinfo(
+                "Information", "Please Try Again!!!", parent=self.root)
+            return
+
         # Decrypting Secret Key
         decrypted_secret_key = self.fernet.decrypt(encrypted_secret_key).decode()
 
