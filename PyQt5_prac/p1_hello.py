@@ -13,30 +13,30 @@ class MainWindow(Qtw.QWidget):
         self.setLayout(Qtw.QVBoxLayout())
 
         # Create Label
-        my_label = Qtw.QLabel("What's Your Name?")
+        self.my_label = Qtw.QLabel("What's Your Name?")
         # Change Font of Label
-        my_label.setFont(Qtg.QFont("Helvetica", 18))
-        self.layout().addWidget(my_label)
+        self.my_label.setFont(Qtg.QFont("Helvetica", 18))
+        self.layout().addWidget(self.my_label)
 
         # Create an Entry Box
-        my_entry = Qtw.QLineEdit()
+        self.my_entry = Qtw.QLineEdit()
         # Set the name of the Entry Box
-        my_entry.setObjectName("name_field")
-        my_entry.setText("")
-        self.layout().addWidget(my_entry)
+        self.my_entry.setObjectName("name_field")
+        self.my_entry.setText("")
+        self.layout().addWidget(self.my_entry)
 
         # Create a Button
-        my_button = Qtw.QPushButton("Click Me!", clicked=lambda: press_it())
-        self.layout().addWidget(my_button)
+        self.my_button = Qtw.QPushButton("Click Me!", clicked=lambda: self.press_it())
+        self.layout().addWidget(self.my_button)
 
         # Show the App
         self.show()
 
-        def press_it():
-            # Add Name to Label
-            my_label.setText(f'Hello {my_entry.text()}!')
-            # Clear the Entry Box
-            my_entry.setText("")
+    def press_it(self):
+        # Add Name to Label
+        self.my_label.setText(f'Hello {self.my_entry.text()}!')
+        # Clear the Entry Box
+        self.my_entry.setText("")
 
 
 app = Qtw.QApplication([])
