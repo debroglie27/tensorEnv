@@ -5,7 +5,7 @@ from random import randint
 root = Tk()
 root.title("Password Generator")
 root.geometry("460x300+390+140")
-root.config(bg="#ffeac7")
+root.config(bg="#b8f3ff")
 
 
 # Generate Random Password
@@ -53,11 +53,11 @@ def copy_password():
 
 
 # Label Frame
-my_frame = LabelFrame(root, text="How Many Characters?", bg="#ffd794")
-my_frame.pack(pady=(25, 15))
+my_labelframe = LabelFrame(root, text="How Many Characters?", font=("Helvetica", 11), bg="#75e8ff")
+my_labelframe.pack(pady=(25, 15))
 
 # Entry Box to designate number of characters
-my_entry = Entry(my_frame, font=("Helvetica", 24))
+my_entry = Entry(my_labelframe, font=("Helvetica", 24))
 my_entry.pack(pady=20, padx=20)
 
 # Create Entry Box for Password that is returned
@@ -65,13 +65,13 @@ pw_entry = Entry(root, text='', state="readonly", readonlybackground="#f7ff8c", 
 pw_entry.pack(pady=15)
 
 # Create Frame for our Buttons
-button_frame = Frame(root, bg="#ffeac7")
+button_frame = Frame(root, bg="#b8f3ff")
 button_frame.pack(pady=(24, 0))
 
 # Create our Buttons
-copy_button = Button(button_frame, text="Copy", bg="#dfff94", font=("Helvetica", 11), command=copy_password)
+copy_button = Button(button_frame, text="Copy", bg="#ccff66", font=("Helvetica", 11), command=copy_password)
 copy_button.grid(row=0, column=0, padx=(0, 15), ipadx=4)
-generate_button = Button(button_frame, text="Generate Password", bg="#dfff94", font=("Helvetica", 11), command=new_password)
+generate_button = Button(button_frame, text="Generate Password", bg="#ccff66", font=("Helvetica", 11), command=new_password)
 generate_button.grid(row=0, column=1, padx=(15, 0), ipadx=8)
 
 
