@@ -11,8 +11,8 @@ The App looks like this:
 Here we can provide the name of the *Base Country* whose currency we would like to convert.  
 Next we can provide the name of the *Conversion Country* whose currency we want to convert to.
 
-Then by clicking on the *Conversion Rate Button* we can find the  
-conversion rate between those countries.
+Then by clicking on the *Conversion Rate Button* we can find the conversion rate   
+between those countries.
 
 ---
 ### Example:
