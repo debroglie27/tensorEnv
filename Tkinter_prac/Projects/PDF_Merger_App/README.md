@@ -8,7 +8,7 @@ This is how the App looks.
 
 ![Basic View](https://raw.githubusercontent.com/debroglie27/tensorEnv/main/Tkinter_prac/Projects/PDF_Merger_App/Images/Basic_View.png)
 
-We can:
+**We can**:
 * Add files and Remove files using the Menu Buttons on top.
 * Change the sequence of the files being added using the *Move Up* and *Move Down* Button.
 * Change the Page Range by increasing or decreasing the *First Page* and *Last Page* value.
