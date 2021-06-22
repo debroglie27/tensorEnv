@@ -1,8 +1,16 @@
 ## Welcome to My 'tensorENV' Repository:
 This Repository contains 3 Folders:
+* PyQt5_prac
 * Tech_with_Tim
 * Tkinter_prac
 * Udemy_Games
+
+---
+### PyQt5_prac:
+This particular folder contains PyQt5 GUI related things which I learned   
+from a YouTube Channel.
+
+I was able to get started in **PyQt5** and started creating cool desktop apps.
 
 ---
 ### Tech_with_Tim:
